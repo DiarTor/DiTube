@@ -4,8 +4,9 @@ from pytube import YouTube
 import logging
 import http
 import os
+#fill the below requirement args with your bot_token, api_hash, api_id(int)
 bot = Client(
-    "MiTube", bot_token="#place your bot token", api_hash="place your api_hash", api_id=place your api id)
+    "MiTube", bot_token="", api_hash="", api_id=)
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 logger = logging.getLogger(__name__)
