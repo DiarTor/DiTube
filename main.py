@@ -5,7 +5,7 @@ import logging
 import http
 import os
 bot = Client(
-    "MiTube", bot_token="5766331634:AAGh3tTXJt4HiA7grt0X3bGf0JM_ue9IVso", api_hash="639ae9a86624a9ea5c94288928aee16f", api_id=13963330)
+    "MiTube", bot_token="#place your bot token", api_hash="place your api_hash", api_id=place your api id)
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 logger = logging.getLogger(__name__)
