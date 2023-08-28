@@ -78,10 +78,10 @@ class Lang:
                                             reply_markup=select_lang_buttons_reply_markup)
             context.user_data['selecting_lang'] = True
         elif users_collection.find_one({"user_id": user.id})["lang"] == "en":
-            await update.message.reply_text(f"{english.select_lang}", reply_markup=select_lang_buttons_reply_markup)
+            await update.message.reply_text(f"{english.change_lang}", reply_markup=select_lang_buttons_reply_markup)
             context.user_data['selecting_lang'] = True
         elif users_collection.find_one({"user_id": user.id})["lang"] == "fa":
-            await update.message.reply_text(f"{persian.select_lang}", reply_markup=select_lang_buttons_reply_markup)
+            await update.message.reply_text(f"{persian.change_lang}", reply_markup=select_lang_buttons_reply_markup)
             context.user_data['selecting_lang'] = True
 
     async def selected_lang_is_fa(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -89,7 +89,7 @@ class Lang:
         user_data = "fa"
         remove_markup = ReplyKeyboardRemove()
         users_collection.update_one({"user_id": user.id}, {"$set": {"lang": user_data}})
-        await update.message.reply_text(f"{persian.greeting}", reply_markup=remove_markup)
+        await update.message.reply_text(f"{persian.lang_changed}", reply_markup=remove_markup)
         context.user_data["selecting_lang"] = False
 
     async def selected_lang_is_en(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -97,7 +97,7 @@ class Lang:
         user_data = "en"
         remove_markup = ReplyKeyboardRemove()
         users_collection.update_one({"user_id": user.id}, {"$set": {"lang": user_data}})
-        await update.message.reply_text(f"{english.greeting}", reply_markup=remove_markup)
+        await update.message.reply_text(f"{english.lang_changed}", reply_markup=remove_markup)
         context.user_data["selecting_lang"] = False
 
 
@@ -131,7 +131,16 @@ class Staff:
         else:
             await update.message.reply_text("Usage: /sendall <message>")
 
-    async def ahelp(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+
+class Help:
+    async def help(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+        user = update.effective_user
+        if users_collection.find_one({"user_id": user.id})["lang"] == "fa":
+            await update.message.reply_text(f"{persian.guide}")
+        elif users_collection.find_one({"user_id": user.id})["lang"] == "en":
+            await update.message.reply_text(f"{english.guide}")
+
+    async def adminhelp(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         if not users_collection.find_one({"is_staff": True, "user_id": update.effective_user.id}):
             await update.message.reply_text("❌شما دسترسی به این دستور را ندارید.")
             return
@@ -143,9 +152,10 @@ def main() -> None:
     application = Application.builder().token(TOKEN).build()
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CommandHandler("lang", Lang().join_in_selecting_lang))
+    application.add_handler(CommandHandler("help", Help().help))
     application.add_handler(CommandHandler("send", Staff().send))
     application.add_handler(CommandHandler("sendall", Staff().sendall))
-    application.add_handler(CommandHandler("ahelp", Staff().ahelp))
+    application.add_handler(CommandHandler("adminhelp", Help().adminhelp))
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_user_message))
 
     application.run_polling(allowed_updates=Update.ALL_TYPES)
