@@ -6,8 +6,7 @@ from bot.database import users_collection
 from langs import persian, english
 
 select_lang_buttons = [
-    [KeyboardButton("🇮🇷فارسی")],
-    [KeyboardButton("🇺🇸English")]
+    [KeyboardButton("🇺🇸English"), KeyboardButton("🇮🇷فارسی")]
 ]
 select_lang_buttons_reply_markup = ReplyKeyboardMarkup(select_lang_buttons, resize_keyboard=True)
 

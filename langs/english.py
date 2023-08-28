@@ -1,14 +1,36 @@
-select_lang = """Hello Dear Friend Welcome So Much! 😀
-To Continue Please Select Your Language First."""
-greeting = """Hello Dear Friend Welcome So Much! 😀
-you can send the link of the video you want to download at any time."""
-restart = "please use the command /start to restart the bot!"
-change_lang = "please select the language you want to use."
-lang_changed = "Language Changed Successfully! Now you can use the bot.\n To see the guide please use /help."
-didnt_understand = "sorry i didn't get what you mean🧐"
-guide = """To download videos from youtube you can send the link of the video you want to download at any time.
+select_lang = """
+🌟 Welcome, Dear Friend! 🌟
+
+To proceed, kindly select your preferred language first.
+"""
+
+greeting = """
+👋 Warm Greetings, Dear Friend! 👋
+
+Feel free to share the link of the video you wish to download at any time.
+"""
+
+restart = "Please restart the bot with the /start command."
+
+change_lang = "To switch languages, kindly make your selection."
+
+lang_changed = """
+Language Successfully Changed! 🎉
+You are now all set to use the bot.
+For instructions, use the command /help.
+"""
+
+didnt_understand = "I apologize, but I'm having trouble understanding your request. 🧐"
+
+guide = """
+📚 Guide:
+
+To download YouTube videos, simply send the link anytime.
 
 Bot Commands:
-/start - restart the bot
-/lang - change language
-/donate - donate to the developer"""
+/start - Restart the bot
+/lang - Change language
+/donate - Support the developer
+"""
+
+donate = "You can support the developer by using one of the links below. 😊"

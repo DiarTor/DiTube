@@ -1,7 +1,7 @@
 from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, filters
 
-from bot.handlers import start_handler, lang_handler, staff_handler, help_handler, message_handler
+from bot.handlers import start_handler, lang_handler, staff_handler, help_handler, message_handler, donate_handler
 from bot.config import TOKEN
 
 
@@ -10,6 +10,7 @@ def main() -> None:
 
     application.add_handler(CommandHandler("start", start_handler.start))
     application.add_handler(CommandHandler("lang", lang_handler.join_in_selecting_lang))
+    application.add_handler(CommandHandler("donate", donate_handler.donate))
     application.add_handler(CommandHandler("help", help_handler.help))
     application.add_handler(CommandHandler("send", staff_handler.send))
     application.add_handler(CommandHandler("sendall", staff_handler.sendall))
