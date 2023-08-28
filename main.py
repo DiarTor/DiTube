@@ -1,126 +1,155 @@
 import logging
-import os
-import time
 
-from config import API_ID, API_HASH, VIDEO_DOWNLOAD_DIR, BOT_TOKEN
-from pyrogram import Client, filters
-from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
-from pytube import YouTube
+from pymongo import MongoClient
+from telegram import ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemove
+from telegram import Update
+from telegram.error import BadRequest
+from telegram.ext import Application, CommandHandler, ContextTypes, filters, MessageHandler
 
-# region bot config
-bot = Client(
-    "MiTube",
-    bot_token=BOT_TOKEN,
-    api_hash=API_HASH,
-    api_id=API_ID
-)
-# endregion
-# region log Configuration
-logging.basicConfig(
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
+from config import TOKEN
+from langs import persian, english
+
+# region logging
+logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO)
+logging.getLogger("httpx").setLevel(logging.WARNING)
 logger = logging.getLogger(__name__)
-
-
 # endregion
-# region Database
+# region database
+client = MongoClient("mongodb://localhost:27017/")
+db = client['jimoservice_db']
+users_collection = db['users']
 # endregion
-class BadLink(Exception):
-    pass
+select_lang_buttons = [
+    [KeyboardButton("🇮🇷فارسی")],
+    [KeyboardButton("🇺🇸English")]
+]
+select_lang_buttons_reply_markup = ReplyKeyboardMarkup(select_lang_buttons, resize_keyboard=True)
 
 
-# The Class that handles all the commands for downloading videos and sharing them with the user.
-class Download:
-    def __init__(self, bot):
-        self.bot = bot
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    user = update.effective_user
+    user_data = {"user_id": user.id,
+                 "lang": "not_selected",
+                 "is_staff": False,
+                 "donated": 0}
+    if not users_collection.find_one({"user_id": user.id}):
+        users_collection.insert_one(user_data)
+    elif users_collection.find_one({"user_id": user.id})["lang"] == "not_selected":
+        await Lang().join_in_selecting_lang(update, context)
+    elif users_collection.find_one({"user_id": user.id})["lang"] == "en":
+        await update.message.reply_text(f"{english.greeting}")
+    elif users_collection.find_one({"user_id": user.id})["lang"] == "fa":
+        await update.message.reply_text(f"{persian.greeting}")
 
-    def get_resolution_options(self, yt):
-        resolution_options = []
-        for res in yt.streams.filter(progressive=True).order_by("resolution"):
-            if res is not None:
-                resolution_options.append(res.resolution)
-        return resolution_options
 
-    def download_video(self, yt, quality):
-        video = yt.streams.filter(resolution=quality, progressive=True).first()
-        if video is not None:
-            video_title = yt.title
-            if "|" in video_title:
-                video_title = video_title.replace("|", " ")
-            video_path = os.path.join(VIDEO_DOWNLOAD_DIR, f"{video_title}.mp4")
-            video.download(output_path=VIDEO_DOWNLOAD_DIR, filename=f"{video_title}.mp4")
-            return video_path
+async def handle_user_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    support_channel_id = -925489226
+    chat_id = update.effective_chat.id
+    user_message = update.message
+    user_message_text = update.message.text
+    user_reply = update.message.reply_to_message
+    user_photo = update.message.photo
+    user = update.effective_user
+    if not users_collection.find_one({"user_id": user.id}):
+        await update.message.reply_text(f"{persian.restart}\n\n{english.restart}")
+        return
+    elif context.user_data.get('selecting_lang'):
+        if user_message_text == "🇮🇷فارسی":
+            await Lang().selected_lang_is_fa(update, context)
+        elif user_message_text == "🇺🇸English":
+            await Lang().selected_lang_is_en(update, context)
         else:
-            raise Exception("Selected quality not available for download")
+            await update.message.reply_text(
+                f"ببخشید ولی منظورتان را متوجه نشدم🧐 لطفا از دکمه های زیر استفاده کنید👇\nSorry i didn't get what you mean, please select the buttons below.")
+    elif users_collection.find_one({"user_id": user.id})["lang"] == "not_selected":
+        context.user_data['selecting_lang'] = True
+        await update.message.reply_text(f"{persian.restart}\n\n{english.restart}")
+    else:
+        user_lang = users_collection.find_one({"user_id": user.id})["lang"]
+        response = persian.didnt_understand if user_lang == "fa" else english.didnt_understand
+        await update.message.reply_text(response)
 
-    def send_video(self, yt, chat_id, video_path):
-        channel_url = yt.channel_url
-        views = yt.views
-        description = yt.description[:950] if yt.description else ""
-        keyboard = InlineKeyboardMarkup([
-            [InlineKeyboardButton("Creator YT Channel", url=channel_url)]
-        ])
-        self.bot.send_video(
-            chat_id=chat_id,
-            video=video_path,
-            caption=f"*{yt.title}*\n\n👀 Views: {views}\n\n📝 Description: {description}",
-            reply_markup=keyboard
-        )
 
-    def process_video(self, link, quality, chat_id):
+class Lang:
+    async def join_in_selecting_lang(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+        user = update.effective_user
+        if users_collection.find_one({"user_id": user.id})["lang"] == "not_selected":
+            await update.message.reply_html(f"{persian.select_lang}\n\n{english.select_lang}",
+                                            reply_markup=select_lang_buttons_reply_markup)
+            context.user_data['selecting_lang'] = True
+        elif users_collection.find_one({"user_id": user.id})["lang"] == "en":
+            await update.message.reply_text(f"{english.select_lang}", reply_markup=select_lang_buttons_reply_markup)
+            context.user_data['selecting_lang'] = True
+        elif users_collection.find_one({"user_id": user.id})["lang"] == "fa":
+            await update.message.reply_text(f"{persian.select_lang}", reply_markup=select_lang_buttons_reply_markup)
+            context.user_data['selecting_lang'] = True
+
+    async def selected_lang_is_fa(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+        user = update.effective_user
+        user_data = "fa"
+        remove_markup = ReplyKeyboardRemove()
+        users_collection.update_one({"user_id": user.id}, {"$set": {"lang": user_data}})
+        await update.message.reply_text(f"{persian.greeting}", reply_markup=remove_markup)
+        context.user_data["selecting_lang"] = False
+
+    async def selected_lang_is_en(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+        user = update.effective_user
+        user_data = "en"
+        remove_markup = ReplyKeyboardRemove()
+        users_collection.update_one({"user_id": user.id}, {"$set": {"lang": user_data}})
+        await update.message.reply_text(f"{english.greeting}", reply_markup=remove_markup)
+        context.user_data["selecting_lang"] = False
+
+
+class Staff:
+    async def send(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+        if not users_collection.find_one({"is_staff": True, "user_id": update.effective_user.id}):
+            await update.message.reply_text("❌شما دسترسی به این دستور را ندارید.")
+            return
         try:
-            yt = YouTube(link)
-            video_path = self.download_video(yt, quality)
-            self.send_video(yt, chat_id, video_path)
-            os.remove(video_path)  # Remove the downloaded video after sending
-        except Exception as e:
-            logger.error(f"Error processing video: {e}")
+            if context.args and context.args[0].isdigit() and context.args[1:]:
+                user_id = int(context.args[0])
+                message = " ".join(context.args[1:])
+                await context.bot.send_message(user_id, f"👤یک پیام از مدیریت :\n\n{message}")
+                await update.message.reply_text("✅پیام شما ارسال شد.")
+            else:
+                await update.message.reply_text("Usage: /send <user_id> <message>")
+        except BadRequest:
+            await update.message.reply_text("❌کاربر یافت نشد!")
+
+    async def sendall(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+        if not users_collection.find_one({"is_staff": True, "user_id": update.effective_user.id}):
+            await update.message.reply_text("❌شما دسترسی به این دستور را ندارید.")
+            return
+        if context.args and context.args[0:]:
+            documents = users_collection.find()
+            message = " ".join(context.args[0:])
+            for doc in documents:
+                chat_id = doc['user_id']
+                await context.bot.send_message(chat_id=chat_id, text=message)
+            await update.message.reply_text("✅پیام شما ارسال شد.")
+        else:
+            await update.message.reply_text("Usage: /sendall <message>")
+
+    async def ahelp(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+        if not users_collection.find_one({"is_staff": True, "user_id": update.effective_user.id}):
+            await update.message.reply_text("❌شما دسترسی به این دستور را ندارید.")
+            return
+        await update.message.reply_text("/send - Send message to a user\n/sendall - Send message to all users")
 
 
-# The Funtion That Greets the user and starts the bot.
-@bot.on_message(filters.command("start"))
-def greeting(bot, msg: Message):
-    msg.reply("Hi And Welcome 😊\nPlease Send Me Your Video URL")
+def main() -> None:
+    """Start the bot."""
+    application = Application.builder().token(TOKEN).build()
+    application.add_handler(CommandHandler("start", start))
+    application.add_handler(CommandHandler("lang", Lang().join_in_selecting_lang))
+    application.add_handler(CommandHandler("send", Staff().send))
+    application.add_handler(CommandHandler("sendall", Staff().sendall))
+    application.add_handler(CommandHandler("ahelp", Staff().ahelp))
+    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_user_message))
 
-
-# The Function that gets the video link from the user and selects the quality.
-@bot.on_message(filters.text)
-def main(bot, msg: Message):
-    chat_id = msg.chat.id
-    text = msg.text
-    if text.startswith("https://youtu.be/"):
-        try:
-            bot_instance = Download(bot)
-            yt = YouTube(text)
-            video_title = yt.title
-            kb = []
-            resolution_options = bot_instance.get_resolution_options(yt)
-            for k in sorted(list(set(resolution_options))):
-                kb.append([InlineKeyboardButton(
-                    f"{k}", callback_data=f"{text} {k} {chat_id}"
-                )])
-            reply_markup = InlineKeyboardMarkup(kb)
-            msg.reply("❓Choose The Quality :", reply_markup=reply_markup, quote=True)
-        except BadLink:
-            msg.reply("❌ Bad link Please Try Again")
-        except Exception as e:
-            logger.error(f"Error fetching video info: {e}")
-            time.sleep(10)  # Wait for 10 seconds before retrying
-
-
-# The Function that sends the video to the class that handles all the commands for downloading videos
-@bot.on_callback_query()
-def download_chosen_quality(bot, call):
-    link, res_code, chat_id = call.data.split(" ", 2)
-    call.edit_message_text("✨Downloading...")
-    try:
-        bot_instance = Download(bot)
-        bot_instance.process_video(link=link, quality=res_code, chat_id=chat_id)
-        call.edit_message_text("✅ Here Is Your Video :")
-    except http.client.IncompleteRead:
-        call.edit_message_text("❌ Something is Wrong With Our Servers! Please Try Again.")
-    except Exception as e:
-        logger.error(f"Error processing download: {e}")
+    application.run_polling(allowed_updates=Update.ALL_TYPES)
 
 
 if __name__ == "__main__":
-    bot.run()
+    main()
