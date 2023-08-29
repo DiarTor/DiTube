@@ -1,5 +1,4 @@
 from telegram import InlineKeyboardMarkup, InlineKeyboardButton
-from telegram.ext import ContextTypes
 from telegram import Update
 
 
