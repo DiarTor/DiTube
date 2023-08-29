@@ -3,6 +3,9 @@ from telegram.ext import ContextTypes
 from bot.database import users_collection
 from langs import persian, english
 from bot.handlers.lang_handler import selected_lang_is_en, selected_lang_is_fa
+from pytube import YouTube
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup
+from bot.download.get_resolution import get_resolution_options
 async def handle_user_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     support_channel_id = -925489226
     chat_id = update.effective_chat.id
@@ -14,6 +17,16 @@ async def handle_user_message(update: Update, context: ContextTypes.DEFAULT_TYPE
     if not users_collection.find_one({"user_id": user.id}):
         await update.message.reply_text(f"{persian.restart}\n\n{english.restart}")
         return
+    elif user_message_text.startswith("https://youtu.be/"):
+        kb = []
+        yt = YouTube(user_message_text)
+        resolution_options = get_resolution_options(yt)
+        for res in sorted(resolution_options):
+            kb.append([InlineKeyboardButton(
+                f"{res}", callback_data=f"{user_message_text} {res} {chat_id}"
+            )])
+        reply_markup = InlineKeyboardMarkup(kb)
+        await update.message.reply_text("❓Choose The Quality :", reply_markup=reply_markup, quote=True)
     elif context.user_data.get('selecting_lang'):
         if user_message_text == "🇮🇷فارسی":
             await selected_lang_is_fa(update, context)
