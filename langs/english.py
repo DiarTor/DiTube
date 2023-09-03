@@ -34,3 +34,9 @@ Bot Commands:
 """
 
 donate = "You can support the developer by using one of the links below. 😊"
+
+select_quality = "❓Choose The Quality :"
+
+timed_out = "❌Timed Out!"
+
+get_video_info = "🔍Getting Video Information..."
