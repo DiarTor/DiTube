@@ -13,7 +13,7 @@ async def send(update: Update, yt, chat_id, video_path) -> None:
     if user_lang == "en":
         keyboard = InlineKeyboardMarkup([[InlineKeyboardButton("Creator YT Channel", url=channel_url)]])
         await update.effective_chat.send_video(video=video_path,
-                                               caption=f"{yt.title}\n\n👀 Views: {views}\n📝 Description:\n{description}\n\n📅 Publishe Date: {published}",
+                                               caption=f"{yt.title}\n\n👀 Views: {views}\n📝 Description:\n{description}\n\n📅 Publish Date: {published}",
                                                reply_markup=keyboard)
     else:
         keyboard = InlineKeyboardMarkup([[InlineKeyboardButton("کانال یوتیوب سازنده", url=channel_url)]])

@@ -33,7 +33,7 @@ Bot Commands:
 /donate - Support the developer
 """
 
-donate = "You can support the developer by using one of the links below. 😊"
+donate = "You can support the developer by using one of the links below. 😊\n\nGuide :\nCoffeete for Rial donations\nTron for Digital currency donations\n\nCoffeete : https://www.coffeete.ir/DiarTor\nTron (TRX) : `TJXeM5puLgWu8sHu96riZrrpxLxanvUB59`"
 
 select_quality = "❓Choose The Quality :"
 

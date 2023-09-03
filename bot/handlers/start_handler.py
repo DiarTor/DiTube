@@ -8,7 +8,19 @@ from langs import persian, english
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user = update.effective_user
-    user_data = {"user_id": user.id, "lang": "not_selected", "is_staff": False, "donated": 0}
+    user_data = {
+        "user_id": user.id,
+        "user_name": user.username,
+        "user_firstname": user.first_name,
+        "user_lastname": user.last_name,
+        "lang": "not_selected",
+        "is_staff": False,
+        "premium": False,
+        "premium_time": 0,
+        "videos_downloaded": 0,
+        "audios_downloaded": 0,
+        "donated": 0
+    }
     if not users_collection.find_one({"user_id": user.id}):
         users_collection.insert_one(user_data)
     elif users_collection.find_one({"user_id": user.id})["lang"] == "not_selected":

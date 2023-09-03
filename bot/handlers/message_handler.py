@@ -17,11 +17,11 @@ async def handle_user_message(update: Update, context: ContextTypes.DEFAULT_TYPE
     user_reply = update.message.reply_to_message
     user_photo = update.message.photo
     user = update.effective_user
-    user_lang = users_collection.find_one({"user_id": user.id})["lang"]
     if not users_collection.find_one({"user_id": user.id}):
         await update.message.reply_text(f"{persian.restart}\n\n{english.restart}")
         return
     elif user_message_text.startswith("https://youtu.be/"):
+        user_lang = users_collection.find_one({"user_id": user.id})["lang"]
         geting_info_response = persian.get_video_info if user_lang == "fa" else english.get_video_info
         message_info = await update.message.reply_text(geting_info_response, quote=True)
         kb = []
@@ -36,6 +36,7 @@ async def handle_user_message(update: Update, context: ContextTypes.DEFAULT_TYPE
         await update.message.reply_text(response, reply_markup=reply_markup, quote=True)
         await message_info.delete()
     elif user_message_text.startswith("https://youtube.com/shorts/"):
+        user_lang = users_collection.find_one({"user_id": user.id})["lang"]
         geting_info_response = persian.get_video_info if user_lang == "fa" else english.get_video_info
         message_info = await update.message.reply_text(geting_info_response, quote=True)
         kb = []
