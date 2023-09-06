@@ -40,3 +40,5 @@ select_quality = "❓Choose The Quality :"
 timed_out = "❌Timed Out!"
 
 get_video_info = "🔍Getting Video Information..."
+
+age_restricted = "Sorry, the video you want to download is age restricted by youtube so we are not able to download it. 🧐"

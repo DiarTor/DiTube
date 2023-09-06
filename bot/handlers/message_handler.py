@@ -2,7 +2,7 @@ from pytube import YouTube
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 from telegram import Update
 from telegram.ext import ContextTypes
-
+from pytube.exceptions import AgeRestrictedError
 from bot.database import users_collection
 from bot.download_videos.get_resolution import get_resolution_options
 from bot.handlers.lang_handler import selected_lang_is_en, selected_lang_is_fa
@@ -26,7 +26,12 @@ async def handle_user_message(update: Update, context: ContextTypes.DEFAULT_TYPE
         message_info = await update.message.reply_text(geting_info_response, quote=True)
         kb = []
         yt = YouTube(user_message_text)
-        resolution_options = get_resolution_options(yt)
+        try:
+            resolution_options = get_resolution_options(yt)
+        except AgeRestrictedError:
+            response = persian.age_restricted if user_lang == "fa" else english.age_restricted
+            await update.message.reply_text(response, quote=True)
+            return
         for res in sorted(resolution_options):
             kb.append([InlineKeyboardButton(
                 f"{res}", callback_data=f"{user_message_text} {res} {chat_id}"
