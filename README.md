@@ -37,7 +37,7 @@ Using MiTube is as easy as 1-2-3:
 
 4. **Choose the desired video quality 📹🎧.**
 
-The bot will process your request and provide you with a downloadable link to the video.
+The bot will process your request and provide you with downloadable the video.
 
 ---
 
