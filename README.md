@@ -15,7 +15,7 @@ To get started with MiTube, follow these simple installation steps:
     ```bash
     pip install -r requirements.txt
 
-- Configure the database by editing the database.py file with your own database settings.
+- Configure the database by editing the database.py file with your own database settings (i used mongodb(pymongo)).
 
 - Replace the TOKEN in config.py with your own bot token.
 
