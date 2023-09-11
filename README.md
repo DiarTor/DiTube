@@ -1,50 +1,50 @@
-MiTube - YouTube Downloader Telegram Bot 🎥🤖
+# MiTube - YouTube Downloader Telegram Bot 🎥🤖
 
 MiTube is a Telegram bot that allows users to easily download YouTube videos by sending the bot a YouTube link. Users can select their preferred language (Farsi or English), choose the video quality 📹🎧, and enjoy the convenience of downloading YouTube videos.
-Installation 🚀
+
+## Installation 🚀
 
 To get started with MiTube, follow these simple installation steps:
 
-    Clone the repository:
+1. Clone the repository :
 
-    bash
+   ```bash
+   git clone https://github.com/your-username/MiTube.git
 
-git clone https://github.com/your-username/MiTube.git
-
-Install the project dependencies using requirements.txt:
-
+2. Install the project dependencies using requirements.txt:
+    ```bash
     pip install -r requirements.txt
 
-    Configure the database by editing the database.py file with your own database settings.
+- Configure the database by editing the database.py file with your own database settings.
 
-    Replace the TOKEN in config.py with your own bot token.
+- Replace the TOKEN in config.py with your own bot token.
 
 Usage 📋
 
-Using MiTube is a breeze:
+Using MiTube is a breeze :
 
-    Start the bot on Telegram 🚀.
+ - Start the bot on Telegram 🚀.
 
-    Select your preferred language (Farsi or English) 🗣️.
+ - Select your preferred language (Farsi or English) 🗣️.
 
-    Send a YouTube link to the bot 📨.
+ - Send a YouTube link to the bot 📨.
 
-    Choose the desired video quality 📹🎧.
+ - Choose the desired video quality 📹🎧.
 
 The bot will process your request and provide you with a downloadable link to the video.
 Dependencies 📦
 
 MiTube relies on the following Python libraries:
 
-    python-telegram-bot: Python wrapper for the Telegram Bot API.
-    pymongo: Python driver for MongoDB, used for database operations.
-    pytube: A lightweight, dependency-free Python library for downloading YouTube videos.
+- python-telegram-bot : Python wrapper for the Telegram Bot API.
+- pymongo : Python driver for MongoDB, used for database operations.
+- pytube : A lightweight, dependency-free Python library for downloading YouTube videos.
 
 Contact 📞
 
 If you have any questions or need assistance with MiTube, you can reach out to the developer:
 
-    Telegram: @diartor 💬
-    Instagram: instagram.com/diartor 📷
+- Telegram: https://t.me/diartor 💬
+- Instagram: https://instagram.com/diartor 📷
 
 Feel free to report any issues or suggest improvements. Thank you for using MiTube! 😊👍
