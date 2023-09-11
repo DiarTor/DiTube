@@ -5,10 +5,6 @@ Installation 🚀
 
 To get started with MiTube, follow these simple installation steps:
 
-    Clone the repository:
-
-    bash
-
 git clone https://github.com/your-username/MiTube.git
 
 Install the project dependencies using requirements.txt:
