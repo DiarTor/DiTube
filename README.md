@@ -34,6 +34,27 @@ Using MiTube is a breeze :
 The bot will process your request and provide you with a downloadable link to the video.
 Dependencies 📦
 
+Bot Commands 🤖
+
+    /lang: Use this command to change the bot's language preferences.
+    /help: Get a guide on how to use the bot.
+    /donate: See the donation links for supporting the development of MiTube.
+    /start: Start a new session.
+
+Please remember to add these commands in BotFather for better usability.
+
+Notes 📝
+
+  - MiTube is designed for educational and personal use only. Please respect copyright and intellectual property rights when using this bot.
+
+   - While MiTube strives to provide high-quality video downloads, the availability of video quality options may vary depending on YouTube's policies and the video itself.
+
+   - MiTube is an open-source project developed by the community. Feel free to contribute to its development or report any issues you encounter.
+
+   - To see administrator commands, please write /adminhelp.
+
+   - Note: Please change the donation links located in the lang/persian and lang/english files to update the donation information as needed.
+
 MiTube relies on the following Python libraries:
 
 - python-telegram-bot : Python wrapper for the Telegram Bot API.
