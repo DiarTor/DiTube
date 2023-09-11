@@ -6,3 +6,4 @@ pyvenv.cfg
 .idea
 old_version.py
 test.py
+bot/.env
