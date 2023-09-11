@@ -1,2 +1,3 @@
-TOKEN = "5766331634:AAGh3tTXJt4HiA7grt0X3bGf0JM_ue9IVso"
+#Enter Your Bot Token Here
+TOKEN = ""
 VIDEO_DOWNLOAD_DIR = "videos/"
