@@ -36,7 +36,7 @@ async def handle_user_message(update: Update, context: ContextTypes.DEFAULT_TYPE
             kb.append([InlineKeyboardButton(
                 f"{res}", callback_data=f"{user_message_text} {res} {chat_id}"
             )])
-        if selected_lang_is_en(update, context):
+        if user_lang == "en":
             kb.append([InlineKeyboardButton(
                 f"Download Audio", callback_data=f"{user_message_text} vc {chat_id}"
             )])
