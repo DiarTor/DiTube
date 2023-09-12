@@ -1,5 +1,7 @@
+import os
+
 from pymongo import MongoClient
-#Enter Your Database Config Here / You Can Use Another Databases As Well
-client = MongoClient("")
-db = client['']
-users_collection = db['']
+
+client = MongoClient(os.environ.get("MONGODB_URI", "mongodb://localhost:27017/"))
+db = client['mitube']
+users_collection = db['users']

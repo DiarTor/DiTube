@@ -1,9 +1,8 @@
-from telegram import Update
-from telegram.ext import Application, CommandHandler, MessageHandler, filters, CallbackQueryHandler
-
 from bot.config import TOKEN
 from bot.handlers import start_handler, lang_handler, staff_handler, help_handler, message_handler, donate_handler, \
     callback_handler
+from telegram import Update
+from telegram.ext import Application, CommandHandler, MessageHandler, filters, CallbackQueryHandler
 
 
 def main() -> None:

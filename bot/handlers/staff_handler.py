@@ -1,8 +1,7 @@
+from bot.database import users_collection
 from telegram import Update
 from telegram.error import BadRequest
 from telegram.ext import ContextTypes
-
-from bot.database import users_collection
 
 
 async def send(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
