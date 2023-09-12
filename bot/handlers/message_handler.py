@@ -1,12 +1,12 @@
+from bot.database import users_collection
+from bot.download_videos.get_video_information import get_video_options
+from bot.handlers.lang_handler import selected_lang_is_en, selected_lang_is_fa
+from langs import persian, english
 from pytube import YouTube
+from pytube.exceptions import AgeRestrictedError
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardRemove
 from telegram import Update
 from telegram.ext import ContextTypes
-from pytube.exceptions import AgeRestrictedError
-from bot.database import users_collection
-from bot.download_videos.get_resolution import get_resolution_options
-from bot.handlers.lang_handler import selected_lang_is_en, selected_lang_is_fa
-from langs import persian, english
 
 
 async def handle_user_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -27,14 +27,22 @@ async def handle_user_message(update: Update, context: ContextTypes.DEFAULT_TYPE
         kb = []
         yt = YouTube(user_message_text)
         try:
-            resolution_options = get_resolution_options(yt)
+            video_options = get_video_options(yt)
         except AgeRestrictedError:
             response = persian.age_restricted if user_lang == "fa" else english.age_restricted
             await update.message.reply_text(response, quote=True)
             return
-        for res in sorted(resolution_options):
+        for res in sorted(video_options):
             kb.append([InlineKeyboardButton(
                 f"{res}", callback_data=f"{user_message_text} {res} {chat_id}"
+            )])
+        if selected_lang_is_en(update, context):
+            kb.append([InlineKeyboardButton(
+                f"Download Audio", callback_data=f"{user_message_text} vc {chat_id}"
+            )])
+        else:
+            kb.append([InlineKeyboardButton(
+                f"دانلود صوت", callback_data=f"{user_message_text} vc {chat_id}"
             )])
         reply_markup = InlineKeyboardMarkup(kb)
         response = persian.select_quality if user_lang == "fa" else english.select_quality
@@ -47,13 +55,13 @@ async def handle_user_message(update: Update, context: ContextTypes.DEFAULT_TYPE
         kb = []
         yt = YouTube(user_message_text)
         try:
-            resolution_options = get_resolution_options(yt)
+            video_options = get_video_options(yt)
         except AgeRestrictedError:
             response = persian.age_restricted if user_lang == "fa" else english.age_restricted
             await update.message.reply_text(response, quote=True)
             return
         url_code = user_message_text.split("shorts/")
-        for res in sorted(resolution_options):
+        for res in sorted(video_options):
             kb.append([InlineKeyboardButton(
                 f"{res}", callback_data=f"{url_code[1]} {res} {chat_id}"
             )])
