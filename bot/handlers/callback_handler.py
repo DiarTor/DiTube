@@ -1,8 +1,7 @@
-from telegram import Update
-from telegram.ext import CallbackContext
-
 from bot.database import users_collection
 from bot.download_videos.process_video import process
+from telegram import Update
+from telegram.ext import CallbackContext
 
 
 async def handle_callback(update: Update, context: CallbackContext):

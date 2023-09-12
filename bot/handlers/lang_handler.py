@@ -1,9 +1,8 @@
+from bot.database import users_collection
+from langs import persian, english
 from telegram import ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemove
 from telegram import Update
 from telegram.ext import ContextTypes
-
-from bot.database import users_collection
-from langs import persian, english
 
 select_lang_buttons = [
     [KeyboardButton("🇺🇸English"), KeyboardButton("🇮🇷فارسی")]

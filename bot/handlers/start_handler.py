@@ -1,9 +1,8 @@
-from telegram import Update
-from telegram.ext import ContextTypes
-
 from bot.database import users_collection
 from bot.handlers.lang_handler import join_in_selecting_lang
 from langs import persian, english
+from telegram import Update
+from telegram.ext import ContextTypes
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:

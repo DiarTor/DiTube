@@ -1,8 +1,7 @@
-from telegram import Update
-from telegram.ext import ContextTypes
-
 from bot.database import users_collection
 from langs import persian, english
+from telegram import Update
+from telegram.ext import ContextTypes
 
 
 async def donate(update: Update, context: ContextTypes.DEFAULT_TYPE):

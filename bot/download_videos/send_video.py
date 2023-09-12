@@ -1,7 +1,6 @@
+from bot.database import users_collection
 from telegram import InlineKeyboardMarkup, InlineKeyboardButton
 from telegram import Update
-
-from bot.database import users_collection
 
 
 async def send(update: Update, yt, chat_id, video_path) -> None:
