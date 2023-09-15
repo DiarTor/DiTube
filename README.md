@@ -13,7 +13,7 @@ Getting started with MiTube is a breeze:
 1. **Clone the repository:**
 
    ```bash
-   git clone https://github.com/your-username/MiTube.git
+   git clone https://github.com/DiarTor/MiTube.git
 
 2. **Install project dependencies using `requirements.txt`:**
 
