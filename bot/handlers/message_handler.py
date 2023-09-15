@@ -1,6 +1,9 @@
+import re
+
 from bot.database import users_collection
 from bot.download_videos.get_video_information import get_video_options
 from bot.handlers.lang_handler import selected_lang_is_en, selected_lang_is_fa
+from bot.handlers.staff_handler import send_msg_to_all, send_msg_to_user
 from langs import persian, english
 from pytube import YouTube
 from pytube.exceptions import AgeRestrictedError
@@ -10,17 +13,16 @@ from telegram.ext import ContextTypes
 
 
 async def handle_user_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    support_channel_id = -925489226
     chat_id = update.effective_chat.id
     user_message = update.message
-    user_message_text = update.message.text
+    user_message_text = user_message.text
     user_reply = update.message.reply_to_message
     user_photo = update.message.photo
     user = update.effective_user
     if not users_collection.find_one({"user_id": user.id}):
         await update.message.reply_text(f"{persian.restart}\n\n{english.restart}")
         return
-    elif user_message_text.startswith("https://youtu.be/"):
+    elif user_message_text and re.search("^https://youtu.be/", user_message_text):
         user_lang = users_collection.find_one({"user_id": user.id})["lang"]
         geting_info_response = persian.get_video_info if user_lang == "fa" else english.get_video_info
         message_info = await update.message.reply_text(geting_info_response, quote=True)
@@ -48,7 +50,7 @@ async def handle_user_message(update: Update, context: ContextTypes.DEFAULT_TYPE
         response = persian.select_quality if user_lang == "fa" else english.select_quality
         await update.message.reply_text(response, reply_markup=reply_markup, quote=True)
         await message_info.delete()
-    elif user_message_text.startswith("https://youtube.com/shorts/"):
+    elif user_message_text and re.search("^https://youtube.com/shorts/", user_message_text):
         user_lang = users_collection.find_one({"user_id": user.id})["lang"]
         geting_info_response = persian.get_video_info if user_lang == "fa" else english.get_video_info
         message_info = await update.message.reply_text(geting_info_response, quote=True)
@@ -65,6 +67,14 @@ async def handle_user_message(update: Update, context: ContextTypes.DEFAULT_TYPE
             kb.append([InlineKeyboardButton(
                 f"{res}", callback_data=f"{url_code[1]} {res} {chat_id}"
             )])
+        if user_lang == "en":
+            kb.append([InlineKeyboardButton(
+                f"Download Audio", callback_data=f"{url_code[1]} vc {chat_id}"
+            )])
+        else:
+            kb.append([InlineKeyboardButton(
+                f"دانلود صوت", callback_data=f"{url_code[1]} vc {chat_id}"
+            )])
         reply_markup = InlineKeyboardMarkup(kb)
         response = persian.select_quality if user_lang == "fa" else english.select_quality
         await update.message.reply_text(response, reply_markup=reply_markup, quote=True)
@@ -77,6 +87,19 @@ async def handle_user_message(update: Update, context: ContextTypes.DEFAULT_TYPE
         else:
             await update.message.reply_text(
                 f"ببخشید ولی منظورتان را متوجه نشدم🧐 لطفا از دکمه های زیر استفاده کنید👇\nSorry i didn't get what you mean, please select the buttons below.")
+    elif context.user_data.get("sending_to_all"):
+        if user_message_text == "Cancel ⬅️":
+            context.user_data['sending_to_all'] = False
+            await update.message.reply_text("Canceld ✅", reply_markup=ReplyKeyboardRemove())
+        else:
+            await send_msg_to_all(update, context)
+    elif context.user_data.get("sending_to_user"):
+        if user_message_text == "Cancel ⬅️":
+            context.user_data['sending_to_user'] = False
+            context.user_data['user_id'] = None
+            await update.message.reply_text("Canceld ✅", reply_markup=ReplyKeyboardRemove())
+        else:
+            await send_msg_to_user(update, context)
     elif users_collection.find_one({"user_id": user.id})["lang"] == "not_selected":
         context.user_data['selecting_lang'] = True
         await update.message.reply_text(f"{persian.restart}\n\n{english.restart}")
