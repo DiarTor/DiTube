@@ -1,7 +1,7 @@
 import datetime
 import os
 
-from common.clean_title import replace_invalid_characters_with_space
+from utils.clean_title import replace_invalid_characters_with_space
 
 from ..config import VIDEO_DOWNLOAD_DIR
 
