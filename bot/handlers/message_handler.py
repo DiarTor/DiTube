@@ -7,7 +7,7 @@ from pytube.exceptions import AgeRestrictedError
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardRemove
 from telegram import Update
 from telegram.ext import ContextTypes
-
+from utils.is_channel_sub import check_sub
 
 async def handle_user_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     support_channel_id = -925489226
@@ -17,7 +17,9 @@ async def handle_user_message(update: Update, context: ContextTypes.DEFAULT_TYPE
     user_reply = update.message.reply_to_message
     user_photo = update.message.photo
     user = update.effective_user
-    if not users_collection.find_one({"user_id": user.id}):
+    if not await check_sub(update, context, user.id):
+        await update.message.reply_text(f"Please subscribe and then use /start.\n @diardev")
+    elif not users_collection.find_one({"user_id": user.id}):
         await update.message.reply_text(f"{persian.restart}\n\n{english.restart}")
         return
     elif user_message_text.startswith("https://youtu.be/"):
@@ -32,10 +34,13 @@ async def handle_user_message(update: Update, context: ContextTypes.DEFAULT_TYPE
             response = persian.age_restricted if user_lang == "fa" else english.age_restricted
             await update.message.reply_text(response, quote=True)
             return
-        for res in sorted(video_options):
-            kb.append([InlineKeyboardButton(
-                f"{res}", callback_data=f"{user_message_text} {res} {chat_id}"
-            )])
+        for item in sorted(video_options, reverse=True):
+            parts = item.split()
+            if len(parts) == 2:
+                quality, size = parts
+                kb.append([InlineKeyboardButton(
+                    f"{quality} {size}", callback_data=f"{user_message_text} {quality} {chat_id}"
+                )])
         if user_lang == "en":
             kb.append([InlineKeyboardButton(
                 f"Download Audio", callback_data=f"{user_message_text} vc {chat_id}"
