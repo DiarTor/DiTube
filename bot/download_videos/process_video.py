@@ -10,11 +10,12 @@ from telegram.error import TimedOut
 
 
 async def process(update: Update, link, quality_or_audio, chat_id):
-    user_lang = users_collection.find_one({"user_id": update.effective_user.id})["lang"]
+    user_lang = users_collection.find_one({"user_id": update.effective_user.id})["settings"]["language"]
     try:
         yt = YouTube(link)
         video_path = download_yt_video(yt, quality_or_audio)
         await send(update=update, yt=yt, chat_id=chat_id, video_path=video_path)
+
         os.remove(video_path)
     except TimedOut:
         response = english.timed_out if user_lang == "en" else persian.timed_out

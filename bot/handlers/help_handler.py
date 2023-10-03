@@ -6,9 +6,9 @@ from telegram.ext import ContextTypes
 
 async def help(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user = update.effective_user
-    if users_collection.find_one({"user_id": user.id})["lang"] == "fa":
+    if users_collection.find_one({"user_id": user.id})["settings"]["language"] == "fa":
         await update.message.reply_text(f"{persian.guide}")
-    elif users_collection.find_one({"user_id": user.id})["lang"] == "en":
+    elif users_collection.find_one({"user_id": user.id})["settings"]["language"] == "en":
         await update.message.reply_text(f"{english.guide}")
 
 

@@ -19,11 +19,12 @@ async def handle_user_message(update: Update, context: ContextTypes.DEFAULT_TYPE
     user = update.effective_user
     if not await check_sub(update, context, user.id):
         await update.message.reply_text(f"Please subscribe and then use /start.\n @diardev")
+        return
     elif not users_collection.find_one({"user_id": user.id}):
         await update.message.reply_text(f"{persian.restart}\n\n{english.restart}")
         return
     elif user_message_text.startswith("https://youtu.be/"):
-        user_lang = users_collection.find_one({"user_id": user.id})["lang"]
+        user_lang = users_collection.find_one({"user_id": user.id})["settings"]["language"]
         geting_info_response = persian.get_video_info if user_lang == "fa" else english.get_video_info
         message_info = await update.message.reply_text(geting_info_response, quote=True)
         kb = []
@@ -54,7 +55,7 @@ async def handle_user_message(update: Update, context: ContextTypes.DEFAULT_TYPE
         await update.message.reply_text(response, reply_markup=reply_markup, quote=True)
         await message_info.delete()
     elif user_message_text.startswith("https://youtube.com/shorts/"):
-        user_lang = users_collection.find_one({"user_id": user.id})["lang"]
+        user_lang = users_collection.find_one({"user_id": user.id})["settings"]["language"]
         geting_info_response = persian.get_video_info if user_lang == "fa" else english.get_video_info
         message_info = await update.message.reply_text(geting_info_response, quote=True)
         kb = []
@@ -65,11 +66,13 @@ async def handle_user_message(update: Update, context: ContextTypes.DEFAULT_TYPE
             response = persian.age_restricted if user_lang == "fa" else english.age_restricted
             await update.message.reply_text(response, quote=True)
             return
-        url_code = user_message_text.split("shorts/")
-        for res in sorted(video_options):
-            kb.append([InlineKeyboardButton(
-                f"{res}", callback_data=f"{url_code[1]} {res} {chat_id}"
-            )])
+        for item in sorted(video_options, reverse=True):
+            parts = item.split()
+            if len(parts) == 2:
+                quality, size = parts
+                kb.append([InlineKeyboardButton(
+                    f"{quality} {size}", callback_data=f"{user_message_text} {quality} {chat_id}"
+                )])
         reply_markup = InlineKeyboardMarkup(kb)
         response = persian.select_quality if user_lang == "fa" else english.select_quality
         await update.message.reply_text(response, reply_markup=reply_markup, quote=True)
@@ -82,10 +85,10 @@ async def handle_user_message(update: Update, context: ContextTypes.DEFAULT_TYPE
         else:
             await update.message.reply_text(
                 f"ببخشید ولی منظورتان را متوجه نشدم🧐 لطفا از دکمه های زیر استفاده کنید👇\nSorry i didn't get what you mean, please select the buttons below.")
-    elif users_collection.find_one({"user_id": user.id})["lang"] == "not_selected":
+    elif users_collection.find_one({"user_id": user.id})["settings"]["language"] == "not_selected":
         context.user_data['selecting_lang'] = True
         await update.message.reply_text(f"{persian.restart}\n\n{english.restart}")
     else:
-        user_lang = users_collection.find_one({"user_id": user.id})["lang"]
+        user_lang = users_collection.find_one({"user_id": user.id})["settings"]["language"]
         response = persian.didnt_understand if user_lang == "fa" else english.didnt_understand
         await update.message.reply_text(response, reply_markup=ReplyKeyboardRemove())
