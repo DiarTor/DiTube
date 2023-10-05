@@ -10,7 +10,7 @@ from telegram import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMa
 from telegram import Update
 from telegram.ext import ContextTypes
 from utils.buttons import homepage_buttons
-from utils.check_user_settings import check_user_lang
+from utils.check_user_data import get_user_lang, format_subscription_data, get_user_subscription_data
 from utils.is_channel_sub import check_sub
 
 
@@ -77,7 +77,7 @@ async def handle_user_message(update: Update, context: ContextTypes.DEFAULT_TYPE
         await update.message.reply_text(response, reply_markup=reply_markup, quote=True)
         await message_info.delete()
     elif user_message_text == "Return" or user_message_text == "بازگشت":
-        user_lang = check_user_lang(user_id=user.id)
+        user_lang = get_user_lang(user_id=user.id)
         response = "Returned to the main menu" if user_lang == "en" else "بازگشت به صفحه اصلی"
         await update.message.reply_text(response, reply_markup=ReplyKeyboardMarkup(homepage_buttons(user.id),
                                                                                    resize_keyboard=True))
@@ -86,12 +86,14 @@ async def handle_user_message(update: Update, context: ContextTypes.DEFAULT_TYPE
             context.user_data["selecting_lang"] = False
     elif user_message_text == "⚙️ تنظیمات" or user_message_text == "⚙️ Settings":
         await join_in_settings(update, context)
+    elif user_message_text == "📋 My Subscription" or user_message_text == "📋 اشتراک من":
+        await update.message.reply_text(format_subscription_data(get_user_subscription_data(user_id=user.id), user.id))
     elif context.user_data.get("joined_in_settings"):
         if user_message_text == "Change Language" or user_message_text == "تغییر زبان":
             await join_in_selecting_lang(update, context)
             context.user_data["joined_in_settings"] = False
         else:
-            user_lang = check_user_lang(user_id=user.id)
+            user_lang = get_user_lang(user_id=user.id)
             response = persian.didnt_understand if user_lang == "fa" else english.didnt_understand
             await update.message.reply_text(response, quote=True)
     elif context.user_data.get('selecting_lang'):
@@ -102,10 +104,10 @@ async def handle_user_message(update: Update, context: ContextTypes.DEFAULT_TYPE
         else:
             await update.message.reply_text(
                 f"ببخشید ولی منظورتان را متوجه نشدم🧐 لطفا از دکمه های زیر استفاده کنید👇\nSorry i didn't get what you mean, please select the buttons below.")
-    elif check_user_lang(user_id=user.id) == "not_selected":
+    elif get_user_lang(user_id=user.id) == "not_selected":
         context.user_data['selecting_lang'] = True
         await update.message.reply_text(f"{persian.restart}\n\n{english.restart}")
     else:
-        user_lang = check_user_lang(user_id=user.id)
+        user_lang = get_user_lang(user_id=user.id)
         response = persian.didnt_understand if user_lang == "fa" else english.didnt_understand
         await update.message.reply_text(response, quote=True)

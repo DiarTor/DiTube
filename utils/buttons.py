@@ -1,9 +1,9 @@
 from telegram import KeyboardButton
-from utils.check_user_settings import check_user_lang
+from utils.check_user_data import get_user_lang
 
 
 def homepage_buttons(user_id):
-    if check_user_lang(user_id) == "en":
+    if get_user_lang(user_id) == "en":
         buttons = [[KeyboardButton("🛒 Buy Subscription")],
                    [KeyboardButton("📋 My Subscription"), KeyboardButton("👤 Account")],
                    [KeyboardButton("⚙️ Settings"), KeyboardButton("🎁 Gift Code")],
@@ -16,7 +16,7 @@ def homepage_buttons(user_id):
 
 
 def settings_buttons(user_id):
-    if check_user_lang(user_id) == "en":
+    if get_user_lang(user_id) == "en":
         buttons = [[KeyboardButton("Change Language")], [KeyboardButton("Return")]]
     else:
         buttons = [[KeyboardButton("تغییر زبان")], [KeyboardButton("بازگشت")]]
