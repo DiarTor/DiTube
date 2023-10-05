@@ -1,6 +1,6 @@
-import telegram
 from telegram import Update
 from telegram.ext import ContextTypes
+
 
 async def check_sub(update: Update, context: ContextTypes.DEFAULT_TYPE, user_id):
     channel_id = -1001594818741
