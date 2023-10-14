@@ -2,7 +2,7 @@ from telegram import ReplyKeyboardMarkup
 from telegram import Update
 from telegram.ext import ContextTypes
 from utils.buttons import settings_buttons
-from utils.check_user_data import get_user_lang
+from utils.get_user_data import get_user_lang
 
 
 async def join_in_settings(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
