@@ -4,7 +4,7 @@ from telegram import Update
 
 
 async def send(update: Update, yt, chat_id, video_path) -> None:
-    user_lang = users_collection.find_one({"user_id": update.effective_user.id})["lang"]
+    user_lang = users_collection.find_one({"user_id": update.effective_user.id})["settings"]["language"]
     channel_url = yt.channel_url
     views = yt.views
     description = yt.description[:850] if yt.description else ""

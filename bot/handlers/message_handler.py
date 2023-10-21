@@ -1,84 +1,60 @@
 import re
 
 from bot.database import users_collection
-from bot.download_videos.get_video_information import get_video_options
-from bot.handlers.lang_handler import selected_lang_is_en, selected_lang_is_fa
-from bot.handlers.staff_handler import send_msg_to_all, send_msg_to_user
+from bot.handlers.yt_link_handler import youtube_video_handler, youtube_shorts_handler
+from bot.users.settings.language import join_in_selecting_lang
+from bot.users.settings.language import selected_lang_is_en, selected_lang_is_fa
+from bot.users.settings.settings import join_in_settings
 from langs import persian, english
-from pytube import YouTube
-from pytube.exceptions import AgeRestrictedError
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardRemove
+from telegram import ReplyKeyboardMarkup
 from telegram import Update
 from telegram.ext import ContextTypes
-
+from utils.buttons import homepage_buttons
+from utils.get_user_data import get_user_lang
+from utils.is_channel_sub import check_sub
+from bot.users.account.account import show_account
+from bot.users.my_subscription.my_subscription import show_user_subscription_details
 
 async def handle_user_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    support_channel_id = -925489226
     chat_id = update.effective_chat.id
     user_message = update.message
-    user_message_text = user_message.text
+    user_message_text = update.message.text
     user_reply = update.message.reply_to_message
     user_photo = update.message.photo
     user = update.effective_user
-    if not users_collection.find_one({"user_id": user.id}):
+    if not await check_sub(update, context, user.id):
+        await update.message.reply_text(f"Please subscribe and then use /start.\n @diardev")
+        return
+    elif not users_collection.find_one({"user_id": user.id}):
         await update.message.reply_text(f"{persian.restart}\n\n{english.restart}")
         return
-    elif user_message_text and re.search("^https://youtu.be/", user_message_text):
-        user_lang = users_collection.find_one({"user_id": user.id})["lang"]
-        geting_info_response = persian.get_video_info if user_lang == "fa" else english.get_video_info
-        message_info = await update.message.reply_text(geting_info_response, quote=True)
-        kb = []
-        yt = YouTube(user_message_text)
-        try:
-            video_options = get_video_options(yt)
-        except AgeRestrictedError:
-            response = persian.age_restricted if user_lang == "fa" else english.age_restricted
-            await update.message.reply_text(response, quote=True)
-            return
-        for res in sorted(video_options):
-            kb.append([InlineKeyboardButton(
-                f"{res}", callback_data=f"{user_message_text} {res} {chat_id}"
-            )])
-        if user_lang == "en":
-            kb.append([InlineKeyboardButton(
-                f"Download Audio", callback_data=f"{user_message_text} vc {chat_id}"
-            )])
+    elif re.search(r'https://youtu.be/|https://www.youtube.com/watch\?v=', user_message_text):
+        await youtube_video_handler(update, context)
+    elif re.search(r"https://youtube.com/shorts/", user_message_text):
+        await youtube_shorts_handler(update, context)
+    elif user_message_text == "↩️ Return" or user_message_text == "↩️ بازگشت":
+        user_lang = get_user_lang(user_id=user.id)
+        response = "Returned to the main menu" if user_lang == "en" else "بازگشت به صفحه اصلی"
+        await update.message.reply_text(response, reply_markup=ReplyKeyboardMarkup(homepage_buttons(user.id),
+                                                                                   resize_keyboard=True))
+        if context.user_data.get("joined_in_settings") or context.user_data.get("selecting_lang"):
+            context.user_data["joined_in_settings"] = False
+            context.user_data["selecting_lang"] = False
+    elif user_message_text == "👤 حساب کاربری" or user_message_text == "👤 Account":
+        await show_account(update, context)
+    elif user_message_text == "📋 My Subscription" or user_message_text == "📋 اشتراک من":
+        await show_user_subscription_details(update, context)
+    elif user_message_text == "⚙️ تنظیمات" or user_message_text == "⚙️ Settings":
+        await join_in_settings(update, context)
+    elif context.user_data.get("joined_in_settings"):
+        if user_message_text == "🌐 Change Language" or user_message_text == "🌐 تغییر زبان":
+            await join_in_selecting_lang(update, context)
+            context.user_data["joined_in_settings"] = False
         else:
-            kb.append([InlineKeyboardButton(
-                f"دانلود صوت", callback_data=f"{user_message_text} vc {chat_id}"
-            )])
-        reply_markup = InlineKeyboardMarkup(kb)
-        response = persian.select_quality if user_lang == "fa" else english.select_quality
-        await update.message.reply_text(response, reply_markup=reply_markup, quote=True)
-        await message_info.delete()
-    elif user_message_text and re.search("^https://youtube.com/shorts/", user_message_text):
-        user_lang = users_collection.find_one({"user_id": user.id})["lang"]
-        geting_info_response = persian.get_video_info if user_lang == "fa" else english.get_video_info
-        message_info = await update.message.reply_text(geting_info_response, quote=True)
-        kb = []
-        yt = YouTube(user_message_text)
-        try:
-            video_options = get_video_options(yt)
-        except AgeRestrictedError:
-            response = persian.age_restricted if user_lang == "fa" else english.age_restricted
+            user_lang = get_user_lang(user_id=user.id)
+            response = persian.didnt_understand if user_lang == "fa" else english.didnt_understand
             await update.message.reply_text(response, quote=True)
-            return
-        url_code = user_message_text.split("shorts/")
-        for res in sorted(video_options):
-            kb.append([InlineKeyboardButton(
-                f"{res}", callback_data=f"{url_code[1]} {res} {chat_id}"
-            )])
-        if user_lang == "en":
-            kb.append([InlineKeyboardButton(
-                f"Download Audio", callback_data=f"{url_code[1]} vc {chat_id}"
-            )])
-        else:
-            kb.append([InlineKeyboardButton(
-                f"دانلود صوت", callback_data=f"{url_code[1]} vc {chat_id}"
-            )])
-        reply_markup = InlineKeyboardMarkup(kb)
-        response = persian.select_quality if user_lang == "fa" else english.select_quality
-        await update.message.reply_text(response, reply_markup=reply_markup, quote=True)
-        await message_info.delete()
     elif context.user_data.get('selecting_lang'):
         if user_message_text == "🇮🇷فارسی":
             await selected_lang_is_fa(update, context)
@@ -87,23 +63,10 @@ async def handle_user_message(update: Update, context: ContextTypes.DEFAULT_TYPE
         else:
             await update.message.reply_text(
                 f"ببخشید ولی منظورتان را متوجه نشدم🧐 لطفا از دکمه های زیر استفاده کنید👇\nSorry i didn't get what you mean, please select the buttons below.")
-    elif context.user_data.get("sending_to_all"):
-        if user_message_text == "Cancel ⬅️":
-            context.user_data['sending_to_all'] = False
-            await update.message.reply_text("Canceld ✅", reply_markup=ReplyKeyboardRemove())
-        else:
-            await send_msg_to_all(update, context)
-    elif context.user_data.get("sending_to_user"):
-        if user_message_text == "Cancel ⬅️":
-            context.user_data['sending_to_user'] = False
-            context.user_data['user_id'] = None
-            await update.message.reply_text("Canceld ✅", reply_markup=ReplyKeyboardRemove())
-        else:
-            await send_msg_to_user(update, context)
-    elif users_collection.find_one({"user_id": user.id})["lang"] == "not_selected":
+    elif get_user_lang(user_id=user.id) == "not_selected":
         context.user_data['selecting_lang'] = True
         await update.message.reply_text(f"{persian.restart}\n\n{english.restart}")
     else:
-        user_lang = users_collection.find_one({"user_id": user.id})["lang"]
+        user_lang = get_user_lang(user_id=user.id)
         response = persian.didnt_understand if user_lang == "fa" else english.didnt_understand
-        await update.message.reply_text(response, reply_markup=ReplyKeyboardRemove())
+        await update.message.reply_text(response, quote=True)
