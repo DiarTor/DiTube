@@ -10,9 +10,10 @@ from telegram import ReplyKeyboardMarkup
 from telegram import Update
 from telegram.ext import ContextTypes
 from utils.buttons import homepage_buttons
-from utils.get_user_data import get_user_lang, format_subscription_data, get_user_subscription_data
+from utils.get_user_data import get_user_lang
 from utils.is_channel_sub import check_sub
-
+from bot.users.account.account import show_account
+from bot.users.my_subscription.my_subscription import show_user_subscription_details
 
 async def handle_user_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     support_channel_id = -925489226
@@ -32,7 +33,7 @@ async def handle_user_message(update: Update, context: ContextTypes.DEFAULT_TYPE
         await youtube_video_handler(update, context)
     elif re.search(r"https://youtube.com/shorts/", user_message_text):
         await youtube_shorts_handler(update, context)
-    elif user_message_text == "Return" or user_message_text == "بازگشت":
+    elif user_message_text == "↩️ Return" or user_message_text == "↩️ بازگشت":
         user_lang = get_user_lang(user_id=user.id)
         response = "Returned to the main menu" if user_lang == "en" else "بازگشت به صفحه اصلی"
         await update.message.reply_text(response, reply_markup=ReplyKeyboardMarkup(homepage_buttons(user.id),
@@ -40,12 +41,14 @@ async def handle_user_message(update: Update, context: ContextTypes.DEFAULT_TYPE
         if context.user_data.get("joined_in_settings") or context.user_data.get("selecting_lang"):
             context.user_data["joined_in_settings"] = False
             context.user_data["selecting_lang"] = False
+    elif user_message_text == "👤 حساب کاربری" or user_message_text == "👤 Account":
+        await show_account(update, context)
+    elif user_message_text == "📋 My Subscription" or user_message_text == "📋 اشتراک من":
+        await show_user_subscription_details(update, context)
     elif user_message_text == "⚙️ تنظیمات" or user_message_text == "⚙️ Settings":
         await join_in_settings(update, context)
-    elif user_message_text == "📋 My Subscription" or user_message_text == "📋 اشتراک من":
-        await update.message.reply_text(format_subscription_data(get_user_subscription_data(user_id=user.id), user.id))
     elif context.user_data.get("joined_in_settings"):
-        if user_message_text == "Change Language" or user_message_text == "تغییر زبان":
+        if user_message_text == "🌐 Change Language" or user_message_text == "🌐 تغییر زبان":
             await join_in_selecting_lang(update, context)
             context.user_data["joined_in_settings"] = False
         else:

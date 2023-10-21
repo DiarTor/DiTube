@@ -21,7 +21,8 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             "user_name": user.username,
             "user_firstname": user.first_name,
             "user_lastname": user.last_name,
-            "balance": 0,
+            "balance_irr": 0,
+            "balance_usd": 0,
             "referrals": [],
             "referraled": None,  # Store the referrer's user ID
             "registered_at": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
