@@ -9,20 +9,9 @@ from utils.get_user_data import get_user_lang
 
 
 async def youtube_video_handler(update, context) -> None:
-    last_download_time = users_collection.find_one({"user_id": update.effective_user.id})["last_download_time"]
-    cooldown_duration = 20
     user = update.effective_user
     user_message_text = update.message.text
     chat_id = update.effective_chat.id
-    if users_collection.find_one({"user_id": user.id})["subscription"]["type"] == "bronze":
-        if last_download_time and time.time() - float(last_download_time) < cooldown_duration:
-            if get_user_lang(user.id) == "en":
-                await update.message.reply_text(
-                    f"You must wait {cooldown_duration:.0f} seconds before downloading another video.")
-                return
-            elif get_user_lang(user.id) == "fa":
-                await update.message.reply_text(f"شما باید {cooldown_duration:.0f} ثانیه دیگر دانلود کنید")
-                return
     user_lang = users_collection.find_one({"user_id": user.id})["settings"]["language"]
     geting_info_response = persian.get_video_info if user_lang == "fa" else english.get_video_info
     message_info = await update.message.reply_text(geting_info_response, quote=True)

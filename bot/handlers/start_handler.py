@@ -24,9 +24,8 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             "balance_irr": 0,
             "balance_usd": 0,
             "referrals": [],
-            "referraled": None,  # Store the referrer's user ID
+            "referraled": None,
             "registered_at": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-            "last_download_time": {},
             "subscription": {
                 "type": "bronze",
                 "status": "active",
