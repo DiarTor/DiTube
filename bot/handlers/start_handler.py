@@ -34,9 +34,9 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                 "expire_date": None,
                 "auto_renew": False,
                 "max_file_size": 200,
-                "max_data_per_day": 1000,
+                "max_data_per_day": 800,
                 "used_data": 0,
-                "remaining_data": 500,
+                "remaining_data": 800,
                 "last_reset_date": datetime.date.today().strftime("%Y-%m-%d"),
                 "history": [
                     {

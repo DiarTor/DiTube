@@ -1,4 +1,3 @@
-import time
 from urllib.error import HTTPError
 
 from bot.database import users_collection
@@ -19,7 +18,7 @@ async def youtube_video_handler(update, context) -> None:
     kb = []
     yt = YouTube(user_message_text)
     try:
-        video_options = get_video_options(yt)
+        video_options =  get_video_options(yt)
         sorted_video_options = sorted(video_options, key=lambda x: int(x.split()[0].split('p')[0]), reverse=True)
     except (AgeRestrictedError, HTTPError):
         if HTTPError:
@@ -48,11 +47,6 @@ async def youtube_video_handler(update, context) -> None:
     response = persian.select_quality if user_lang == "fa" else english.select_quality
     await update.message.reply_text(response, reply_markup=reply_markup, quote=True)
     await message_info.delete()
-    users_collection.update_one(
-        {"user_id": user.id},
-        {"$set": {"last_download_time": time.time()}},
-        upsert=True
-    )
 
 
 async def youtube_shorts_handler(update, context) -> None:
