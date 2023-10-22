@@ -1,17 +1,17 @@
 import datetime
 import time
-
 from bot.database import users_collection
 
 
-async def change_user_subscription_size(user, filesize):
+def change_user_subscription_size(user, filesize):
     existing_used_size = user["subscription"]["used_data"]
     existing_remaining_size = user["subscription"]["remaining_data"]
     monthly_limit = user["subscription"]["max_data_per_day"]
     new_used_data = existing_used_size + filesize
     new_remaining_data = existing_remaining_size - filesize
-    users_collection.update_one(user, {
-        "$set": {"subscription.used_data": new_used_data, "subscription.remaining_data": new_remaining_data}})
+    filter = {"_id": user["_id"]}
+    update = {"$set": {"subscription.used_data": new_used_data, "subscription.remaining_data": new_remaining_data}}
+    users_collection.update_one(filter, update)
 
 
 def reset_daily_data():
@@ -22,14 +22,9 @@ def reset_daily_data():
         for user in users:
             daily_limit = user['subscription']['max_data_per_day']
 
-            result = users_collection.update_one(
-                {'_id': user['_id']},
-                {"$set": {
-                    "subscription.used_data": 0,
-                    "subscription.remaining_data": daily_limit,
-                    "subscription.last_reset_date": current_date
-                }}
-            )
+            result = users_collection.update_one({'_id': user['_id']}, {
+                "$set": {"subscription.used_data": 0, "subscription.remaining_data": daily_limit,
+                    "subscription.last_reset_date": current_date}})
 
             print(f"Matched: {result.matched_count}, Modified: {result.modified_count}")
 
