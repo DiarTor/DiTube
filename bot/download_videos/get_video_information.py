@@ -1,10 +1,7 @@
 from pytube import YouTube
 
-
 def get_video_options(yt):
     video_options = []
-
-    # Get progressive video streams
     progressive_streams = yt.streams.filter(progressive=True).order_by("resolution")
     for res in progressive_streams:
         if res is not None:
@@ -13,7 +10,6 @@ def get_video_options(yt):
             formatted_filesize = "{:.1f}".format(filesize_in_kb / 1024)
             video_options.append(res.resolution + ' ' + formatted_filesize + 'mb')
 
-    # Get the 1080p adaptive stream if available
     quality_1080p = yt.streams.filter(resolution="1080p").first()
     if quality_1080p is not None:
         filesize_in_bytes = quality_1080p.filesize
