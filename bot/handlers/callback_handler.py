@@ -5,7 +5,7 @@ from telegram import Update
 from telegram.error import TimedOut
 from telegram.ext import CallbackContext
 from utils.check_download_limit import file_size_exceeded, daily_file_size_exceeded
-from utils.modify_user_data import change_user_subscription_size
+from utils.modify_user_data import change_user_subscription_data
 
 
 async def handle_callback(update: Update, context: CallbackContext):
@@ -43,7 +43,7 @@ async def handle_callback(update: Update, context: CallbackContext):
             await query.edit_message_text("✨درحال پردازش...")
         try:
             await process(update=update, link=link, quality_or_audio=res_code_or_vc, chat_id=chat_id)
-            await change_user_subscription_size(user=the_user, filesize=filesize)
+            await change_user_subscription_data(user=the_user, filesize=filesize)
 
         except TimedOut:
             await query.edit_message_text(

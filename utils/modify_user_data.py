@@ -4,14 +4,15 @@ import time
 from bot.database import users_collection
 
 
-async def change_user_subscription_size(user, filesize):
+async def change_user_subscription_data(user, filesize):
     existing_used_size = user["subscription"]["used_data"]
     existing_remaining_size = user["subscription"]["remaining_data"]
     monthly_limit = user["subscription"]["max_data_per_day"]
     new_used_data = existing_used_size + filesize
     new_remaining_data = existing_remaining_size - filesize
-    users_collection.update_one(user, {
-        "$set": {"subscription.used_data": new_used_data, "subscription.remaining_data": new_remaining_data}})
+    filter = {"_id": user["_id"]}
+    update = {"$set": {"subscription.used_data": new_used_data, "subscription.remaining_data": new_remaining_data}}
+    users_collection.update_one(filter, update)
 
 
 def reset_daily_data():
