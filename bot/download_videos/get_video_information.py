@@ -1,6 +1,6 @@
 from pytube import YouTube
-
-def get_video_options(yt):
+import asyncio
+async def get_video_options(yt):
     video_options = []
     progressive_streams = yt.streams.filter(progressive=True).order_by("resolution")
     for res in progressive_streams:
