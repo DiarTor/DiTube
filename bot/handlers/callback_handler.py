@@ -2,7 +2,6 @@ import telebot.types
 from bot.database import users_collection
 from bot.download_videos.get_video_information import get_only_filesize
 from bot.download_videos.process_video import process
-from telegram.error import TimedOut
 from utils.check_download_limit import file_size_exceeded, daily_file_size_exceeded
 from utils.modify_user_data import change_user_subscription_data
 
@@ -16,7 +15,9 @@ def handle_callback(callback: telebot.types.CallbackQuery, bot: telebot.TeleBot)
         video_id, res_code_or_vc, chat_id = data.split(" ", 2)
         if not res_code_or_vc == "vc":
             if res_code_or_vc == "1080p" and the_user['subscription']['type'] == "bronze":
-                bot.edit_message_text("❌You cant download 1080p ! To gain access to this quality please buy a subscription.", chat_id, message_id=callback.message.id)
+                bot.edit_message_text(
+                    "❌You cant download 1080p ! To gain access to this quality please buy a subscription.", chat_id,
+                    message_id=callback.message.id)
                 return
             link = f"https://www.youtube.com/watch?v={video_id}"
             filesize = get_only_filesize(link, res_code_or_vc)
@@ -39,15 +40,13 @@ def handle_callback(callback: telebot.types.CallbackQuery, bot: telebot.TeleBot)
             bot.edit_message_text("✨Processing...", chat_id, message_id=callback.message.id)
         else:
             bot.edit_message_text("✨درحال پردازش...", chat_id, message_id=callback.message.id)
-        try:
-            process(msg=telebot.types.Message, bot=bot, link=link, quality_or_audio=res_code_or_vc, chat_id=chat_id, user_id=callback.from_user.id)
-            change_user_subscription_data(user=the_user, filesize=filesize)
 
-        except TimedOut:
-            bot.edit_message_text(
-                text="❌Time Out, Dont worry no data has been used from your subscription, please try again.",
-                chat_id=chat_id, message_id=query.message.message_id)
+        process(msg=telebot.types.Message, bot=bot, link=link, quality_or_audio=res_code_or_vc, chat_id=chat_id,
+                user_id=callback.from_user.id)
+        change_user_subscription_data(user=the_user, filesize=filesize)
+
         bot.delete_message(chat_id=chat_id, message_id=callback.message.message_id)
+
     elif data == "invite_referrals":
         bot.send_message(callback.message.chat.id,
                          f"Share this link to your friends.\nhttps://t.me/DiarTorBot?start=ref_{callback.from_user.id}")

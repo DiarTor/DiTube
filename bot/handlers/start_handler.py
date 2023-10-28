@@ -53,7 +53,6 @@ def start(msg: telebot.types.Message, bot: telebot.TeleBot):
                 "selecting_language": False,
                 "joined_in_settings": False
 
-
             },
         }
         users_collection.insert_one(user_data)

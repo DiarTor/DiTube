@@ -1,7 +1,7 @@
 import telebot
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 from utils.get_user_data import get_user_lang
-
+from requests.exceptions import ConnectionError
 
 def send(msg: telebot.types.Message, bot: telebot.TeleBot, yt, chat_id, video_path, user_id):
     user_lang = get_user_lang(user_id)
@@ -10,7 +10,7 @@ def send(msg: telebot.types.Message, bot: telebot.TeleBot, yt, chat_id, video_pa
         keyboard = InlineKeyboardMarkup().row(InlineKeyboardButton("Creator YT Channel", url=yt.channel_url))
         media_type = "video" if video_path.endswith(".mp4") else "audio"
         caption = generate_caption(yt, user_lang)
-
+    try:
         if user_lang == "en":
             if media_type == "video":
                 bot.send_video(chat_id=chat_id, video=open(video_path, "rb"), caption=caption, reply_markup=keyboard)
@@ -21,6 +21,11 @@ def send(msg: telebot.types.Message, bot: telebot.TeleBot, yt, chat_id, video_pa
                 bot.send_video(chat_id=chat_id, video=open(video_path, "rb"), caption=caption, reply_markup=keyboard)
             elif media_type == "audio":
                 bot.send_audio(chat_id=chat_id, audio=open(video_path, "rb"), caption=caption, reply_markup=keyboard)
+    except ConnectionError:
+        if user_lang == "en":
+            bot.send_message(chat_id=chat_id, text="Connection Error")
+        elif user_lang == "fa":
+            bot.send_message(chat_id=chat_id, text="خطا در ارتباط با سرور")
 
 
 def generate_caption(yt, user_lang):
@@ -29,8 +34,8 @@ def generate_caption(yt, user_lang):
     description = yt.description[:850] if yt.description else ""
     published = yt.publish_date.strftime("%d/%m/%Y")
     if user_lang == "en":
-        caption = f"{yt.title}\n\n👀 Views: {views}\n\n📝 Description:\n{description}\n\n📅 Publish Date: {published}"
+        caption = f"{yt.title}\n\n👀 Views: {views}\n\n📝 Description:\n{description}\n\n📅 Publish Date: {published} \n\n@MiTubeRobot"
         return caption
     elif user_lang == "fa":
-        caption = f"{yt.title}\n\n👀 بازدید: {views}\n📝 توضیحات:\n{description}\n\n📅 تاریخ انتشار: {published}"
+        caption = f"{yt.title}\n\n👀 بازدید: {views}\n📝 توضیحات:\n{description}\n\n📅 تاریخ انتشار: {published} \n\n@MiTubeRobot"
         return caption

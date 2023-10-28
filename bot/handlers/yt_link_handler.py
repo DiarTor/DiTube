@@ -46,7 +46,7 @@ def youtube_video_handler(msg: telebot.types.Message, bot: telebot.TeleBot):
                                         callback_data=f"{yt.video_id} vc {chat_id}")])
     else:
         audio_file_size = get_only_filesize(user_message_text)
-        formatted_size = "{:.1f} MB".format(audio_file_size)
+        formatted_size = "{:.1f}".format(audio_file_size)
         kb.append(
             [InlineKeyboardButton(f"دانلود صدا ({formatted_size} mb)", callback_data=f"{yt.video_id} vc {chat_id}")])
     reply_markup = InlineKeyboardMarkup(kb)
