@@ -4,7 +4,7 @@ import time
 from bot.database import users_collection
 
 
-async def change_user_subscription_data(user, filesize):
+def change_user_subscription_data(user, filesize):
     existing_used_size = user["subscription"]["used_data"]
     existing_remaining_size = user["subscription"]["remaining_data"]
     monthly_limit = user["subscription"]["max_data_per_day"]

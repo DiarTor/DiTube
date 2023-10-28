@@ -1,19 +1,18 @@
 import datetime
 
+import telebot.types
 from jdatetime import datetime as jdatetime
-from telegram import InlineKeyboardMarkup, Update
-from telegram.ext import ContextTypes
 from utils.buttons import my_subscription_buttons
 from utils.get_user_data import get_user_subscription_data, get_user_lang
 
 
-async def show_user_subscription_details(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    subscription_data = get_user_subscription_data(user_id=update.effective_user.id)
+def show_user_subscription_details(msg: telebot.types.Message, bot: telebot.TeleBot):
+    subscription_data = get_user_subscription_data(user_id=msg.from_user.id)
     used_data = subscription_data['used_data']
     remaining_data = subscription_data['remaining_data']
-    formatted_used_data = "{:.2f}".format(used_data)
-    formatted_remaining_data = "{:.2f}".format(remaining_data)
-    if get_user_lang(user_id=update.effective_user.id) == "en":
+    formatted_used_data = "{:.1f}".format(used_data)
+    formatted_remaining_data = "{:.1f}".format(remaining_data)
+    if get_user_lang(user_id=msg.from_user.id) == "en":
         subscription_type = subscription_data['type']
         type = {"bronze": "Bronze 🥉", "silver": "Silver 🥈", "gold": "Gold 🥇", }
         subscription_status = subscription_data['status']
@@ -75,5 +74,4 @@ async def show_user_subscription_details(update: Update, context: ContextTypes.D
         formatted_data += "➖➖➖➖➖➖➖➖➖➖➖\n"
         formatted_data += f"\n✨در صورتی که تمایل دارید پس از تمام شدن زمان اشتراک، اشتراک شما با 10 درصد تخفیف بصورت خودکار تمدید شود، گزینه تمدید خودکار را فعال کنید."
         formatted_data += f"\n\n@MiTubeRobot"
-    await update.message.reply_text(formatted_data, reply_markup=InlineKeyboardMarkup(
-        my_subscription_buttons(user_id=update.effective_user.id)), parse_mode="markdown")
+    bot.send_message(msg.chat.id, formatted_data, reply_markup=my_subscription_buttons(msg.from_user.id), parse_mode='markdown')

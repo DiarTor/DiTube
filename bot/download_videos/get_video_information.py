@@ -1,6 +1,11 @@
+import time
+
 from pytube import YouTube
-import asyncio
-async def get_video_options(yt):
+from urllib.error import URLError
+
+def get_video_options(yt):
+    delay = 3
+    retries = 3
     video_options = []
     progressive_streams = yt.streams.filter(progressive=True).order_by("resolution")
     for res in progressive_streams:

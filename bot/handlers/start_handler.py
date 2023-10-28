@@ -1,30 +1,26 @@
 import datetime
 import re
-import asyncio
+
+import telebot.types
 from bot.database import users_collection
 from bot.users.settings.language import join_in_selecting_lang
-from langs import persian, english
-from telegram import ReplyKeyboardMarkup
-from telegram import Update
-from telegram.ext import ContextTypes
+from langs import english, persian
 from utils.buttons import homepage_buttons
 from utils.is_channel_sub import check_sub
 
 
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    user = update.effective_user
+def start(msg: telebot.types.Message, bot: telebot.TeleBot):
+    user = msg.from_user
     the_user = users_collection.find_one({"user_id": user.id})
     if not the_user:
-        # New user: Insert user data into the database
         user_data = {
             "user_id": user.id,
             "user_name": user.username,
             "user_firstname": user.first_name,
             "user_lastname": user.last_name,
-            "balance_irr": 0,
-            "balance_usd": 0,
+            "balance": 0,
             "referrals": [],
-            "referraled": None,  # Store the referrer's user ID
+            "referraled": None,
             "registered_at": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             "subscription": {
                 "type": "bronze",
@@ -53,33 +49,38 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             "settings": {
                 "language": "not_selected",
             },
+            "metadata": {
+                "selecting_language": False,
+                "joined_in_settings": False
+
+
+            },
         }
         users_collection.insert_one(user_data)
         the_user = users_collection.find_one({"user_id": user.id})
-
-    if context.args and the_user["settings"]["language"] == "not_selected":
-        referral_code_match = re.match(r'ref_(\w+)', context.args[0])
+    args = msg.text.split()[1:]
+    if args and the_user["settings"]["language"] == "not_selected":
+        referral_code_match = re.match(r'ref_(\w+)', args[0])
         if referral_code_match:
             referral_code = int(referral_code_match.group(1))
             if the_user and not the_user.get("referraled"):
                 referral_user = users_collection.find_one({"user_id": referral_code})
-                if referral_user and user.id != referral_code and referral_code not in referral_user.get("referrals", []):
+                if referral_user and user.id != referral_code and referral_code not in referral_user.get("referrals",
+                                                                                                         []):
                     # Update referrer and referred users
                     users_collection.update_one({"user_id": referral_code}, {"$push": {"referrals": user.id}})
                     users_collection.update_one({"user_id": user.id}, {"$set": {"referraled": referral_code}})
                 else:
-                    await update.message.reply_text("Invalid referral code")
+                    bot.reply_to(msg, "Invalid referral code")
             else:
-                await update.message.reply_text("You've already used a referral code.")
-    if not await check_sub(update, context, user.id):
-        await update.message.reply_text("Please subscribe and then use /start. @diardev")
+                bot.reply_to(msg, "You've already used a referral code.")
+    if not check_sub(msg, bot):
+        bot.reply_to(msg, "Please subscribe and then use /start. @diardev")
         return
     if the_user["settings"]["language"] == "not_selected":
-        await join_in_selecting_lang(update, context)
+        join_in_selecting_lang(msg, bot)
     else:
         languages = {'fa': persian.greeting, 'en': english.greeting}
         selected_lang = the_user["settings"]["language"]
-        await update.message.reply_text(languages[selected_lang],
-                                        reply_markup=ReplyKeyboardMarkup(homepage_buttons(user.id),
-                                                                         resize_keyboard=True))
-
+        bot.send_message(chat_id=msg.chat.id, text=languages[selected_lang],
+                         reply_markup=homepage_buttons(user.id))
