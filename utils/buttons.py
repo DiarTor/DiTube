@@ -8,7 +8,7 @@ def homepage_buttons(user_id):
     if user_lang == "en":
         buttons = [[KeyboardButton("🛒 Buy Subscription")],
             [KeyboardButton("📋 My Subscription"), KeyboardButton("👤 Account")],
-            [KeyboardButton("⚙️ Settings"), KeyboardButton("🎁 GiftCode")],
+            [KeyboardButton("⚙️ Settings"), KeyboardButton("🎁 Gift Code")],
             [KeyboardButton("📞 Support"), KeyboardButton("📖 Guide")]]
     else:
         buttons = [[KeyboardButton("🛒 خرید اشتراک")], [KeyboardButton("📋 اشتراک من"), KeyboardButton("👤 حساب کاربری")],
@@ -55,5 +55,16 @@ def my_subscription_buttons(user_id):
         buttons = [InlineKeyboardButton(text="❌ Auto Renew", callback_data="auto_renew")]
     else:
         buttons = [InlineKeyboardButton(text="❌ تمدید خودکار", callback_data="auto_renew")]
+    markup.row(*buttons)
+    return markup
+
+
+def return_buttons(user_id):
+    user_lang = get_user_lang(user_id)
+    markup = ReplyKeyboardMarkup(resize_keyboard=True)
+    if get_user_lang(user_id) == "en":
+        buttons = [KeyboardButton(text="↩️ Return")]
+    else:
+        buttons = [KeyboardButton(text="↩️ بازگشت")]
     markup.row(*buttons)
     return markup

@@ -51,12 +51,19 @@ def start(msg: telebot.types.Message, bot: telebot.TeleBot):
             },
             "metadata": {
                 "selecting_language": False,
-                "joined_in_settings": False
+                "joined_in_settings": False,
+                "redeeming_code": False
 
             },
         }
         users_collection.insert_one(user_data)
         the_user = users_collection.find_one({"user_id": user.id})
+    users_collection.update_one(filter={"_id": the_user["_id"]},
+                                   update={"$set": {"metadata.selecting_language": False}})
+    users_collection.update_one(filter={"_id": the_user["_id"]},
+                                    update={"$set": {"metadata.joined_in_settings": False}})
+    users_collection.update_one(filter={"_id": the_user["_id"]},
+                                    update={"$set": {"metadata.redeeming_code": False}})
     args = msg.text.split()[1:]
     if args and the_user["settings"]["language"] == "not_selected":
         referral_code_match = re.match(r'ref_(\w+)', args[0])
@@ -66,7 +73,6 @@ def start(msg: telebot.types.Message, bot: telebot.TeleBot):
                 referral_user = users_collection.find_one({"user_id": referral_code})
                 if referral_user and user.id != referral_code and referral_code not in referral_user.get("referrals",
                                                                                                          []):
-                    # Update referrer and referred users
                     users_collection.update_one({"user_id": referral_code}, {"$push": {"referrals": user.id}})
                     users_collection.update_one({"user_id": user.id}, {"$set": {"referraled": referral_code}})
                 else:
