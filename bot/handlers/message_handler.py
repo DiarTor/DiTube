@@ -38,13 +38,8 @@ def handle_user_message(msg: telebot.types.Message, bot: telebot.TeleBot):
         user_lang = get_user_lang(user_id=user.id)
         response = "Returned to the main menu" if user_lang == "en" else "بازگشت به صفحه اصلی"
         bot.send_message(chat_id, response, reply_markup=homepage_buttons(user.id))
-
-        users_collection.update_one(filter={"_id": the_user["_id"]},
-                                    update={"$set": {"metadata.selecting_language": False}})
-        users_collection.update_one(filter={"_id": the_user["_id"]},
-                                    update={"$set": {"metadata.joined_in_settings": False}})
-        users_collection.update_one(filter={"_id": the_user["_id"]},
-                                    update={"$set": {"metadata.redeeming_code": False}})
+        for field in ["selecting_language", "joined_in_settings", "redeeming_code"]:
+            users_collection.update_one({"_id": the_user["_id"]}, {"$set": {"metadata." + field: False}})
     elif user_message_text == "👤 حساب کاربری" or user_message_text == "👤 Account":
         show_account(msg, bot)
     elif user_message_text == "📋 My Subscription" or user_message_text == "📋 اشتراک من":
@@ -52,6 +47,16 @@ def handle_user_message(msg: telebot.types.Message, bot: telebot.TeleBot):
     elif user_message_text == "🎁 کد هدیه" or user_message_text == "🎁 Gift Code":
         bot.send_message(chat_id, f"Now Send the code you want to redeem", reply_markup=return_buttons(user.id))
         users_collection.update_one(filter={"_id": the_user["_id"]}, update={"$set": {"metadata.redeeming_code": True}})
+    elif user_message_text == "📖 Guide" or user_message_text == "📖 راهنما":
+        user_guide_text = """
+        How to Use *MiTube*:
+1. Send a YouTube video URL.
+2. Choose the download Method.
+3. Enjoy your downloaded video!
+    
+🌐@DiarDev
+🤖@MiTubeRobot"""
+        bot.send_message(chat_id, user_guide_text, parse_mode="Markdown")
     elif user_message_text == "⚙️ تنظیمات" or user_message_text == "⚙️ Settings":
         join_in_settings(msg, bot)
     elif the_user['metadata']["redeeming_code"] == True:

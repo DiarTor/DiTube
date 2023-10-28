@@ -58,12 +58,8 @@ def start(msg: telebot.types.Message, bot: telebot.TeleBot):
         }
         users_collection.insert_one(user_data)
         the_user = users_collection.find_one({"user_id": user.id})
-    users_collection.update_one(filter={"_id": the_user["_id"]},
-                                   update={"$set": {"metadata.selecting_language": False}})
-    users_collection.update_one(filter={"_id": the_user["_id"]},
-                                    update={"$set": {"metadata.joined_in_settings": False}})
-    users_collection.update_one(filter={"_id": the_user["_id"]},
-                                    update={"$set": {"metadata.redeeming_code": False}})
+    for field in ["selecting_language", "joined_in_settings", "redeeming_code"]:
+        users_collection.update_one({"_id": the_user["_id"]}, {"$set": {"metadata." + field: False}})
     args = msg.text.split()[1:]
     if args and the_user["settings"]["language"] == "not_selected":
         referral_code_match = re.match(r'ref_(\w+)', args[0])
