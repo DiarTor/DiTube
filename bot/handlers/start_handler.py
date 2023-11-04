@@ -52,13 +52,14 @@ def start(msg: telebot.types.Message, bot: telebot.TeleBot):
             "metadata": {
                 "selecting_language": False,
                 "joined_in_settings": False,
-                "redeeming_code": False
+                "redeeming_code": False,
+                "joined_in_support": False
 
             },
         }
         users_collection.insert_one(user_data)
         the_user = users_collection.find_one({"user_id": user.id})
-    for field in ["selecting_language", "joined_in_settings", "redeeming_code"]:
+    for field in ["selecting_language", "joined_in_settings", "redeeming_code", "joined_in_support"]:
         users_collection.update_one({"_id": the_user["_id"]}, {"$set": {"metadata." + field: False}})
     args = msg.text.split()[1:]
     if args and the_user["settings"]["language"] == "not_selected":

@@ -9,6 +9,7 @@ from bot.users.my_subscription.my_subscription import show_user_subscription_det
 from bot.users.settings.language import join_in_selecting_lang
 from bot.users.settings.language import selected_lang_is_en, selected_lang_is_fa
 from bot.users.settings.settings import join_in_settings
+from bot.users.support.support import join_in_support, send_user_msg_to_support, send_user_photo_to_support, reply_to_user_support_msg
 from langs import persian, english
 from utils.buttons import homepage_buttons, return_buttons
 from utils.get_user_data import get_user_lang
@@ -23,13 +24,14 @@ def handle_user_message(msg: telebot.types.Message, bot: telebot.TeleBot):
     user_message_text = msg.text
     user_photo = msg.photo
     user_reply = msg.reply_to_message
-    support_channel_id = -925489226
+    support_group_id = -4043182903
     if not check_sub(msg, bot):
         bot.reply_to(msg, f"Please subscribe and then use /start.\n @diardev")
         return
-    elif not users_collection.find_one({"user_id": user.id}):
+    if not users_collection.find_one({"user_id": user.id}):
         bot.reply_to(msg, f"{persian.restart}\n\n{english.restart}")
-        return
+    if chat_id == support_group_id and msg.reply_to_message:
+        reply_to_user_support_msg(msg, bot)
     elif re.search(r'https://youtu.be/|https://www.youtube.com/watch\?v=', user_message_text):
         youtube_video_handler(msg, bot)
     elif re.search(r"https://youtube.com/shorts/", user_message_text):
@@ -38,7 +40,7 @@ def handle_user_message(msg: telebot.types.Message, bot: telebot.TeleBot):
         user_lang = get_user_lang(user_id=user.id)
         response = "Returned to the main menu" if user_lang == "en" else "بازگشت به صفحه اصلی"
         bot.send_message(chat_id, response, reply_markup=homepage_buttons(user.id))
-        for field in ["selecting_language", "joined_in_settings", "redeeming_code"]:
+        for field in ["selecting_language", "joined_in_settings", "redeeming_code", "joined_in_support"]:
             users_collection.update_one({"_id": the_user["_id"]}, {"$set": {"metadata." + field: False}})
     elif user_message_text == "👤 حساب کاربری" or user_message_text == "👤 Account":
         show_account(msg, bot)
@@ -59,6 +61,8 @@ def handle_user_message(msg: telebot.types.Message, bot: telebot.TeleBot):
         bot.send_message(chat_id, user_guide_text, parse_mode="Markdown")
     elif user_message_text == "⚙️ تنظیمات" or user_message_text == "⚙️ Settings":
         join_in_settings(msg, bot)
+    elif user_message_text == "📞 پشتیبانی" or user_message_text == "📞 Support":
+        join_in_support(msg, bot)
     elif the_user['metadata']["redeeming_code"] == True:
         redeem_giftcode(msg, bot)
     elif the_user['metadata']["joined_in_settings"] == True:
@@ -78,6 +82,8 @@ def handle_user_message(msg: telebot.types.Message, bot: telebot.TeleBot):
         else:
             bot.reply_to(msg,
                          f"ببخشید ولی منظورتان را متوجه نشدم🧐 لطفا از دکمه های زیر استفاده کنید👇\nSorry i didn't get what you mean, please select the buttons below.")
+    elif the_user['metadata']["joined_in_support"] == True:
+        send_user_msg_to_support(msg, bot)
     elif get_user_lang(user_id=user.id) == "not_selected":
         the_user['metadata']["selecting_language"] = True
         bot.reply_to(msg, f"{persian.restart}\n\n{english.restart}")
@@ -85,3 +91,11 @@ def handle_user_message(msg: telebot.types.Message, bot: telebot.TeleBot):
         user_lang = get_user_lang(user_id=user.id)
         response = persian.didnt_understand if user_lang == "fa" else english.didnt_understand
         bot.reply_to(msg, response)
+def handle_user_photo(msg: telebot.types.Message, bot: telebot.TeleBot):
+    the_user = users_collection.find_one({"user_id": msg.from_user.id})
+    chat_id = msg.chat.id
+    support_group_id = -4043182903
+    if chat_id == support_group_id and msg.reply_to_message:
+        reply_to_user_support_msg(msg, bot)
+    if the_user['metadata']["joined_in_support"] == True:
+        send_user_photo_to_support(msg, bot)

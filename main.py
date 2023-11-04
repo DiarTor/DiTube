@@ -15,6 +15,7 @@ bot = telebot.TeleBot("6545347914:AAF0-kxh-8Ztn8JNXTCkmiumfdR3Z7K8vKs")
 bot.register_message_handler(start_handler.start, commands=["start"], pass_bot=True)
 bot.register_message_handler(giftcode.generate_code, commands=['ggift'], pass_bot=True)
 bot.register_message_handler(message_handler.handle_user_message, content_types=['text'], pass_bot=True)
+bot.register_message_handler(message_handler.handle_user_photo, content_types=['photo'], pass_bot=True)
 bot.register_callback_query_handler(callback_handler.handle_callback, pass_bot=True, func=lambda call: True)
 
 
