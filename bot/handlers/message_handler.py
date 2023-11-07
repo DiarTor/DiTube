@@ -9,7 +9,8 @@ from bot.users.my_subscription.my_subscription import show_user_subscription_det
 from bot.users.settings.language import join_in_selecting_lang
 from bot.users.settings.language import selected_lang_is_en, selected_lang_is_fa
 from bot.users.settings.settings import join_in_settings
-from bot.users.support.support import join_in_support, send_user_msg_to_support, send_user_photo_to_support, reply_to_user_support_msg
+from bot.users.support.support import join_in_support, send_user_msg_to_support, send_user_photo_to_support, \
+    reply_to_user_support_msg
 from langs import persian, english
 from utils.buttons import homepage_buttons, return_buttons
 from utils.get_user_data import get_user_lang
@@ -42,6 +43,8 @@ def handle_user_message(msg: telebot.types.Message, bot: telebot.TeleBot):
         bot.send_message(chat_id, response, reply_markup=homepage_buttons(user.id))
         for field in ["selecting_language", "joined_in_settings", "redeeming_code", "joined_in_support"]:
             users_collection.update_one({"_id": the_user["_id"]}, {"$set": {"metadata." + field: False}})
+    elif user_message_text == "🛒 Buy Subscription" or user_message_text == "🛒 خرید اشتراک":
+        bot.reply_to(msg, "Currently not available, You can use the bot with the free subscription.")
     elif user_message_text == "👤 حساب کاربری" or user_message_text == "👤 Account":
         show_account(msg, bot)
     elif user_message_text == "📋 My Subscription" or user_message_text == "📋 اشتراک من":
@@ -91,6 +94,8 @@ def handle_user_message(msg: telebot.types.Message, bot: telebot.TeleBot):
         user_lang = get_user_lang(user_id=user.id)
         response = persian.didnt_understand if user_lang == "fa" else english.didnt_understand
         bot.reply_to(msg, response)
+
+
 def handle_user_photo(msg: telebot.types.Message, bot: telebot.TeleBot):
     the_user = users_collection.find_one({"user_id": msg.from_user.id})
     chat_id = msg.chat.id
