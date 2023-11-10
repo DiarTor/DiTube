@@ -3,8 +3,8 @@ import datetime
 import telebot.types
 from jdatetime import datetime as jdatetime
 from utils.buttons import my_subscription_buttons
-from utils.get_user_data import get_user_subscription_data, get_user_lang
-
+from utils.get_user_data import get_user_subscription_data, get_user_lang, get_user_lang_and_return_response
+from langs import persian
 
 def show_user_subscription_details(msg: telebot.types.Message, bot: telebot.TeleBot):
     subscription_data = get_user_subscription_data(user_id=msg.from_user.id)
@@ -54,24 +54,27 @@ def show_user_subscription_details(msg: telebot.types.Message, bot: telebot.Tele
             formatted_jalali_expire_date = jalali_expire_date.strftime("%Y/%m/%d")
         else:
             formatted_jalali_expire_date = "هیچوقت"
-        formatted_data = f"🔸 نوع : {type[subscription_type]}\n"
-        formatted_data += f"🟢 وضعیت : {status[subscription_status]}\n"
+        formatted_subscription_type = type[subscription_type]
+        formatted_subscription_status = status[subscription_status]
         if subscription_data['price'] == 0:
-            formatted_data += f"💲 قیمت : رایگان\n"
+            formatted_price = "رایگان"
         else:
-            formatted_data += f"💲 قیمت : {subscription_data['price']} ریال\n"
-        formatted_data += f"📅 تاریخ شروع : {formatted_jalali_start_date}\n"
+            formatted_price = subscription_data['price']
 
-        if subscription_data['expire_date']:
-            formatted_data += f"❌ تاریخ انقضا : {formatted_jalali_expire_date}\n"
-        else:
-            formatted_data += f"❌ تاریخ انقضا : هیچوقت\n"
+        max_file_size = subscription_data['max_file_size']
+        max_data_per_day = subscription_data['max_data_per_day']
+        response = get_user_lang_and_return_response(user_id=msg.from_user.id, persian=persian.subscription_details)
+        response = response.format(
+            formatted_subscription_type,
+            formatted_subscription_status,
+            formatted_price,
+            formatted_jalali_start_date,
+            formatted_jalali_expire_date,
+            max_file_size,
+            max_data_per_day,
+            formatted_used_data,
+            formatted_remaining_data,
 
-        formatted_data += f"📏 حداکثر حجم برای هر فایل : {subscription_data['max_file_size']} مگابایت\n"
-        formatted_data += f"📆 حداکثر حجم در روز : {subscription_data['max_data_per_day']} مگابایت\n"
-        formatted_data += f"💾 حجم استفاده شده : {formatted_used_data} مگابایت\n"
-        formatted_data += f"💼 حجم باقی‌مانده : {formatted_remaining_data} مگابایت\n"
-        formatted_data += "➖➖➖➖➖➖➖➖➖➖➖\n"
-        formatted_data += f"\n✨در صورتی که تمایل دارید پس از تمام شدن زمان اشتراک، اشتراک شما با 10 درصد تخفیف بصورت خودکار تمدید شود، گزینه تمدید خودکار را فعال کنید."
-        formatted_data += f"\n\n@MiTubeRobot"
-    bot.send_message(msg.chat.id, formatted_data, reply_markup=my_subscription_buttons(msg.from_user.id), parse_mode='markdown')
+        )
+    bot.send_message(msg.chat.id, response, reply_markup=my_subscription_buttons(msg.from_user.id),
+                     parse_mode='markdown')

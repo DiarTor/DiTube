@@ -1,9 +1,12 @@
+import datetime
+
 import telebot.types
 from bot.database import users_collection
 from jdatetime import datetime as jdatetime
+from langs import persian
 from utils.buttons import account_buttons
-from utils.get_user_data import get_user_lang
-import datetime
+from utils.get_user_data import get_user_lang, get_user_lang_and_return_response
+
 
 def show_account(msg: telebot.types.Message, bot: telebot.TeleBot):
     user = msg.from_user
@@ -33,21 +36,12 @@ def show_account(msg: telebot.types.Message, bot: telebot.TeleBot):
                         f"🚀 To Charge Your Account, Use The '*'Charge Account'*' Button, And For Referral, Use The '*'Invite Users'*' Button!"
                         f"\n\n@MiTubeRobot")
 
-    response_farsi = ("👤 **اطلاعات حساب**\n\n"
-                      f"👥 شناسه کاربری: `{user.id}`\n"
-                      "🌍 زبان: فارسی 🇮🇷\n"
-                      f"📅 تاریخ عضویت: {user_jdate_register_date}\n\n"
-                      f"📥 تعداد کل دانلودها: {user_total_downloads}\n"
-                      f"💾 حجم کل دانلودها: {formated_user_total_downloads_size} مگابایت\n\n"
-                      f"💰 موجودی: {formatted_balance} تومان\n"
-                      f"🤝 تعداد زیر مجموعه ها: {user_referrals}\n\n"
-                      "🚀 برای شارژ حساب کاربری خود از دکمه '*'شارژ حساب'*' استفاده کنید, و برای زیر مجموعه گیری از دکمه '*'زیر مجموعه گیری'*' اسفتاده کنید!"
-                      f"\n\n@MiTubeRobot")
+    response = get_user_lang_and_return_response(user.id, persian=persian.account_details.format(user.id,
+                                                                                                 user_jdate_register_date,
+                                                                                                 user_total_downloads,
+                                                                                                 formated_user_total_downloads_size,
+                                                                                                 formatted_balance,
+                                                                                                 user_referrals))
 
-    if user_lang == "en":
-        final_response = response_english
-    else:
-        final_response = response_farsi
-
-    bot.send_message(chat_id=msg.chat.id, text=final_response, reply_markup=account_buttons(user.id),
+    bot.send_message(chat_id=msg.chat.id, text=response, reply_markup=account_buttons(user.id),
                      parse_mode="markdown")

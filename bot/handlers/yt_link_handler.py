@@ -7,6 +7,7 @@ from langs import persian, english
 from pytube import YouTube
 from pytube.exceptions import AgeRestrictedError
 from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup
+from utils.get_user_data import get_user_lang_and_return_response
 
 
 def youtube_video_handler(msg: telebot.types.Message, bot: telebot.TeleBot):
@@ -14,7 +15,7 @@ def youtube_video_handler(msg: telebot.types.Message, bot: telebot.TeleBot):
     user_message_text = msg.text
     chat_id = msg.chat.id
     user_lang = users_collection.find_one({"user_id": user.id})["settings"]["language"]
-    geting_info_response = persian.get_video_info if user_lang == "fa" else english.get_video_info
+    geting_info_response = get_user_lang_and_return_response(user.id, persian=persian.getting_media_link_information)
     message_info = bot.send_message(chat_id, geting_info_response, reply_to_message_id=msg.message_id)
     kb = []
     yt = YouTube(user_message_text)
@@ -22,16 +23,17 @@ def youtube_video_handler(msg: telebot.types.Message, bot: telebot.TeleBot):
         video_options = get_video_options(yt)
         sorted_video_options = sorted(video_options, key=lambda x: int(x.split()[0].split('p')[0]), reverse=True)
     except (AgeRestrictedError, HTTPError, URLError) as e:
+        response = get_user_lang_and_return_response(user.id, persian=persian.problem_from_server)
         if HTTPError:
             print(e)
-            bot.send_message(chat_id, "An error occurred. Please try again later.",
+            bot.send_message(chat_id, response,
                              reply_to_message_id=msg.message_id)
             return
         elif AgeRestrictedError:
             bot.send_message(chat_id, response, reply_to_message_id=msg.message_id)
             return
         elif URLError:
-            bot.send_message(chat_id, "bad url", reply_to_message_id=msg.message_id)
+            bot.send_message(chat_id, response, reply_to_message_id=msg.message_id)
     for item in video_options:
         parts = item.split()
         if len(parts) == 2:
@@ -50,37 +52,6 @@ def youtube_video_handler(msg: telebot.types.Message, bot: telebot.TeleBot):
         kb.append(
             [InlineKeyboardButton(f"دانلود صدا ({formatted_size} mb)", callback_data=f"{yt.video_id} vc {chat_id}")])
     reply_markup = InlineKeyboardMarkup(kb)
-    response = persian.select_quality if user_lang == "fa" else english.select_quality
+    response = persian.select_download_option if user_lang == "fa" else english.select_quality
     bot.send_message(chat_id, response, reply_markup=reply_markup, reply_to_message_id=msg.message_id)
     bot.delete_message(chat_id, message_info.id)
-
-
-def youtube_shorts_handler(msg: telebot.types.Message, bot: telebot.TeleBot):
-    ususer = msg.from_user
-    user_message_text = msg.text
-    chat_id = msg.chat.id
-    user_lang = users_collection.find_one({"user_id": user.id})["settings"]["language"]
-    geting_info_response = persian.get_video_info if user_lang == "fa" else english.get_video_info
-    message_info = bot.send_message(chat_id, geting_info_response, reply_to_message_id=msg.message_id)
-    kb = []
-    yt = YouTube(user_message_text)
-    try:
-        video_options = get_video_options(yt)
-    except (AgeRestrictedError, HTTPError):
-        if HTTPError:
-            bot.send_message(chat_id, "An error occurred. Please try again later.",
-                             reply_to_message_id=msg.message_id)
-            return
-        elif AgeRestrictedError:
-            bot.send_message(chat_id, response, reply_to_message_id=msg.message_id)
-            return
-    for item in sorted(video_options, reverse=True):
-        parts = item.split()
-        if len(parts) == 2:
-            quality, size = parts
-            kb.append([InlineKeyboardButton(f"{quality} {size}",
-                                            callback_data=f"{yt.video_id} {quality} {chat_id}")])
-    reply_markup = InlineKeyboardMarkup(kb)
-    response = persian.select_quality if user_lang == "fa" else english.select_quality
-    bot.send_message(chat_id, response, reply_markup=reply_markup, reply_to_message_id=msg.message_id)
-    message_info.delete()

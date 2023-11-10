@@ -46,7 +46,6 @@ def handle_callback(callback: telebot.types.CallbackQuery, bot: telebot.TeleBot)
         change_user_subscription_data(user=the_user, filesize=filesize)
 
         bot.delete_message(chat_id=chat_id, message_id=callback.message.message_id)
-
     elif data == "invite_referrals":
         bot.send_message(callback.message.chat.id,
                          f"Share this link to your friends.\nhttps://t.me/DiarTorBot?start=ref_{callback.from_user.id}")

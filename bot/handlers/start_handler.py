@@ -5,11 +5,11 @@ import telebot.types
 from bot.database import users_collection
 from bot.users.settings.language import join_in_selecting_lang
 from langs import english, persian
-from utils.buttons import homepage_buttons
+from utils.buttons import homepage_buttons, subscribe_to_channel_buttons
 from utils.is_channel_sub import check_sub
+from utils.get_user_data import get_user_lang_and_return_response
 
-
-def start(msg: telebot.types.Message, bot: telebot.TeleBot):
+def start(msg: telebot.types.Message = None, bot: telebot.TeleBot = None):
     user = msg.from_user
     the_user = users_collection.find_one({"user_id": user.id})
     if not the_user:
@@ -77,7 +77,8 @@ def start(msg: telebot.types.Message, bot: telebot.TeleBot):
             else:
                 bot.reply_to(msg, "You've already used a referral code.")
     if not check_sub(msg, bot):
-        bot.reply_to(msg, "Please subscribe and then use /start. @diardev")
+        response = get_user_lang_and_return_response(user.id, persian=persian.subscribe_to_channel)
+        bot.send_message(msg.chat.id, response, reply_markup=subscribe_to_channel_buttons(user.id))
         return
     if the_user["settings"]["language"] == "not_selected":
         join_in_selecting_lang(msg, bot)

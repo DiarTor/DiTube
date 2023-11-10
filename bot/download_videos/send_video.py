@@ -7,7 +7,8 @@ def send(msg: telebot.types.Message, bot: telebot.TeleBot, yt, chat_id, video_pa
     user_lang = get_user_lang(user_id)
 
     if video_path.endswith((".mp4", ".mp3")):
-        keyboard = InlineKeyboardMarkup().row(InlineKeyboardButton("Creator YT Channel", url=yt.channel_url))
+        creator_yt_channel_lang = "Creator YouTube Channel" if user_lang == "en" else "کانال یوتیوب سازنده"
+        keyboard = InlineKeyboardMarkup().row(InlineKeyboardButton(creator_yt_channel_lang, url=yt.channel_url))
         media_type = "video" if video_path.endswith(".mp4") else "audio"
         caption = generate_caption(yt, user_lang)
     try:
@@ -32,10 +33,10 @@ def generate_caption(yt, user_lang):
     channel_url = yt.channel_url
     views = yt.views
     description = yt.description[:850] if yt.description else ""
-    published = yt.publish_date.strftime("%d/%m/%Y")
+    published = yt.publish_date.strftime("%Y/%m/%d")
     if user_lang == "en":
-        caption = f"{yt.title}\n\n👀 Views: {views}\n\n📝 Description:\n{description}\n\n📅 Publish Date: {published} \n\n@MiTubeRobot"
+        caption = f"{yt.title}\n\n👀 Views: {views}\n\n📝 Description:\n{description}\n\n📅 Publish Date: {published} \n\n@DiTubebot"
         return caption
     elif user_lang == "fa":
-        caption = f"{yt.title}\n\n👀 بازدید: {views}\n📝 توضیحات:\n{description}\n\n📅 تاریخ انتشار: {published} \n\n@MiTubeRobot"
+        caption = f"{yt.title}\n\n👀 بازدید: {views}\n📝 توضیحات:\n{description}\n\n📅 تاریخ انتشار: {published} \n\n@DiTubebot"
         return caption

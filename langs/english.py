@@ -10,7 +10,7 @@ greeting = """
 Feel free to share the link of the video you wish to download at any time.
 """
 
-restart = "Please restart the bot with the /start command."
+restart = "Please restart_required the bot with the /start command."
 
 change_lang = "To switch languages, kindly make your selection."
 

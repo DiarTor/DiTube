@@ -7,13 +7,13 @@ def homepage_buttons(user_id):
     markup = ReplyKeyboardMarkup(resize_keyboard=True)
     if user_lang == "en":
         buttons = [[KeyboardButton("🛒 Buy Subscription")],
-            [KeyboardButton("📋 My Subscription"), KeyboardButton("👤 Account")],
-            [KeyboardButton("⚙️ Settings"), KeyboardButton("🎁 Gift Code")],
-            [KeyboardButton("📞 Support"), KeyboardButton("📖 Guide")]]
+                   [KeyboardButton("📋 My Subscription"), KeyboardButton("👤 Account")],
+                   [KeyboardButton("⚙️ Settings"), KeyboardButton("🎁 Gift Code")],
+                   [KeyboardButton("📞 Support"), KeyboardButton("📖 Guide")]]
     else:
         buttons = [[KeyboardButton("🛒 خرید اشتراک")], [KeyboardButton("📋 اشتراک من"), KeyboardButton("👤 حساب کاربری")],
-            [KeyboardButton("⚙️ تنظیمات"), KeyboardButton("🎁 کد هدیه")],
-            [KeyboardButton("📞 پشتیبانی"), KeyboardButton("📖 راهنما")]]
+                   [KeyboardButton("⚙️ تنظیمات"), KeyboardButton("🎁 کد هدیه")],
+                   [KeyboardButton("📞 پشتیبانی"), KeyboardButton("📖 راهنما")]]
     for row in buttons:
         markup.row(*row)
     return markup
@@ -35,15 +35,11 @@ def account_buttons(user_id):
     user_lang = get_user_lang(user_id)
     markup = InlineKeyboardMarkup()
     if get_user_lang(user_id) == "en":
-        buttons = [
-            InlineKeyboardButton(text="💳 Charge Account", callback_data="charge_account"),
-            InlineKeyboardButton(text="📢 Invite Referrals", callback_data="invite_referrals")
-        ]
+        buttons = [InlineKeyboardButton(text="💳 Charge Account", callback_data="charge_account"),
+                   InlineKeyboardButton(text="📢 Invite Referrals", callback_data="invite_referrals")]
     else:
-        buttons = [
-            InlineKeyboardButton(text="💳 شارژ حساب", callback_data="charge_account"),
-            InlineKeyboardButton(text="📢 زیر مجموعه گیری", callback_data="invite_referrals")
-        ]
+        buttons = [InlineKeyboardButton(text="💳 شارژ حساب", callback_data="charge_account"),
+                   InlineKeyboardButton(text="📢 زیر مجموعه گیری", callback_data="invite_referrals")]
     markup.row(*buttons)
     return markup
 
@@ -56,6 +52,21 @@ def my_subscription_buttons(user_id):
     else:
         buttons = [InlineKeyboardButton(text="❌ تمدید خودکار", callback_data="auto_renew")]
     markup.row(*buttons)
+    return markup
+
+
+def subscribe_to_channel_buttons(user_id):
+    user_lang = get_user_lang(user_id)
+    markup = InlineKeyboardMarkup()
+    if get_user_lang(user_id) == "en":
+        buttons = [[InlineKeyboardButton("👉 Join Channel", url="https://t.me/DiarDev")],
+            [InlineKeyboardButton("✅ Joined", url="https://t.me/diartorbot?start=joined")]]
+    else:
+        buttons = [[InlineKeyboardButton("👉 عضویت در کانال", url="https://t.me/DiarDev")],
+            [InlineKeyboardButton("✅ عضو شدم", url="https://t.me/diartorbot?start=joined")]]
+
+    for row in buttons:
+        markup.row(*row)
     return markup
 
 
