@@ -4,8 +4,8 @@ from bot.download_videos.get_video_information import get_only_filesize
 from bot.download_videos.process_video import process
 from utils.check_download_limit import file_size_exceeded, daily_file_size_exceeded
 from utils.modify_user_data import change_user_subscription_data
-
-
+from utils.get_user_data import get_user_lang_and_return_response
+from langs import persian, english
 def handle_callback(callback: telebot.types.CallbackQuery, bot: telebot.TeleBot):
     the_user = users_collection.find_one({"user_id": callback.from_user.id})
     user_lang = the_user["settings"]["language"]
@@ -48,7 +48,8 @@ def handle_callback(callback: telebot.types.CallbackQuery, bot: telebot.TeleBot)
         bot.delete_message(chat_id=chat_id, message_id=callback.message.message_id)
     elif data == "invite_referrals":
         bot.send_message(callback.message.chat.id,
-                         f"Share this link to your friends.\nhttps://t.me/DiarTorBot?start=ref_{callback.from_user.id}")
+                         get_user_lang_and_return_response(user_id=callback.from_user.id, persian=persian.invite_referral_banner).format(f'https://t.me/DiarTorBot?start=ref_{callback.from_user.id}'))
+        bot.send_message(callback.message.chat.id, get_user_lang_and_return_response(user_id=callback.from_user.id, persian=persian.invite_referral_guide))
     elif data == "charge_account":
         bot.answer_callback_query(callback.id, "⚡️Coming Soon...")
     elif data == "auto_renew":
