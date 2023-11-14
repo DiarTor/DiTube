@@ -1,7 +1,7 @@
 import datetime
 import time
 
-from bot.database import users_collection
+from config.database import users_collection
 
 
 def replace_invalid_characters_with_underscore(input_string: str) -> str:

@@ -3,10 +3,10 @@ import secrets
 import string
 
 import telebot.types
-from bot.database import giftcodes_collection, users_collection
-from utils.button_utils import KeyboardMarkupGenerator
-from utils.user_utils import UserManager
-from langs import persian
+from config.database import giftcodes_collection, users_collection
+from bot.user_management.utils.button_utils import KeyboardMarkupGenerator
+from bot.user_management.utils.user_utils import UserManager
+from languages import persian
 def generate_code(msg: telebot.types.Message, bot: telebot.TeleBot):
     admin = 1154909190
     if msg.from_user.id == admin:

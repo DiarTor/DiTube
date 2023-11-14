@@ -1,9 +1,9 @@
 import datetime
 import os
 
-from bot.config import VIDEO_DOWNLOAD_DIR
+from config.config import VIDEO_DOWNLOAD_DIR
 from moviepy.editor import VideoFileClip, AudioFileClip
-from utils.utils import replace_invalid_characters_with_underscore
+from bot.common.utils import replace_invalid_characters_with_underscore
 
 
 def download_yt_video(yt, quality):

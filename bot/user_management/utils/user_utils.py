@@ -1,6 +1,6 @@
 import logging
 
-from bot.database import users_collection
+from config.database import users_collection
 
 
 class UserManager:

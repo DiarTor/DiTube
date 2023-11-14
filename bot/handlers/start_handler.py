@@ -2,11 +2,11 @@ import datetime
 import re
 
 import telebot.types
-from bot.database import users_collection
-from bot.users.settings.language import join_in_selecting_lang
-from langs import persian
-from utils.button_utils import KeyboardMarkupGenerator
-from utils.user_utils import UserManager
+from config.database import users_collection
+from bot.user_management.settings.apps.language import join_in_selecting_lang
+from languages import persian
+from bot.user_management.utils.button_utils import KeyboardMarkupGenerator
+from bot.user_management.utils.user_utils import UserManager
 
 
 def start(msg: telebot.types.Message = None, bot: telebot.TeleBot = None):

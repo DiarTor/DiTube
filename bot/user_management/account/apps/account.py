@@ -1,14 +1,14 @@
 import datetime
 
 import telebot.types
-from bot.database import users_collection
+from config.database import users_collection
 from jdatetime import datetime as jdatetime
-from langs import persian
-from utils.button_utils import KeyboardMarkupGenerator
-from utils.user_utils import UserManager
+from languages import persian
+from bot.user_management.utils.button_utils import KeyboardMarkupGenerator
+from bot.user_management.utils.user_utils import UserManager
 
 
-def show_account(msg: telebot.types.Message, bot: telebot.TeleBot):
+def show_account_details(msg: telebot.types.Message, bot: telebot.TeleBot):
     user = msg.from_user
     usermanager = UserManager(user.id)
     user_lang = usermanager.get_user_language()

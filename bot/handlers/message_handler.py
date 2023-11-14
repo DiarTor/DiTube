@@ -1,19 +1,21 @@
 import re
 
 import telebot.types
-from bot.database import users_collection
 from bot.handlers.yt_link_handler import youtube_video_handler
-from bot.users.account.account import show_account
-from bot.users.giftcode.giftcode import redeem_giftcode
-from bot.users.my_subscription.my_subscription import show_user_subscription_details
-from bot.users.settings.language import join_in_selecting_lang
-from bot.users.settings.language import selected_lang_is_en, selected_lang_is_fa
-from bot.users.settings.settings import join_in_settings
-from bot.users.support.support import join_in_support, send_user_msg_to_support, send_user_photo_to_support, \
+from bot.user_management.account.apps.account import show_account_details
+from bot.user_management.giftcode.apps.giftcode import redeem_giftcode
+from bot.user_management.guide.apps.guide import send_guide_message
+from bot.user_management.my_subscription.apps.my_subscription import show_user_subscription_details
+from bot.user_management.settings.apps.language import join_in_selecting_lang
+from bot.user_management.settings.apps.language import selected_lang_is_en, selected_lang_is_fa
+from bot.user_management.settings.apps.settings import join_in_settings
+from bot.user_management.support.apps.support import join_in_support, send_user_msg_to_support, \
+    send_user_photo_to_support, \
     reply_to_user_support_msg
-from langs import persian, english
-from utils.button_utils import KeyboardMarkupGenerator
-from utils.user_utils import UserManager
+from bot.user_management.utils.button_utils import KeyboardMarkupGenerator
+from bot.user_management.utils.user_utils import UserManager
+from config.database import users_collection
+from languages import persian, english
 
 
 def handle_user_message(msg: telebot.types.Message, bot: telebot.TeleBot):
@@ -53,7 +55,7 @@ def handle_user_message(msg: telebot.types.Message, bot: telebot.TeleBot):
         else:
             bot.reply_to(msg, "در حال حاضر در دسترس نیست، می توانید با اشتراک رایگان از ربات استفاده کنید.")
     elif user_message_text == "👤 حساب کاربری" or user_message_text == "👤 Account":
-        show_account(msg, bot)
+        show_account_details(msg, bot)
     elif user_message_text == "📋 My Subscription" or user_message_text == "📋 اشتراک من":
         show_user_subscription_details(msg, bot)
     elif user_message_text == "🎁 کد هدیه" or user_message_text == "🎁 Gift Code":
@@ -61,8 +63,7 @@ def handle_user_message(msg: telebot.types.Message, bot: telebot.TeleBot):
         bot.send_message(chat_id, response, reply_markup=keyboardgenerator.return_buttons())
         users_collection.update_one(filter={"_id": the_user["_id"]}, update={"$set": {"metadata.redeeming_code": True}})
     elif user_message_text == "📖 Guide" or user_message_text == "📖 راهنما":
-        response = usermanager.return_response_based_on_language(persian=persian.guide)
-        bot.send_message(chat_id, response, parse_mode="Markdown")
+        send_guide_message(msg, bot)
     elif user_message_text == "⚙️ تنظیمات" or user_message_text == "⚙️ Settings":
         join_in_settings(msg, bot)
     elif user_message_text == "📞 پشتیبانی" or user_message_text == "📞 Support":

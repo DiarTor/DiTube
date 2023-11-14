@@ -1,10 +1,10 @@
 import telebot.types
-from bot.database import users_collection
+from config.database import users_collection
 from bot.download_videos.get_video_information import get_only_filesize
 from bot.download_videos.process_video import process
-from langs import persian
-from utils.subscription_utils import SubscriptionManager
-from utils.user_utils import UserManager
+from languages import persian
+from bot.user_management.utils.subscription_utils import SubscriptionManager
+from bot.user_management.utils.user_utils import UserManager
 
 
 def handle_callback(callback: telebot.types.CallbackQuery, bot: telebot.TeleBot):

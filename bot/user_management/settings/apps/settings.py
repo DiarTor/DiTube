@@ -1,8 +1,8 @@
 import telebot.types
-from bot.database import users_collection
-from langs import persian
-from utils.button_utils import KeyboardMarkupGenerator
-from utils.user_utils import UserManager
+from config.database import users_collection
+from languages import persian
+from bot.user_management.utils.button_utils import KeyboardMarkupGenerator
+from bot.user_management.utils.user_utils import UserManager
 
 
 def join_in_settings(msg: telebot.types.Message, bot: telebot.TeleBot):

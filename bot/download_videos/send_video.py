@@ -1,6 +1,6 @@
 import telebot
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
-from utils.user_utils import UserManager
+from bot.user_management.utils.user_utils import UserManager
 from requests.exceptions import ConnectionError
 
 def send(msg: telebot.types.Message, bot: telebot.TeleBot, yt, chat_id, video_path, user_id):

@@ -1,5 +1,5 @@
 from telebot.types import KeyboardButton, ReplyKeyboardMarkup, InlineKeyboardMarkup, InlineKeyboardButton
-from utils.user_utils import UserManager
+from bot.user_management.utils.user_utils import UserManager
 
 
 class KeyboardMarkupGenerator:

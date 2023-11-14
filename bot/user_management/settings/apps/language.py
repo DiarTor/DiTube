@@ -1,8 +1,8 @@
 import telebot.types
-from bot.database import users_collection
-from langs import persian, english
+from config.database import users_collection
+from languages import persian, english
 from telebot.types import ReplyKeyboardMarkup, KeyboardButton
-from utils.button_utils import KeyboardMarkupGenerator
+from bot.user_management.utils.button_utils import KeyboardMarkupGenerator
 
 select_lang_buttons = [[KeyboardButton("🇺🇸English"), KeyboardButton("🇮🇷فارسی")]]
 select_lang_buttons_reply_markup = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)

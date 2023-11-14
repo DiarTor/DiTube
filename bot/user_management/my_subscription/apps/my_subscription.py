@@ -2,9 +2,9 @@ import datetime
 
 import telebot.types
 from jdatetime import datetime as jdatetime
-from utils.button_utils import KeyboardMarkupGenerator
-from utils.user_utils import UserManager
-from langs import persian
+from bot.user_management.utils.button_utils import KeyboardMarkupGenerator
+from bot.user_management.utils.user_utils import UserManager
+from languages import persian
 
 
 def show_user_subscription_details(msg: telebot.types.Message, bot: telebot.TeleBot):

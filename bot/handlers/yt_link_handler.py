@@ -1,13 +1,13 @@
 from urllib.error import HTTPError, URLError
 
 import telebot.types
-from bot.database import users_collection
+from config.database import users_collection
 from bot.download_videos.get_video_information import get_video_options, get_only_filesize
-from langs import persian
+from languages import persian
 from pytube import YouTube
 from pytube.exceptions import AgeRestrictedError
 from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup
-from utils.user_utils import UserManager
+from bot.user_management.utils.user_utils import UserManager
 
 
 def youtube_video_handler(msg: telebot.types.Message, bot: telebot.TeleBot):

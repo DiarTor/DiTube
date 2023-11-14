@@ -3,8 +3,8 @@ import threading
 
 import telebot
 from bot.handlers import start_handler, message_handler, callback_handler
-from bot.users.giftcode import giftcode
-from utils.utils import reset_daily_data
+from bot.user_management.giftcode.apps import giftcode
+from bot.common.utils import reset_daily_data
 
 logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO)
 logging.getLogger("httpx").setLevel(logging.WARNING)

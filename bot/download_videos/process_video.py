@@ -2,7 +2,7 @@ import datetime
 import os
 
 import telebot.types
-from bot.database import users_collection
+from config.database import users_collection
 from bot.download_videos.download_video import download_yt_video
 from bot.download_videos.get_video_information import get_only_filesize
 from bot.download_videos.send_video import send
