@@ -12,9 +12,8 @@ from bot.users.settings.settings import join_in_settings
 from bot.users.support.support import join_in_support, send_user_msg_to_support, send_user_photo_to_support, \
     reply_to_user_support_msg
 from langs import persian, english
-from utils.buttons import homepage_buttons, return_buttons, subscribe_to_channel_buttons
-from utils.get_user_data import get_user_lang, get_user_lang_and_return_response
-from utils.is_channel_sub import check_sub
+from utils.button_utils import KeyboardMarkupGenerator
+from utils.user_utils import UserManager
 
 
 def handle_user_message(msg: telebot.types.Message, bot: telebot.TeleBot):
@@ -26,9 +25,11 @@ def handle_user_message(msg: telebot.types.Message, bot: telebot.TeleBot):
     user_photo = msg.photo
     user_reply = msg.reply_to_message
     support_group_id = -4043182903
-    if not check_sub(msg, bot):
-        response = get_user_lang_and_return_response(user.id, persian=persian.subscribe_to_channel)
-        bot.send_message(chat_id, response, reply_markup=subscribe_to_channel_buttons(user.id))
+    keyboardgenerator = KeyboardMarkupGenerator(user.id)
+    usermanager = UserManager(user.id)
+    if not usermanager.is_subscribed_to_channel(msg, bot):
+        response = usermanager.return_response_based_on_language(persian=persian.subscribe_to_channel)
+        bot.send_message(chat_id, response, reply_markup=keyboardgenerator.subscribe_to_channel_buttons())
         return
     if not users_collection.find_one({"user_id": user.id}):
         bot.reply_to(msg, f"{persian.restart_required}\n\n{english.restart}")
@@ -42,12 +43,12 @@ def handle_user_message(msg: telebot.types.Message, bot: telebot.TeleBot):
     ]):
         youtube_video_handler(msg, bot)
     elif user_message_text == "↩️ Return" or user_message_text == "↩️ بازگشت":
-        response = get_user_lang_and_return_response(user.id, persian=persian.returned_to_homepage)
-        bot.send_message(chat_id, response, reply_markup=homepage_buttons(user.id))
+        response = usermanager.return_response_based_on_language(persian=persian.returned_to_homepage)
+        bot.send_message(chat_id, response, reply_markup=keyboardgenerator.homepage_buttons())
         for field in ["selecting_language", "joined_in_settings", "redeeming_code", "joined_in_support"]:
             users_collection.update_one({"_id": the_user["_id"]}, {"$set": {"metadata." + field: False}})
     elif user_message_text == "🛒 Buy Subscription" or user_message_text == "🛒 خرید اشتراک":
-        if get_user_lang(user_id=user.id) == "en":
+        if usermanager.get_user_language() == "en":
             bot.reply_to(msg, "Currently not available, You can use the bot with the free subscription.")
         else:
             bot.reply_to(msg, "در حال حاضر در دسترس نیست، می توانید با اشتراک رایگان از ربات استفاده کنید.")
@@ -56,11 +57,11 @@ def handle_user_message(msg: telebot.types.Message, bot: telebot.TeleBot):
     elif user_message_text == "📋 My Subscription" or user_message_text == "📋 اشتراک من":
         show_user_subscription_details(msg, bot)
     elif user_message_text == "🎁 کد هدیه" or user_message_text == "🎁 Gift Code":
-        response = get_user_lang_and_return_response(user.id, persian=persian.send_the_giftcode)
-        bot.send_message(chat_id, response, reply_markup=return_buttons(user.id))
+        response = usermanager.return_response_based_on_language(persian=persian.send_the_giftcode)
+        bot.send_message(chat_id, response, reply_markup=keyboardgenerator.return_buttons())
         users_collection.update_one(filter={"_id": the_user["_id"]}, update={"$set": {"metadata.redeeming_code": True}})
     elif user_message_text == "📖 Guide" or user_message_text == "📖 راهنما":
-        response = get_user_lang_and_return_response(user.id, persian=persian.guide)
+        response = usermanager.return_response_based_on_language(persian=persian.guide)
         bot.send_message(chat_id, response, parse_mode="Markdown")
     elif user_message_text == "⚙️ تنظیمات" or user_message_text == "⚙️ Settings":
         join_in_settings(msg, bot)
@@ -74,7 +75,7 @@ def handle_user_message(msg: telebot.types.Message, bot: telebot.TeleBot):
             users_collection.update_one(filter={"_id": the_user["_id"]},
                                         update={"$set": {"metadata.joined_in_settings": False}})
         else:
-            response = get_user_lang_and_return_response(user.id, persian=persian.unknown_request)
+            response = usermanager.return_response_based_on_language(persian=persian.unknown_request)
             bot.reply_to(msg, response)
     elif the_user['metadata']["selecting_language"] == True:
         if user_message_text == "🇮🇷فارسی":
@@ -86,11 +87,11 @@ def handle_user_message(msg: telebot.types.Message, bot: telebot.TeleBot):
                          f"ببخشید ولی منظورتان را متوجه نشدم🧐 لطفا از دکمه های زیر استفاده کنید👇\nSorry i didn't get what you mean🧐, please user the buttons below👇.")
     elif the_user['metadata']["joined_in_support"] == True:
         send_user_msg_to_support(msg, bot)
-    elif get_user_lang(user_id=user.id) == "not_selected":
+    elif usermanager.get_user_language() == "not_selected":
         the_user['metadata']["selecting_language"] = True
         bot.reply_to(msg, f"{persian.restart_required}\n\n{english.restart}")
     else:
-        response = get_user_lang_and_return_response(user.id, persian=persian.unknown_request)
+        usermanager.return_response_based_on_language(persian=persian.unknown_request)
         bot.reply_to(msg, response)
 
 

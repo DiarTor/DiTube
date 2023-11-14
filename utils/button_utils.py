@@ -1,5 +1,5 @@
-from telebot.types import KeyboardButton, ReplyKeyboardMarkup, InlineKeyboardMarkup
-from utils.get_user_data import UserDataProvider
+from telebot.types import KeyboardButton, ReplyKeyboardMarkup, InlineKeyboardMarkup, InlineKeyboardButton
+from utils.user_utils import UserManager
 
 
 class KeyboardMarkupGenerator:
@@ -11,7 +11,7 @@ class KeyboardMarkupGenerator:
         """
 
         self.user_id = user_id
-        self.user_language = UserDataProvider(user_id).get_user_language()
+        self.user_language = UserManager(user_id).get_user_language()
 
     def _create_reply_keyboard(self, buttons):
         """
@@ -38,7 +38,7 @@ class KeyboardMarkupGenerator:
 
         markup = InlineKeyboardMarkup()
         for row in buttons:
-            markup.row(*row)
+            markup.row(row)
         return markup
 
     def homepage_buttons(self):
@@ -70,9 +70,9 @@ class KeyboardMarkupGenerator:
 
         user_language = self.user_language
         if user_language == 'en':
-            buttons = [KeyboardButton(text="↩️ Return")]
+            buttons = [[KeyboardButton(text="↩️ Return")]]
         else:
-            buttons = [KeyboardButton(text="↩️ بازگشت")]
+            buttons = [[KeyboardButton(text="↩️ بازگشت")]]
         return self._create_reply_keyboard(buttons)
 
     def settings_buttons(self):

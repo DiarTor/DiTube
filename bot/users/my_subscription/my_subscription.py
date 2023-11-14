@@ -2,17 +2,19 @@ import datetime
 
 import telebot.types
 from jdatetime import datetime as jdatetime
-from utils.buttons import my_subscription_buttons
-from utils.get_user_data import get_user_subscription_data, get_user_lang, get_user_lang_and_return_response
+from utils.button_utils import KeyboardMarkupGenerator
+from utils.user_utils import UserManager
 from langs import persian
 
+
 def show_user_subscription_details(msg: telebot.types.Message, bot: telebot.TeleBot):
-    subscription_data = get_user_subscription_data(user_id=msg.from_user.id)
+    user_manager = UserManager(msg.from_user.id)
+    subscription_data = user_manager.get_user_subscription_details()
     used_data = subscription_data['used_data']
     remaining_data = subscription_data['remaining_data']
     formatted_used_data = "{:.1f}".format(used_data)
     formatted_remaining_data = "{:.1f}".format(remaining_data)
-    if get_user_lang(user_id=msg.from_user.id) == "en":
+    if user_manager.get_user_language() == "en":
         subscription_type = subscription_data['type']
         type = {"bronze": "Bronze 🥉", "silver": "Silver 🥈", "gold": "Gold 🥇", }
         subscription_status = subscription_data['status']
@@ -63,7 +65,7 @@ def show_user_subscription_details(msg: telebot.types.Message, bot: telebot.Tele
 
         max_file_size = subscription_data['max_file_size']
         max_data_per_day = subscription_data['max_data_per_day']
-        response = get_user_lang_and_return_response(user_id=msg.from_user.id, persian=persian.subscription_details)
+        response = user_manager.return_response_based_on_language(persian=persian.subscription_details)
         response = response.format(
             formatted_subscription_type,
             formatted_subscription_status,
@@ -76,5 +78,6 @@ def show_user_subscription_details(msg: telebot.types.Message, bot: telebot.Tele
             formatted_remaining_data,
 
         )
-    bot.send_message(msg.chat.id, response, reply_markup=my_subscription_buttons(msg.from_user.id),
+    bot.send_message(msg.chat.id, response,
+                     reply_markup=KeyboardMarkupGenerator(msg.from_user.id).my_subscription_buttons(),
                      parse_mode='markdown')

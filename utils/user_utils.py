@@ -3,7 +3,7 @@ import logging
 from bot.database import users_collection
 
 
-class UserDataProvider:
+class UserManager:
     def __init__(self, user_id):
         """
         Initialize UserDataProvider with a user_id.
@@ -19,8 +19,7 @@ class UserDataProvider:
         """
         Retrieve user data from the database.
 
-        Returns :
-        - dict: User data if found, None otherwise.
+        :return: User data if found, None otherwise.
         """
 
         try:
@@ -34,10 +33,7 @@ class UserDataProvider:
         """
         Get the language setting for the user.
 
-        Returns :
-        - not_selected (str): if the user did'nt select a language.
-        - fa (str): if the user selected Farsi(persian).
-        - en (str): if the user selected English.
+        :return: fa(Farsi), en(English), or not_selected(if the user has not selected a language)
         """
 
         if self.user:
@@ -48,9 +44,7 @@ class UserDataProvider:
     def get_user_subscription_details(self) -> dict:
         """
         Get details about the user's subscription.
-
-        Returns :
-        - dict: Subscription details.
+        :return: The user's subscription details.
         """
 
         if self.user:
@@ -61,15 +55,24 @@ class UserDataProvider:
     def return_response_based_on_language(self, english=None, persian=None) -> str:
         """
         Generate a response based on the user's language setting.
-
-        Parameters :
-        - english (str): The response in English.
-        - persian (str): The response in Persian.
-
-        Returns :
-        - str: The response in the user's language.
+        :param english: The response in English.
+        :param persian: The response in Persian.
+        :return: The response based on the user's language setting.
         """
 
         user_language = self.get_user_language()
         response = english if user_language == "en" else persian
         return response
+
+    def is_subscribed_to_channel(self, msg, bot):
+        """
+        Check if the user is subscribed to the channel.
+        :param msg: An instance Of telebot.types.Message
+        :param bot: An instance Of telebot.TeleBot
+        :return: True if the user is subscribed to the channel, False otherwise
+        """
+        channel_id = -1001594818741
+        chat_member = bot.get_chat_member(chat_id=channel_id, user_id=msg.from_user.id)
+        if chat_member.status in ["member", "administrator", "creator"]:
+            return True
+        return False

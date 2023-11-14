@@ -2,7 +2,7 @@ import telebot.types
 from bot.database import users_collection
 from langs import persian, english
 from telebot.types import ReplyKeyboardMarkup, KeyboardButton
-from utils.buttons import homepage_buttons
+from utils.button_utils import KeyboardMarkupGenerator
 
 select_lang_buttons = [[KeyboardButton("🇺🇸English"), KeyboardButton("🇮🇷فارسی")]]
 select_lang_buttons_reply_markup = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
@@ -31,7 +31,7 @@ def selected_lang_is_fa(msg: telebot.types.Message, bot: telebot.TeleBot):
     user = msg.from_user
     the_user = users_collection.find_one({"user_id": user.id})
     users_collection.update_one({"_id": the_user["_id"]}, {"$set": {"settings.language": "fa"}})
-    bot.send_message(msg.chat.id, persian.language_changed, reply_markup=homepage_buttons(user.id))
+    bot.send_message(msg.chat.id, persian.language_changed, reply_markup=KeyboardMarkupGenerator(user.id).homepage_buttons())
     users_collection.update_one(filter={"_id": the_user["_id"]}, update={"$set": {"metadata.selecting_language": False}})
 
 
@@ -39,5 +39,5 @@ def selected_lang_is_en(msg: telebot.types.Message, bot: telebot.TeleBot):
     user = msg.from_user
     the_user = users_collection.find_one({"user_id": user.id})
     users_collection.update_one({"_id": the_user["_id"]}, {"$set": {"settings.language": "en"}})
-    bot.send_message(msg.chat.id, english.lang_changed, reply_markup=homepage_buttons(user.id))
+    bot.send_message(msg.chat.id, english.lang_changed, reply_markup=KeyboardMarkupGenerator(user.id).homepage_buttons())
     users_collection.update_one(filter={"_id": the_user["_id"]}, update={"$set": {"metadata.selecting_language": False}})

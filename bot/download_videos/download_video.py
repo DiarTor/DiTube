@@ -3,7 +3,7 @@ import os
 
 from bot.config import VIDEO_DOWNLOAD_DIR
 from moviepy.editor import VideoFileClip, AudioFileClip
-from utils.clean_title import replace_invalid_characters_with_space
+from utils.utils import replace_invalid_characters_with_underscore
 
 
 def download_yt_video(yt, quality):
@@ -12,7 +12,7 @@ def download_yt_video(yt, quality):
     if not quality == "vc":
         if not quality == "1080p":
             video = yt.streams.filter(resolution=quality, progressive=True).first()
-            video_title = replace_invalid_characters_with_space(yt.title)
+            video_title = replace_invalid_characters_with_underscore(yt.title)
             video.download(output_path=VIDEO_DOWNLOAD_DIR, filename=f"{video_title} {datetimenow}.mp4")
             video_path = os.path.join(VIDEO_DOWNLOAD_DIR, f"{video_title} {datetimenow}.mp4")
             return video_path
@@ -20,11 +20,11 @@ def download_yt_video(yt, quality):
             video = yt.streams.filter(resolution="1080p").first()
             audio_of_video = yt.streams.filter(only_audio=True).last()
 
-            video_title = replace_invalid_characters_with_space(yt.title)
+            video_title = replace_invalid_characters_with_underscore(yt.title)
             video.download(output_path=VIDEO_DOWNLOAD_DIR, filename=f"{video_title} {datetimenow}.mp4")
             video_path = os.path.join(VIDEO_DOWNLOAD_DIR, f"{video_title} {datetimenow}.mp4")
 
-            audio_title = replace_invalid_characters_with_space(yt.title)
+            audio_title = replace_invalid_characters_with_underscore(yt.title)
             audio_of_video.download(output_path=VIDEO_DOWNLOAD_DIR, filename=f"{audio_title} {datetimenow}.mp3")
             audio_path = os.path.join(VIDEO_DOWNLOAD_DIR, f"{audio_title} {datetimenow}.mp3")
 
@@ -35,7 +35,7 @@ def download_yt_video(yt, quality):
     else:
         audio = yt.streams.filter(only_audio=True).last()
         if audio is not None:
-            audio_title = replace_invalid_characters_with_space(yt.title)
+            audio_title = replace_invalid_characters_with_underscore(yt.title)
             audio.download(output_path=VIDEO_DOWNLOAD_DIR, filename=f"{audio_title} {datetimenow}.mp3")
             audio_path = os.path.join(VIDEO_DOWNLOAD_DIR, f"{audio_title} {datetimenow}.mp3")
             return audio_path

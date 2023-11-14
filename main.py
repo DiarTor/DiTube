@@ -4,7 +4,7 @@ import threading
 import telebot
 from bot.handlers import start_handler, message_handler, callback_handler
 from bot.users.giftcode import giftcode
-from utils.modify_user_data import reset_daily_data
+from utils.utils import reset_daily_data
 
 logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO)
 logging.getLogger("httpx").setLevel(logging.WARNING)

@@ -1,10 +1,10 @@
 import telebot
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
-from utils.get_user_data import get_user_lang
+from utils.user_utils import UserManager
 from requests.exceptions import ConnectionError
 
 def send(msg: telebot.types.Message, bot: telebot.TeleBot, yt, chat_id, video_path, user_id):
-    user_lang = get_user_lang(user_id)
+    user_lang = UserManager(user_id).get_user_language()
 
     if video_path.endswith((".mp4", ".mp3")):
         creator_yt_channel_lang = "Creator YouTube Channel" if user_lang == "en" else "کانال یوتیوب سازنده"

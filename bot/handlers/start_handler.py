@@ -4,14 +4,15 @@ import re
 import telebot.types
 from bot.database import users_collection
 from bot.users.settings.language import join_in_selecting_lang
-from langs import english, persian
-from utils.buttons import homepage_buttons, subscribe_to_channel_buttons
-from utils.is_channel_sub import check_sub
-from utils.get_user_data import get_user_lang_and_return_response
+from langs import persian
+from utils.button_utils import KeyboardMarkupGenerator
+from utils.user_utils import UserManager
+
 
 def start(msg: telebot.types.Message = None, bot: telebot.TeleBot = None):
     user = msg.from_user
     the_user = users_collection.find_one({"user_id": user.id})
+    usermanager = UserManager(user.id)
     if not the_user:
         user_data = {
             "user_id": user.id,
@@ -76,14 +77,14 @@ def start(msg: telebot.types.Message = None, bot: telebot.TeleBot = None):
                     bot.reply_to(msg, "Invalid referral code")
             else:
                 bot.reply_to(msg, "You've already used a referral code.")
-    if not check_sub(msg, bot):
-        response = get_user_lang_and_return_response(user.id, persian=persian.subscribe_to_channel)
-        bot.send_message(msg.chat.id, response, reply_markup=subscribe_to_channel_buttons(user.id))
+    if not usermanager.is_subscribed_to_channel(msg, bot):
+        response = usermanager.return_response_based_on_language(persian=persian.subscribe_to_channel)
+        bot.send_message(msg.chat.id, response,
+                         reply_markup=KeyboardMarkupGenerator(user.id).subscribe_to_channel_buttons())
         return
     if the_user["settings"]["language"] == "not_selected":
         join_in_selecting_lang(msg, bot)
     else:
-        languages = {'fa': persian.greeting, 'en': english.greeting}
-        selected_lang = the_user["settings"]["language"]
-        bot.send_message(chat_id=msg.chat.id, text=languages[selected_lang],
-                         reply_markup=homepage_buttons(user.id))
+        response = usermanager.return_response_based_on_language(persian=persian.greeting)
+        bot.send_message(chat_id=msg.chat.id, text=response,
+                         reply_markup=KeyboardMarkupGenerator(user.id).homepage_buttons())

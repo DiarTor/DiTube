@@ -4,18 +4,24 @@ import time
 from bot.database import users_collection
 
 
-def change_user_subscription_data(user, filesize):
-    existing_used_size = user["subscription"]["used_data"]
-    existing_remaining_size = user["subscription"]["remaining_data"]
-    monthly_limit = user["subscription"]["max_data_per_day"]
-    new_used_data = existing_used_size + filesize
-    new_remaining_data = existing_remaining_size - filesize
-    filter = {"_id": user["_id"]}
-    update = {"$set": {"subscription.used_data": new_used_data, "subscription.remaining_data": new_remaining_data}}
-    users_collection.update_one(filter, update)
+def replace_invalid_characters_with_underscore(input_string: str) -> str:
+    """
+    Replace invalid characters with underscore in a string.
+    :param input_string: The string you want to be processed.
+    :return: The processed string.
+    """
+    invalid_characters = ['<', '>', ':', '"', '/', '\\', '|', '?', '*']
+    for char in invalid_characters:
+        input_string = input_string.replace(char, '_')
+
+    return input_string
 
 
 def reset_daily_data():
+    """
+    Reset daily data for users.
+    Works every 24 hours.
+    """
     while True:
         current_date = datetime.date.today().strftime("%Y-%m-%d")
         users = users_collection.find({"subscription.last_reset_date": {"$ne": current_date}})
@@ -34,4 +40,4 @@ def reset_daily_data():
 
             print(f"Matched: {result.matched_count}, Modified: {result.modified_count}")
 
-        time.sleep(86400)  # Sleep for 24 hours (86400 seconds)
+        time.sleep(86400)

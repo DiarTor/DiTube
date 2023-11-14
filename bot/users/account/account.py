@@ -4,13 +4,14 @@ import telebot.types
 from bot.database import users_collection
 from jdatetime import datetime as jdatetime
 from langs import persian
-from utils.buttons import account_buttons
-from utils.get_user_data import get_user_lang, get_user_lang_and_return_response
+from utils.button_utils import KeyboardMarkupGenerator
+from utils.user_utils import UserManager
 
 
 def show_account(msg: telebot.types.Message, bot: telebot.TeleBot):
     user = msg.from_user
-    user_lang = get_user_lang(user_id=user.id)
+    usermanager = UserManager(user.id)
+    user_lang = usermanager.get_user_language()
     format_number_with_commas = lambda number: f"{number:,}"
     user_register_date = users_collection.find_one({"user_id": user.id})["registered_at"]
     user_total_downloads = len(users_collection.find_one({"user_id": user.id})["downloads"])
@@ -24,7 +25,7 @@ def show_account(msg: telebot.types.Message, bot: telebot.TeleBot):
     jalali_start_date = jdatetime.fromgregorian(
         datetime=datetime.datetime.strptime(user_register_date, "%Y-%m-%d %H:%M:%S"))
     user_jdate_register_date = jalali_start_date.strftime("%Y/%m/%d")
-    buttons = account_buttons(user_id=user.id)
+    buttons = KeyboardMarkupGenerator(user_id=user.id).account_buttons()
     response_english = ("👤 **Account Information**\n\n"
                         f"👥 User ID: `{user.id}`\n"
                         "🌍 Language: English 🇺🇸\n"
@@ -36,12 +37,13 @@ def show_account(msg: telebot.types.Message, bot: telebot.TeleBot):
                         f"🚀 To Charge Your Account, Use The '*'Charge Account'*' Button, And For Referral, Use The '*'Invite Users'*' Button!"
                         f"\n\n@MiTubeRobot")
 
-    response = get_user_lang_and_return_response(user.id, persian=persian.account_details.format(user.id,
-                                                                                                 user_jdate_register_date,
-                                                                                                 user_total_downloads,
-                                                                                                 formated_user_total_downloads_size,
-                                                                                                 formatted_balance,
-                                                                                                 user_referrals))
+    response = usermanager.return_response_based_on_language(persian=persian.account_details.format(user.id,
+                                                                                                    user_jdate_register_date,
+                                                                                                    user_total_downloads,
+                                                                                                    formated_user_total_downloads_size,
+                                                                                                    formatted_balance,
+                                                                                                    user_referrals))
 
-    bot.send_message(chat_id=msg.chat.id, text=response, reply_markup=account_buttons(user.id),
+    bot.send_message(chat_id=msg.chat.id, text=response,
+                     reply_markup=KeyboardMarkupGenerator(user.id).account_buttons(),
                      parse_mode="markdown")

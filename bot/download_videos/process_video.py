@@ -7,11 +7,9 @@ from bot.download_videos.download_video import download_yt_video
 from bot.download_videos.get_video_information import get_only_filesize
 from bot.download_videos.send_video import send
 from pytube import YouTube
-from utils.get_user_data import get_user_lang
 
 
 def process(msg: telebot.types.Message, bot: telebot.TeleBot, link, quality_or_audio, chat_id, user_id):
-    user_lang = get_user_lang(user_id)
     yt = YouTube(link)
     video_path = download_yt_video(yt, quality_or_audio)
     send(msg=msg, bot=bot, yt=yt, chat_id=chat_id, video_path=video_path, user_id=user_id)
