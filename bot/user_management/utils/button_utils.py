@@ -130,9 +130,9 @@ class KeyboardMarkupGenerator:
         channel_link = "https://t.me/DiarDev"
         starter_link = "https://t.me/diartorbot?start=joined"
         if user_language == 'en':
-            buttons = [[InlineKeyboardButton("👉 Join Channel", url=channel_link)],
-                       [InlineKeyboardButton("✅ Joined", url=starter_link)]]
+            buttons = [InlineKeyboardButton("👉 Join Channel", url=channel_link),
+                       InlineKeyboardButton("✅ Joined", url=starter_link)]
         else:
-            buttons = [[InlineKeyboardButton("👉 عضویت در کانال", url=channel_link)],
-                       [InlineKeyboardButton("✅ عضو شدم", url=starter_link)]]
+            buttons = [InlineKeyboardButton("👉 عضویت در کانال", url=channel_link),
+                       InlineKeyboardButton("✅ عضو شدم", url=starter_link)]
         return self._create_inline_keyboard(buttons)
