@@ -60,10 +60,10 @@ def subscribe_to_channel_buttons(user_id):
     markup = InlineKeyboardMarkup()
     if get_user_lang(user_id) == "en":
         buttons = [[InlineKeyboardButton("👉 Join Channel", url="https://t.me/DiarDev")],
-            [InlineKeyboardButton("✅ Joined", url="https://t.me/diartorbot?start=joined")]]
+            [InlineKeyboardButton("✅ Joined", url="https://t.me/ditubebot?start=joined")]]
     else:
         buttons = [[InlineKeyboardButton("👉 عضویت در کانال", url="https://t.me/DiarDev")],
-            [InlineKeyboardButton("✅ عضو شدم", url="https://t.me/diartorbot?start=joined")]]
+            [InlineKeyboardButton("✅ عضو شدم", url="https://t.me/ditubebot?start=joined")]]
 
     for row in buttons:
         markup.row(*row)
