@@ -48,7 +48,7 @@ def handle_callback(callback: telebot.types.CallbackQuery, bot: telebot.TeleBot)
         bot.delete_message(chat_id=chat_id, message_id=callback.message.message_id)
     elif data == "invite_referrals":
         bot.send_message(callback.message.chat.id,
-                         get_user_lang_and_return_response(user_id=callback.from_user.id, persian=persian.invite_referral_banner).format(f'https://t.me/DiarTorBot?start=ref_{callback.from_user.id}'))
+                         get_user_lang_and_return_response(user_id=callback.from_user.id, persian=persian.invite_referral_banner).format(f'https://t.me/DitubeBot?start=ref_{callback.from_user.id}'))
         bot.send_message(callback.message.chat.id, get_user_lang_and_return_response(user_id=callback.from_user.id, persian=persian.invite_referral_guide))
     elif data == "charge_account":
         bot.answer_callback_query(callback.id, "⚡️Coming Soon...")
