@@ -50,8 +50,8 @@ class CallbackHandler:
             self.bot.delete_message(chat_id=self.chat_id, message_id=self.callback.message.message_id)
             SubscriptionManager(self.callback.from_user.id, filesize).change_user_subscription_data()
 
-        elif self.data == "invite_referrals":
-            referral_banner = self.user_manager.return_response_based_on_language(
+        elif data == "invite_referrals":
+            referral_banner = user_manager.return_response_based_on_language(
                 persian=persian.invite_referral_banner)
             referral_link = f'https://t.me/DiarTorBot?start=ref_{self.callback.from_user.id}'
             self.bot.send_message(self.chat_id, referral_banner.format(referral_link))
