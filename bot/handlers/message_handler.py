@@ -43,6 +43,9 @@ class MessageHandler:
         # Check if the user is new and requires a restart
         if not users_collection.find_one({"user_id": msg.from_user.id}):
             bot.reply_to(msg, f"{persian.restart_required}\n\n{english.restart}")
+        if self.the_user['settings']['language'] == 'not_selected' and self.user_message_text not in {'🇮🇷فارسی', '🇺🇸English'}:
+            join_in_selecting_lang(msg, bot)
+            return
 
         # Check if the message is a reply in the support group
         if self.chat_id == self.support_group_id and msg.reply_to_message:
@@ -97,8 +100,9 @@ class MessageHandler:
             self.the_user['metadata']["selecting_language"] = True
             bot.reply_to(msg, f"{persian.restart_required}\n\n{english.restart}")
         else:
-            response = self.usermanager.return_response_based_on_language(persian=persian.unknown_request)
-            bot.reply_to(msg, response)
+            if not self.the_user['settings']['language'] == 'not_selected':
+                response = self.usermanager.return_response_based_on_language(persian=persian.unknown_request)
+                bot.reply_to(msg, response)
 
     def handle_return(self):
         # Handle the "Return" command
