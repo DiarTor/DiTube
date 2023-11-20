@@ -43,7 +43,9 @@ class MessageHandler:
         # Check if the user is new and requires a restart
         if not users_collection.find_one({"user_id": msg.from_user.id}):
             bot.reply_to(msg, f"{persian.restart_required}\n\n{english.restart}")
-        if self.the_user['settings']['language'] == 'not_selected' and self.user_message_text not in {'🇮🇷فارسی', '🇺🇸English'}:
+
+        if self.the_user['settings']['language'] == 'not_selected' and self.user_message_text not in {'🇮🇷فارسی',
+                                                                                                      '🇺🇸English'}:
             join_in_selecting_lang(msg, bot)
             return
 
