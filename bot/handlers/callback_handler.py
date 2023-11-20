@@ -53,7 +53,7 @@ class CallbackHandler:
         elif self.data == "invite_referrals":
             referral_banner = self.user_manager.return_response_based_on_language(
                 persian=persian.invite_referral_banner)
-            referral_link = f'https://t.me/DiarTorBot?start=ref_{self.callback.from_user.id}'
+            referral_link = f'https://t.me/DitubeBot?start=ref_{self.callback.from_user.id}'
             self.bot.send_message(self.chat_id, referral_banner.format(referral_link))
             self.bot.send_message(self.chat_id, user_manager.return_response_based_on_language(
                 persian=persian.invite_referral_guide))
