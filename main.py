@@ -16,9 +16,9 @@ logger = logging.getLogger(__name__)
 bot = telebot.TeleBot("6967607104:AAELes1amDRSEpIhgcZBEYY9QwfoAQbugO0")
 
 bot.register_message_handler(StartCommandHandler().process_start_command, commands=["start"], pass_bot=True)
+bot.register_message_handler(giftcode.generate_code, commands=['gift'], pass_bot=True)
 bot.register_message_handler(MessageHandler().handle_message, content_types=['text'], pass_bot=True)
 bot.register_message_handler(MessageHandler().handle_photo, content_types=['photo'], pass_bot=True)
-bot.register_message_handler(giftcode.generate_code, commands=['ggift'], pass_bot=True)
 
 bot.register_callback_query_handler(CallbackHandler().process_callback, pass_bot=True, func=lambda call: True)
 

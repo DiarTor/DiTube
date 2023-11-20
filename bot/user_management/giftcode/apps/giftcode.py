@@ -16,7 +16,7 @@ def generate_code(msg: telebot.types.Message, bot: telebot.TeleBot):
         except IndexError:
             credit = None
         if not credit:
-            bot.send_message(chat_id=msg.chat.id, text="Please specify a credit amount. /ggift <credit>")
+            bot.send_message(chat_id=msg.chat.id, text="Please specify a credit amount. /gift <credit>")
             return
         giftcodes_collection.insert_one(
             {"code": code, "credit": int(credit), "used": False,
