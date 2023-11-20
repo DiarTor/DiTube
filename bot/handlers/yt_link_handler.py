@@ -11,23 +11,6 @@ from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 
 class YouTubeVideoHandler:
-    def __init__(self, msg, bot):
-        """
-        Initialize the YouTubeVideoHandler instance.
-
-        :param msg: The message object received from Telegram.
-        :param bot: The telebot instance.
-
-        This constructor sets up the initial state for handling YouTube video processing.
-        """
-        self.msg = msg
-        self.bot = bot
-        self.user = msg.from_user
-        self.user_message_text = msg.text
-        self.chat_id = msg.chat.id
-        self.user_lang = users_collection.find_one({"user_id": self.user.id})["settings"]["language"]
-        self.usermanager = UserManager(self.user.id)
-
     def handle_exceptions(self, response, msg_id=None):
         """
         Handle exceptions by sending an error response to the user.
@@ -70,13 +53,13 @@ class YouTubeVideoHandler:
                                                 callback_data=f"{self.yt.video_id} {quality} {self.chat_id}")])
 
         audio_file_size = get_only_filesize(self.user_message_text)
-        formatted_size = "{:.1f} MB".format(audio_file_size)
+        formatted_size = "{:.1f}".format(audio_file_size)
 
         if self.user_lang == "en":
-            kb.append([InlineKeyboardButton(f"Download Audio ({formatted_size} mb)",
+            kb.append([InlineKeyboardButton(f"Download Audio ({formatted_size} MB)",
                                             callback_data=f"{self.yt.video_id} vc {self.chat_id}")])
         else:
-            kb.append([InlineKeyboardButton(f"دانلود صدا ({formatted_size} mb)",
+            kb.append([InlineKeyboardButton(f"دانلود صدا ({formatted_size} MB)",
                                             callback_data=f"{self.yt.video_id} vc {self.chat_id}")])
 
         return InlineKeyboardMarkup(kb)
@@ -87,10 +70,17 @@ class YouTubeVideoHandler:
 
         This function handles the entire process of processing a YouTube video message.
         """
+        self.msg = msg
+        self.bot = bot
+        self.user = msg.from_user
+        self.user_message_text = msg.text
+        self.chat_id = msg.chat.id
+        self.user_lang = users_collection.find_one({"user_id": self.user.id})["settings"]["language"]
+        self.usermanager = UserManager(self.user.id)
         geting_info_response = self.usermanager.return_response_based_on_language(
             persian=persian.getting_media_link_information)
-        message_info = self.bot.send_message(self.chat_id, geting_info_response,
-                                             reply_to_message_id=self.msg.message_id)
+        message_info = bot.send_message(self.chat_id, geting_info_response,
+                                        reply_to_message_id=msg.message_id)
 
         self.yt = YouTube(self.user_message_text)
         video_options = self.get_video_options_sorted(self.yt)
@@ -99,6 +89,5 @@ class YouTubeVideoHandler:
 
         reply_markup = self.create_keyboard(video_options)
         response = self.usermanager.return_response_based_on_language(persian=persian.select_download_option)
-        self.bot.send_message(self.chat_id, response, reply_markup=reply_markup,
-                              reply_to_message_id=self.msg.message_id)
-        self.bot.delete_message(self.chat_id, message_info.id)
+        bot.edit_message_text(text=response, chat_id=self.chat_id, message_id=message_info.id,
+                              reply_markup=reply_markup)

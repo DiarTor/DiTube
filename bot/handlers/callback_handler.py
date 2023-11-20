@@ -1,10 +1,10 @@
 import telebot.types
-from config.database import users_collection
 from bot.download_videos.get_video_information import get_only_filesize
 from bot.download_videos.process_video import process
-from languages import persian
 from bot.user_management.utils.subscription_utils import SubscriptionManager
 from bot.user_management.utils.user_utils import UserManager
+from config.database import users_collection
+from languages import persian
 
 
 def handle_callback(callback: telebot.types.CallbackQuery, bot: telebot.TeleBot):
@@ -33,6 +33,7 @@ def handle_callback(callback: telebot.types.CallbackQuery, bot: telebot.TeleBot)
         elif res_code_or_vc == "vc":
             link = f"https://www.youtube.com/watch?v={video_id}"
             filesize = get_only_filesize(link)
+            subscription_manager = SubscriptionManager(callback.from_user.id, filesize)
             if subscription_manager.is_file_size_exceeded():
                 bot.edit_message_text("❌File Data Exceeded.", chat_id, message_id=callback.message.id)
                 return
@@ -46,9 +47,9 @@ def handle_callback(callback: telebot.types.CallbackQuery, bot: telebot.TeleBot)
 
         process(msg=telebot.types.Message, bot=bot, link=link, quality_or_audio=res_code_or_vc, chat_id=chat_id,
                 user_id=callback.from_user.id)
-        Ssubscription_manager.change_user_subscription_data()
 
         bot.delete_message(chat_id=chat_id, message_id=callback.message.message_id)
+        subscription_manager.change_user_subscription_data()
     elif data == "invite_referrals":
         bot.send_message(callback.message.chat.id,
                          usermanager.return_response_based_on_language(persian=persian.invite_referral_banner).format(

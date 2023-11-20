@@ -13,14 +13,14 @@ def get_video_options(yt):
             filesize_in_bytes = res.filesize
             filesize_in_kb = filesize_in_bytes / 1024
             formatted_filesize = "{:.1f}".format(filesize_in_kb / 1024)
-            video_options.append(res.resolution + ' ' + formatted_filesize + 'mb')
+            video_options.append(res.resolution + ' ' + formatted_filesize + 'MB')
 
     quality_1080p = yt.streams.filter(resolution="1080p").first()
     if quality_1080p is not None:
         filesize_in_bytes = quality_1080p.filesize
         filesize_in_kb = filesize_in_bytes / 1024
         formatted_filesize = "{:.1f}".format(filesize_in_kb / 1024)
-        video_options.append(quality_1080p.resolution + ' ' + formatted_filesize + 'mb')
+        video_options.append(quality_1080p.resolution + ' ' + formatted_filesize + 'MB')
 
     return video_options
 
