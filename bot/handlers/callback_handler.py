@@ -7,56 +7,56 @@ from config.database import users_collection
 from languages import persian
 
 
-def handle_callback(callback: telebot.types.CallbackQuery, bot: telebot.TeleBot):
-    the_user = users_collection.find_one({"user_id": callback.from_user.id})
-    user_lang = the_user["settings"]["language"]
-    data = callback.data
-    chat_id = callback.message.chat.id
-    usermanager = UserManager(callback.from_user.id)
-    if data != "invite_referrals" and data != "charge_account" and data != "auto_renew":
-        video_id, res_code_or_vc, chat_id = data.split(" ", 2)
-        if not res_code_or_vc == "vc":
-            if res_code_or_vc == "1080p" and the_user['subscription']['type'] == "bronze":
-                bot.edit_message_text(
-                    "❌You cant download 1080p ! To gain access to this quality please buy a subscription.", chat_id,
-                    message_id=callback.message.id)
-                return
-            link = f"https://www.youtube.com/watch?v={video_id}"
-            filesize = get_only_filesize(link, res_code_or_vc)
-            subscription_manager = SubscriptionManager(callback.from_user.id, filesize)
-            if subscription_manager.is_file_size_exceeded():
-                bot.edit_message_text("❌File Data Exceeded.", chat_id, message_id=callback.message.id)
-                return
-            elif subscription_manager.is_daily_data_exceeded():
-                bot.edit_message_text("❌Daily Data Exceeded.", chat_id, message_id=callback.message.id)
-                return
-        elif res_code_or_vc == "vc":
-            link = f"https://www.youtube.com/watch?v={video_id}"
-            filesize = get_only_filesize(link)
-            subscription_manager = SubscriptionManager(callback.from_user.id, filesize)
-            if subscription_manager.is_file_size_exceeded():
-                bot.edit_message_text("❌File Data Exceeded.", chat_id, message_id=callback.message.id)
-                return
-            elif subscription_manager.is_daily_data_exceeded():
-                bot.edit_message_text("❌Daily Data Exceeded.", chat_id, message_id=callback.message.id)
-                return
-        if user_lang == "en":
-            bot.edit_message_text("✨Processing...", chat_id, message_id=callback.message.id)
-        else:
-            bot.edit_message_text("✨درحال پردازش...", chat_id, message_id=callback.message.id)
+class CallbackHandler:
+    def send_error_message(self, error_message):
+        self.bot.edit_message_text(error_message, self.chat_id, message_id=self.callback.message.id)
 
-        process(msg=telebot.types.Message, bot=bot, link=link, quality_or_audio=res_code_or_vc, chat_id=chat_id,
-                user_id=callback.from_user.id)
+    def check_subscription(self, filesize):
+        subscription_manager = SubscriptionManager(self.callback.from_user.id, filesize)
+        if subscription_manager.is_file_size_exceeded() or subscription_manager.is_daily_data_exceeded():
+            self.send_error_message(
+                "❌File Data Exceeded." if not subscription_manager.is_daily_data_exceeded() else "❌Daily Data Exceeded.")
+            return True
+        return False
 
-        bot.delete_message(chat_id=chat_id, message_id=callback.message.message_id)
-        subscription_manager.change_user_subscription_data()
-    elif data == "invite_referrals":
-        bot.send_message(callback.message.chat.id,
-                         usermanager.return_response_based_on_language(persian=persian.invite_referral_banner).format(
-                             f'https://t.me/DiarTorBot?start=ref_{callback.from_user.id}'))
-        bot.send_message(callback.message.chat.id,
-                         usermanager.return_response_based_on_language(persian=persian.invite_referral_guide))
-    elif data == "charge_account":
-        bot.answer_callback_query(callback.id, "⚡️Coming Soon...")
-    elif data == "auto_renew":
-        bot.answer_callback_query(callback.id, "⚡️Coming Soon...")
+    def process_callback(self, callback: telebot.types.CallbackQuery, bot: telebot.TeleBot):
+        self.callback = callback
+        self.bot = bot
+        the_user = users_collection.find_one({"user_id": callback.from_user.id})
+        user_manager = UserManager(callback.from_user.id)
+        user_lang = the_user["settings"]["language"]
+        data = callback.data
+        self.chat_id = callback.message.chat.id
+        if data not in {"invite_referrals", "charge_account", "auto_renew"}:
+            video_id, res_code_or_vc, chat_id = data.split(" ", 2)
+            link = f"https://www.youtube.com/watch?v={video_id}"
+            filesize = get_only_filesize(link, res_code_or_vc) if res_code_or_vc != "vc" else get_only_filesize(link)
+
+            if not res_code_or_vc == "vc":
+                if res_code_or_vc == "1080p" and the_user['subscription']['type'] == "bronze":
+                    self.send_error_message(
+                        "❌You can't download 1080p! To gain access to this quality, please buy a subscription.")
+                    return
+
+            if self.check_subscription(filesize):
+                return
+
+            processing_message = "✨Processing..." if user_lang == "en" else "✨درحال پردازش..."
+            self.bot.edit_message_text(processing_message, self.chat_id, message_id=self.callback.message.id)
+
+            process(msg=telebot.types.Message, bot=self.bot, link=link, quality_or_audio=res_code_or_vc,
+                    chat_id=self.chat_id, user_id=self.callback.from_user.id)
+
+            self.bot.delete_message(chat_id=self.chat_id, message_id=self.callback.message.message_id)
+            SubscriptionManager(self.callback.from_user.id, filesize).change_user_subscription_data()
+
+        elif self.data == "invite_referrals":
+            referral_banner = self.user_manager.return_response_based_on_language(
+                persian=persian.invite_referral_banner)
+            referral_link = f'https://t.me/DiarTorBot?start=ref_{self.callback.from_user.id}'
+            self.bot.send_message(self.chat_id, referral_banner.format(referral_link))
+            self.bot.send_message(self.chat_id, user_manager.return_response_based_on_language(
+                persian=persian.invite_referral_guide))
+
+        elif data in {"charge_account", "auto_renew"}:
+            self.bot.answer_callback_query(self.callback.id, "⚡️Coming Soon...")

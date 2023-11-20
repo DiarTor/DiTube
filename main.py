@@ -7,6 +7,7 @@ from bot.user_management.giftcode.apps import giftcode
 from bot.common.utils import reset_daily_data
 from bot.handlers.start_handler import StartCommandHandler
 from bot.handlers.message_handler import MessageHandler
+from bot.handlers.callback_handler import CallbackHandler
 
 logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO)
 logging.getLogger("httpx").setLevel(logging.WARNING)
@@ -19,7 +20,7 @@ bot.register_message_handler(MessageHandler().handle_message, content_types=['te
 bot.register_message_handler(MessageHandler().handle_photo, content_types=['photo'], pass_bot=True)
 bot.register_message_handler(giftcode.generate_code, commands=['ggift'], pass_bot=True)
 
-bot.register_callback_query_handler(callback_handler.handle_callback, pass_bot=True, func=lambda call: True)
+bot.register_callback_query_handler(CallbackHandler().process_callback, pass_bot=True, func=lambda call: True)
 
 
 if __name__ == "__main__":
