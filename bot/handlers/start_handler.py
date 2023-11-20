@@ -7,7 +7,7 @@ from bot.user_management.utils.button_utils import KeyboardMarkupGenerator
 from bot.user_management.utils.user_utils import UserManager
 from config.database import users_collection
 from languages import persian
-
+from bot.user_management.referral.apps.referral import referral_handler
 
 class StartCommandHandler:
     def create_default_user_data(self, msg: telebot.types.Message):
@@ -25,6 +25,7 @@ class StartCommandHandler:
                 "user_lastname": user.last_name,
                 "balance": 0,
                 "referrals": [],
+                "referral_total_profit": 0,
                 "referraled": None,
                 "registered_at": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                 "subscription": {
@@ -74,27 +75,6 @@ class StartCommandHandler:
         for field in ["selecting_language", "joined_in_settings", "redeeming_code", "joined_in_support"]:
             users_collection.update_one({"_id": self.the_user["_id"]}, {"$set": {"metadata." + field: False}})
 
-    def process_referral_code(self, msg: telebot.types.Message, args):
-        """
-        Process referral code if provided in the command arguments.
-
-        :param args: Command arguments.
-        """
-        referral_code_match = re.match(r'ref_(\w+)', args[0])
-        user_id = msg.from_user.id
-        if referral_code_match:
-            referral_code = int(referral_code_match.group(1))
-            if self.the_user and not self.the_user.get("referraled"):
-                referral_user = users_collection.find_one({"user_id": referral_code})
-                if referral_user and user_id != referral_code and referral_code not in referral_user.get("referrals",
-                                                                                                         []):
-                    users_collection.update_one({"user_id": referral_code}, {"$push": {"referrals": user_id}})
-                    users_collection.update_one({"user_id": user_id}, {"$set": {"referraled": referral_code}})
-                else:
-                    bot.reply_to(msg, "Invalid referral code")
-            else:
-                bot.reply_to(msg, "You've already used a referral code.")
-
     def process_start_command(self, msg: telebot.types.Message, bot: telebot.TeleBot):
         """
         Process the /start command.
@@ -107,7 +87,7 @@ class StartCommandHandler:
 
         args = msg.text.split()[1:]
         if args and self.the_user["settings"]["language"] == "not_selected":
-            self.process_referral_code(args=args, msg=msg)
+            referral_handler(msg=msg, bot=bot, referral_user_id=args)
 
         if not user_manager.is_subscribed_to_channel(msg, bot):
             response = user_manager.return_response_based_on_language(persian=persian.subscribe_to_channel)
