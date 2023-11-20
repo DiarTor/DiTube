@@ -2,6 +2,7 @@ import telebot
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 from bot.user_management.utils.user_utils import UserManager
 from requests.exceptions import ConnectionError
+from telebot.apihelper import ApiTelegramException
 
 def send(msg: telebot.types.Message, bot: telebot.TeleBot, yt, chat_id, video_path, user_id):
     user_lang = UserManager(user_id).get_user_language()
@@ -22,11 +23,17 @@ def send(msg: telebot.types.Message, bot: telebot.TeleBot, yt, chat_id, video_pa
                 bot.send_video(chat_id=chat_id, video=open(video_path, "rb"), caption=caption, reply_markup=keyboard)
             elif media_type == "audio":
                 bot.send_audio(chat_id=chat_id, audio=open(video_path, "rb"), caption=caption, reply_markup=keyboard)
-    except ConnectionError:
-        if user_lang == "en":
-            bot.send_message(chat_id=chat_id, text="Connection Error")
-        elif user_lang == "fa":
-            bot.send_message(chat_id=chat_id, text="خطا در ارتباط با سرور")
+    except (ConnectionError, ApiTelegramException):
+        if ConnectionError:
+            if user_lang == "en":
+                bot.send_message(chat_id=chat_id, text="Connection Error")
+            elif user_lang == "fa":
+                bot.send_message(chat_id=chat_id, text="خطا در ارتباط با سرور")
+        elif ApiTelegramException:
+            if user_lang == "en":
+                bot.send_message(chat_id=chat_id, text="Unfurtunalty currently we cant download media larger than 50mb")
+            elif user_lang == "fa":
+                bot.send_message(chat_id=chat_id, text="متاسفانه در حال حاضر نمیتوانید فایل های بزرگتر از 50 مگابایت دانلود کنید")
 
 
 def generate_caption(yt, user_lang):
