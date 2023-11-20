@@ -17,41 +17,36 @@ from bot.user_management.utils.user_utils import UserManager
 from config.database import users_collection
 from languages import persian, english
 
-class MessageHandler:
-    def __init__(self, msg, bot):
-        """
-        Initialize the UserMessageHandler instance.
 
-        :param msg: The message object received from Telegram.
-        :param bot: The telebot instance.
+class MessageHandler:
+    def __init__(self):
         """
+        Initialize the MessageHandler class
+        """
+        self.support_group_id = -4043182903
+
+    def handle_message(self, msg: telebot.types.Message, bot: telebot.TeleBot):
+        self.usermanager = UserManager(msg.from_user.id)
         self.msg = msg
         self.bot = bot
-        self.user = msg.from_user
         self.chat_id = msg.chat.id
         self.user_message_text = msg.text
-        self.user_photo = msg.photo
-        self.user_reply = msg.reply_to_message
-        self.support_group_id = -4043182903
-        self.keyboardgenerator = KeyboardMarkupGenerator(self.user.id)
-        self.usermanager = UserManager(self.user.id)
-        self.the_user = users_collection.find_one({"user_id": self.user.id})
-
-    def handle_message(self):
+        self.keyboardgenerator = KeyboardMarkupGenerator(msg.from_user.id)
+        self.the_user = users_collection.find_one({"user_id": msg.from_user.id})
         # Check if the user is subscribed to the channel
-        if not self.usermanager.is_subscribed_to_channel(self.msg, self.bot):
+        if not self.usermanager.is_subscribed_to_channel(msg, bot):
             response = self.usermanager.return_response_based_on_language(persian=persian.subscribe_to_channel)
-            self.bot.send_message(self.chat_id, response,
-                                  reply_markup=self.keyboardgenerator.subscribe_to_channel_buttons())
+            bot.send_message(self.chat_id, response,
+                             reply_markup=self.keyboardgenerator.subscribe_to_channel_buttons())
             return
 
         # Check if the user is new and requires a restart
-        if not users_collection.find_one({"user_id": self.user.id}):
-            self.bot.reply_to(self.msg, f"{persian.restart_required}\n\n{english.restart}")
+        if not users_collection.find_one({"user_id": msg.from_user.id}):
+            bot.reply_to(msg, f"{persian.restart_required}\n\n{english.restart}")
 
         # Check if the message is a reply in the support group
-        if self.chat_id == self.support_group_id and self.msg.reply_to_message:
-            reply_to_user_support_msg(self.msg, self.bot)
+        if self.chat_id == self.support_group_id and msg.reply_to_message:
+            reply_to_user_support_msg(msg, bot)
             return
 
         # Check for YouTube video links
@@ -61,27 +56,27 @@ class MessageHandler:
             r'https://www.youtube.com/shorts/',
             r'https://youtube.com/shorts/'
         ]):
-            YouTubeVideoHandler(self.msg, self.bot).process_video()
+            YouTubeVideoHandler().process_video(msg, bot)
             return
 
         # Handle specific commands
         command_handlers = {
-            "↩️ Return" : self.handle_return,
+            "↩️ Return": self.handle_return,
             "🛒 Buy Subscription": self.handle_buy_subscription,
             "👤 Account": self.handle_account,
             "📋 My Subscription": self.handle_subscription,
             "🎁 Gift Code": self.handle_gift_code,
             "📖 Guide": self.handle_guide,
-            "⚙️ Settings" : self.handle_settings,
-            "📞 Support" : self.handle_support,
-            "↩️ بازگشت" : self.handle_return,
-            "🛒 خرید اشتراک" : self.handle_buy_subscription,
-            "👤 حساب کاربری" : self.handle_account,
-            "📋 اشتراک من" : self.handle_subscription,
-            "🎁 کد هدیه" : self.handle_gift_code,
-            "📖 راهنما" : self.handle_guide,
-            "⚙️ تنظیمات" : self.handle_settings,
-            "📞 پشتیبانی" : self.handle_support
+            "⚙️ Settings": self.handle_settings,
+            "📞 Support": self.handle_support,
+            "↩️ بازگشت": self.handle_return,
+            "🛒 خرید اشتراک": self.handle_buy_subscription,
+            "👤 حساب کاربری": self.handle_account,
+            "📋 اشتراک من": self.handle_subscription,
+            "🎁 کد هدیه": self.handle_gift_code,
+            "📖 راهنما": self.handle_guide,
+            "⚙️ تنظیمات": self.handle_settings,
+            "📞 پشتیبانی": self.handle_support
         }
 
         # Check if the message corresponds to a known command
@@ -91,19 +86,19 @@ class MessageHandler:
 
         # Check for other conditions
         if self.the_user['metadata']["redeeming_code"]:
-            redeem_giftcode(self.msg, self.bot)
+            redeem_giftcode(msg, bot)
         elif self.the_user['metadata']["joined_in_settings"]:
-            self.handle_joined_settings()
+            handle_joined_settings()
         elif self.the_user['metadata']["selecting_language"]:
-            self.handle_selecting_language()
+            handle_selecting_language()
         elif self.the_user['metadata']["joined_in_support"]:
-            send_user_msg_to_support(self.msg, self.bot)
+            send_user_msg_to_support(msg, bot)
         elif self.usermanager.get_user_language() == "not_selected":
             self.the_user['metadata']["selecting_language"] = True
-            self.bot.reply_to(self.msg, f"{persian.restart_required}\n\n{english.restart}")
+            bot.reply_to(msg, f"{persian.restart_required}\n\n{english.restart}")
         else:
-            self.usermanager.return_response_based_on_language(persian=persian.unknown_request)
-            self.bot.reply_to(self.msg, self.response)
+            response = self.usermanager.return_response_based_on_language(persian=persian.unknown_request)
+            bot.reply_to(msg, response)
 
     def handle_return(self):
         # Handle the "Return" command
@@ -164,8 +159,10 @@ class MessageHandler:
             selected_lang_is_en(self.msg, self.bot)
         else:
             self.bot.reply_to(self.msg, f"ببخشید ولی منظورتان را متوجه نشدم🧐 لطفا")
-    def handle_photo(self):
-        if self.chat_id == self.support_group_id and self.msg.reply_to_message:
-            reply_to_user_support_msg(self.msg, self.bot)
-        if self.the_user['metadata']["joined_in_support"] == True:
-            send_user_photo_to_support(self.msg, self.bot)
+
+    def handle_photo(self, msg: telebot.types.Message, bot: telebot.TeleBot):
+        the_user = users_collection.find_one({"user_id": msg.from_user.id})
+        if msg.chat.id == self.support_group_id and msg.reply_to_message:
+            reply_to_user_support_msg(msg, bot)
+        if the_user['metadata']["joined_in_support"] == True:
+            send_user_photo_to_support(msg, bot)

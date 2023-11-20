@@ -1,5 +1,6 @@
 from urllib.error import HTTPError, URLError
 
+import telebot
 from bot.download_videos.get_video_information import get_video_options, get_only_filesize
 from bot.user_management.utils.user_utils import UserManager
 from config.database import users_collection
@@ -80,7 +81,7 @@ class YouTubeVideoHandler:
 
         return InlineKeyboardMarkup(kb)
 
-    def process_video(self):
+    def process_video(self, msg: telebot.types.Message, bot: telebot.TeleBot):
         """
         Process the YouTube video, send information message, and create an inline keyboard for user options.
 
