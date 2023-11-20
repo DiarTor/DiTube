@@ -16,7 +16,7 @@ def referral_handler(msg: telebot.types.Message, bot: telebot.TeleBot, referral_
             if referral_user and user_id != referral_code and referral_code not in referral_user.get("referrals", []):
                 users_collection.update_one({"user_id": referral_code}, {"$push": {"referrals": user_id}})
                 users_collection.update_one({"user_id": user_id}, {"$set": {"referraled": referral_code}})
-                if referral_user.get("referrals", []).count(user_id) % 10 == 0 and referral_user.get("referrals", []).count(user_id) != 1:
+                if len(users_collection.find_one({'user_id': referral_code}).get("referrals", [])) % 10 == 0:
                     users_collection.update_one({"user_id": referral_code}, {"$inc": {"balance": 50000}})
                     users_collection.update_one({"user_id": referral_code}, {"$inc": {"referral_total_profit": 50000}})
             else:
