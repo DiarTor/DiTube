@@ -32,7 +32,11 @@ class YouTubeVideoHandler:
             video_options = get_video_options(yt)
             return sorted(video_options, key=lambda x: int(x.split()[0].split('p')[0]), reverse=True)
         except (AgeRestrictedError, HTTPError, URLError):
-            response = self.usermanager.return_response_based_on_language(persian=persian.problem_from_server)
+            if AgeRestrictedError:
+                text_fa = persian.age_restricted_exception
+            else:
+                text_fa = persian.server_error
+            response = self.usermanager.return_response_based_on_language(persian=text_fa)
             self.handle_exceptions(response, msg_id=self.msg.message_id)
             return []
 
