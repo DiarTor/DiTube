@@ -88,9 +88,9 @@ class MessageHandler:
         if self.the_user['metadata']["redeeming_code"]:
             redeem_giftcode(msg, bot)
         elif self.the_user['metadata']["joined_in_settings"]:
-            handle_joined_settings()
+            self.handle_joined_settings()
         elif self.the_user['metadata']["selecting_language"]:
-            handle_selecting_language()
+            self.handle_selecting_language()
         elif self.the_user['metadata']["joined_in_support"]:
             send_user_msg_to_support(msg, bot)
         elif self.usermanager.get_user_language() == "not_selected":
