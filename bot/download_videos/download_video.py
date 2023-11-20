@@ -1,44 +1,49 @@
 import datetime
 import os
 
+from bot.common.utils import replace_invalid_characters_with_underscore
 from config.config import VIDEO_DOWNLOAD_DIR
 from moviepy.editor import VideoFileClip, AudioFileClip
-from bot.common.utils import replace_invalid_characters_with_underscore
 
 
 def download_yt_video(yt, quality):
     datetimenow = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
 
-    if not quality == "vc":
-        if not quality == "1080p":
-            video = yt.streams.filter(resolution=quality, progressive=True).first()
-            video_title = replace_invalid_characters_with_underscore(yt.title)
-            video.download(output_path=VIDEO_DOWNLOAD_DIR, filename=f"{video_title} {datetimenow}.mp4")
-            video_path = os.path.join(VIDEO_DOWNLOAD_DIR, f"{video_title} {datetimenow}.mp4")
-            return video_path
-        else:
-            video = yt.streams.filter(resolution="1080p").first()
-            audio_of_video = yt.streams.filter(only_audio=True).last()
+    def download_stream(stream, filename):
+        stream.download(output_path=VIDEO_DOWNLOAD_DIR, filename=filename)
+        return os.path.join(VIDEO_DOWNLOAD_DIR, filename)
 
-            video_title = replace_invalid_characters_with_underscore(yt.title)
-            video.download(output_path=VIDEO_DOWNLOAD_DIR, filename=f"{video_title} {datetimenow}.mp4")
-            video_path = os.path.join(VIDEO_DOWNLOAD_DIR, f"{video_title} {datetimenow}.mp4")
-
-            audio_title = replace_invalid_characters_with_underscore(yt.title)
-            audio_of_video.download(output_path=VIDEO_DOWNLOAD_DIR, filename=f"{audio_title} {datetimenow}.mp3")
-            audio_path = os.path.join(VIDEO_DOWNLOAD_DIR, f"{audio_title} {datetimenow}.mp3")
-
-            combined_output_path = os.path.join(VIDEO_DOWNLOAD_DIR, f"combined_{video_title}.mp4")
-            combine_audio_video(video_path, audio_path, combined_output_path)
-            return combined_output_path
-
-    else:
+    if quality == "vc":
         audio = yt.streams.filter(only_audio=True).last()
         if audio is not None:
             audio_title = replace_invalid_characters_with_underscore(yt.title)
-            audio.download(output_path=VIDEO_DOWNLOAD_DIR, filename=f"{audio_title} {datetimenow}.mp3")
-            audio_path = os.path.join(VIDEO_DOWNLOAD_DIR, f"{audio_title} {datetimenow}.mp3")
+            audio_path = download_stream(audio, f"{audio_title} {datetimenow}.mp3")
             return audio_path
+
+    if quality == "1080p":
+        video = yt.streams.filter(resolution="1080p").first()
+    else:
+        video = yt.streams.filter(resolution=quality, progressive=True).first()
+
+    video_title = replace_invalid_characters_with_underscore(yt.title)
+    video_path = download_stream(video, f"{video_title} {datetimenow}.mp4")
+
+    if quality == "1080p":
+        audio_of_video = yt.streams.filter(only_audio=True).last()
+        if audio_of_video is not None:
+            audio_title = replace_invalid_characters_with_underscore(yt.title)
+            audio_path = download_stream(audio_of_video, f"{audio_title} {datetimenow}.mp3")
+            combined_output_path = os.path.join(VIDEO_DOWNLOAD_DIR, f"combined_{video_title}.mp4")
+
+            with tempfile.NamedTemporaryFile(suffix=".mp4", delete=False) as temp_file:
+                temp_file_path = temp_file.name
+
+            combine_audio_video(video_path, audio_path, temp_file_path)
+            os.replace(temp_file_path, combined_output_path)
+
+            return combined_output_path
+
+    return video_path
 
 
 def combine_audio_video(video_path, audio_path, output_path):

@@ -1,7 +1,5 @@
-import time
-
 from pytube import YouTube
-from urllib.error import URLError
+
 
 def get_video_options(yt):
     delay = 3
@@ -27,10 +25,11 @@ def get_video_options(yt):
 
 def get_only_filesize(url, res_code=None):
     yt = YouTube(url=url)
-    if res_code != "1080p":
-        filesize = yt.streams.filter(resolution=res_code, progressive=True).first().filesize_mb
-    elif res_code == "1080p":
+    if res_code == "1080p":
         filesize = yt.streams.filter(resolution="1080p").first().filesize_mb
-    else:
+    elif res_code == "vc":
         filesize = yt.streams.filter(only_audio=True).last().filesize_mb
+    else:
+        filesize = yt.streams.filter(resolution=res_code, progressive=True).first().filesize_mb
+
     return filesize

@@ -1,8 +1,9 @@
 import telebot
-from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 from bot.user_management.utils.user_utils import UserManager
 from requests.exceptions import ConnectionError
 from telebot.apihelper import ApiTelegramException
+from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
+
 
 def send(msg: telebot.types.Message, bot: telebot.TeleBot, yt, chat_id, video_path, user_id):
     user_lang = UserManager(user_id).get_user_language()
@@ -15,12 +16,14 @@ def send(msg: telebot.types.Message, bot: telebot.TeleBot, yt, chat_id, video_pa
     try:
         if user_lang == "en":
             if media_type == "video":
-                bot.send_video(chat_id=chat_id, video=open(video_path, "rb"), caption=caption, reply_markup=keyboard)
+                bot.send_video(chat_id=chat_id, video=open(video_path, "rb"), caption=caption, supports_streaming=True,
+                               reply_markup=keyboard)
             elif media_type == "audio":
                 bot.send_audio(chat_id=chat_id, audio=open(video_path, "rb"), caption=caption, reply_markup=keyboard)
         elif user_lang == "fa":
             if media_type == "video":
-                bot.send_video(chat_id=chat_id, video=open(video_path, "rb"), caption=caption, reply_markup=keyboard)
+                bot.send_video(chat_id=chat_id, video=open(video_path, "rb"), caption=caption, supports_streaming=True,
+                               reply_markup=keyboard)
             elif media_type == "audio":
                 bot.send_audio(chat_id=chat_id, audio=open(video_path, "rb"), caption=caption, reply_markup=keyboard)
     except (ConnectionError, ApiTelegramException):
@@ -33,7 +36,8 @@ def send(msg: telebot.types.Message, bot: telebot.TeleBot, yt, chat_id, video_pa
             if user_lang == "en":
                 bot.send_message(chat_id=chat_id, text="Unfurtunalty currently we cant download media larger than 50mb")
             elif user_lang == "fa":
-                bot.send_message(chat_id=chat_id, text="متاسفانه در حال حاضر نمیتوانید فایل های بزرگتر از 50 مگابایت دانلود کنید")
+                bot.send_message(chat_id=chat_id,
+                                 text="متاسفانه در حال حاضر نمیتوانید فایل های بزرگتر از 50 مگابایت دانلود کنید")
 
 
 def generate_caption(yt, user_lang):
