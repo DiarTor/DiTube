@@ -1,10 +1,10 @@
 import datetime
 
 import telebot.types
-from jdatetime import datetime as jdatetime
 from bot.user_management.utils.button_utils import KeyboardMarkupGenerator
 from bot.user_management.utils.user_utils import UserManager
-from languages import persian
+from jdatetime import datetime as jdatetime
+from languages import persian, english
 
 
 def show_user_subscription_details(msg: telebot.types.Message, bot: telebot.TeleBot):
@@ -18,28 +18,34 @@ def show_user_subscription_details(msg: telebot.types.Message, bot: telebot.Tele
         subscription_type = subscription_data['type']
         type = {"bronze": "Bronze 🥉", "silver": "Silver 🥈", "gold": "Gold 🥇", }
         subscription_status = subscription_data['status']
-        status = {'active': "Active", 'expired': "Expired", }
-        formatted_data = f"🔸 Type: {type[subscription_type]}\n"
-        formatted_data += f"🟢 Status: {status[subscription_status]}\n"
-        if subscription_data['price'] == 0:
-            formatted_data += f"💲 Price: Free \n"
-        else:
-            formatted_data += f"💲 Price: {subscription_data['price']} IRR\n"
-        formatted_data += f"📅 Start Date: {subscription_data['start_date']}\n"
-
+        status = {'active': "Active", 'expired': "Expired"}
+        subscription_start_date = subscription_data['start_date']
         if subscription_data['expire_date']:
-            formatted_data += f"❌ Expire Date: {subscription_data['expire_date']}\n"
+            subscription_expire_date = subscription_data['expire_date']
         else:
-            formatted_data += f"❌ Expire Date: Never\n"
+            subscription_expire_date = "Never"
+        if subscription_data['price'] == 0:
+            formatted_price = "Free"
+        else:
+            formatted_price = subscription_data['price']
+        max_file_size = subscription_data['max_file_size']
+        max_data_per_day = subscription_data['max_data_per_day']
+        formatted_subscription_type = type[subscription_type]
+        formatted_subscription_status = status[subscription_status]
+        response = user_manager.return_response_based_on_language(english=english.subscription_details)
+        response = response.format(
+            formatted_subscription_type,
+            formatted_subscription_status,
+            formatted_price,
+            subscription_start_date,
+            subscription_expire_date,
+            max_file_size,
+            max_data_per_day,
+            formatted_used_data,
+            formatted_remaining_data,
 
-        formatted_data += f"📏 Max File Size: {subscription_data['max_file_size']} MB\n"
-        formatted_data += f"📆 Max Data Per Day: {subscription_data['max_data_per_day']} MB\n"
-        formatted_data += f"💾 Used Data: {formatted_used_data} MB\n"
-        formatted_data += f"💼 Remaining Data: {formatted_remaining_data} MB\n"
-        formatted_data += "➖➖➖➖➖➖➖➖➖➖\n"
-        formatted_data += f"\n✨If you want your subscription to be automatically renewed at a 10% discount after it expires, activate the 'Auto Renew' option."
-        formatted_data += f"\n\n@MiTubeRobot"
-    else:
+        )
+    elif user_manager.get_user_language() == "fa":
         subscription_type = subscription_data['type']
         type = {"bronze": "برونز 🥉", "silver": "نقره 🥈", "gold": "طلایی 🥇", }
         subscription_status = subscription_data['status']

@@ -35,14 +35,15 @@ class MessageHandler:
         self.the_user = users_collection.find_one({"user_id": msg.from_user.id})
         # Check if the user is subscribed to the channel
         if not self.usermanager.is_subscribed_to_channel(msg, bot):
-            response = self.usermanager.return_response_based_on_language(persian=persian.subscribe_to_channel)
+            response = self.usermanager.return_response_based_on_language(persian=persian.subscribe_to_channel,
+                                                                          english=english.subscribe_to_channel)
             bot.send_message(self.chat_id, response,
                              reply_markup=self.keyboardgenerator.subscribe_to_channel_buttons())
             return
 
         # Check if the user is new and requires a restart
         if not users_collection.find_one({"user_id": msg.from_user.id}):
-            bot.reply_to(msg, f"{persian.restart_required}\n\n{english.restart}")
+            bot.reply_to(msg, f"{persian.restart_required}\n\n{english.restart_required}")
 
         if self.the_user['settings']['language'] == 'not_selected' and self.user_message_text not in {'🇮🇷فارسی',
                                                                                                       '🇺🇸English'}:
@@ -103,22 +104,24 @@ class MessageHandler:
             bot.reply_to(msg, f"{persian.restart_required}\n\n{english.restart}")
         else:
             if not self.the_user['settings']['language'] == 'not_selected':
-                response = self.usermanager.return_response_based_on_language(persian=persian.unknown_request)
+                response = self.usermanager.return_response_based_on_language(persian=persian.unknown_request,
+                                                                              english=english.unknown_request)
                 bot.reply_to(msg, response)
 
     def handle_return(self):
         # Handle the "Return" command
-        response = self.usermanager.return_response_based_on_language(persian=persian.returned_to_homepage)
+        response = self.usermanager.return_response_based_on_language(persian=persian.returned_to_homepage,
+                                                                      english=english.returned_to_homepage)
         self.bot.send_message(self.chat_id, response, reply_markup=self.keyboardgenerator.homepage_buttons())
         for field in ["selecting_language", "joined_in_settings", "redeeming_code", "joined_in_support"]:
             users_collection.update_one({"_id": self.the_user["_id"]}, {"$set": {"metadata." + field: False}})
 
     def handle_buy_subscription(self):
         # Handle the "Buy Subscription" Button
-        if self.usermanager.get_user_language() == "en":
-            self.bot.reply_to(self.msg, "Currently not available, You can use the bot with the free subscription.")
-        else:
-            self.bot.reply_to(self.msg, "در حال حاضر در دسترس نیست، می توانید با اشتراک رایگان از ربات استفاده کنید.")
+        response = self.usermanager.return_response_based_on_language(
+            persian=persian.buy_subscription_currently_not_available,
+            english=english.buy_subscription_currently_not_available)
+        self.bot.reply_to(self.msg, response)
 
     def handle_account(self):
         # Handle the "Account" Button
@@ -130,7 +133,8 @@ class MessageHandler:
 
     def handle_gift_code(self):
         # Handle the "Gift Code" Button
-        response = self.usermanager.return_response_based_on_language(persian=persian.send_the_giftcode)
+        response = self.usermanager.return_response_based_on_language(persian=persian.send_the_giftcode,
+                                                                      english=english.send_the_giftcode)
         self.bot.send_message(self.chat_id, response, reply_markup=self.keyboardgenerator.return_buttons())
         users_collection.update_one(filter={"_id": self.the_user["_id"]},
                                     update={"$set": {"metadata.redeeming_code": True}})
@@ -154,7 +158,8 @@ class MessageHandler:
             users_collection.update_one(filter={"_id": self.the_user["_id"]},
                                         update={"$set": {"metadata.joined_in_settings": False}})
         else:
-            response = self.usermanager.return_response_based_on_language(persian=persian.unknown_request)
+            response = self.usermanager.return_response_based_on_language(persian=persian.unknown_request,
+                                                                          english=english.unknown_request)
             self.bot.reply_to(self.msg, self.response)
 
     def handle_selecting_language(self):
@@ -163,8 +168,6 @@ class MessageHandler:
             selected_lang_is_fa(self.msg, self.bot)
         elif self.user_message_text == "🇺🇸English":
             selected_lang_is_en(self.msg, self.bot)
-        else:
-            self.bot.reply_to(self.msg, f"ببخشید ولی منظورتان را متوجه نشدم🧐 لطفا")
 
     def handle_photo(self, msg: telebot.types.Message, bot: telebot.TeleBot):
         the_user = users_collection.find_one({"user_id": msg.from_user.id})

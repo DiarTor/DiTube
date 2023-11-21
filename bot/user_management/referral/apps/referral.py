@@ -19,7 +19,3 @@ def referral_handler(msg: telebot.types.Message, bot: telebot.TeleBot, referral_
                 if len(users_collection.find_one({'user_id': referral_code}).get("referrals", [])) % 10 == 0:
                     users_collection.update_one({"user_id": referral_code}, {"$inc": {"balance": 50000}})
                     users_collection.update_one({"user_id": referral_code}, {"$inc": {"referral_total_profit": 50000}})
-            else:
-                bot.reply_to(msg, "Invalid referral code")
-        else:
-            bot.reply_to(msg, "You've already used a referral code.")

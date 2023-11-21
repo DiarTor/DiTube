@@ -1,11 +1,11 @@
 import datetime
 
 import telebot.types
-from config.database import users_collection
-from jdatetime import datetime as jdatetime
-from languages import persian
 from bot.user_management.utils.button_utils import KeyboardMarkupGenerator
 from bot.user_management.utils.user_utils import UserManager
+from config.database import users_collection
+from jdatetime import datetime as jdatetime
+from languages import persian, english
 
 
 def show_account_details(msg: telebot.types.Message, bot: telebot.TeleBot):
@@ -26,19 +26,14 @@ def show_account_details(msg: telebot.types.Message, bot: telebot.TeleBot):
         datetime=datetime.datetime.strptime(user_register_date, "%Y-%m-%d %H:%M:%S"))
     user_jdate_register_date = jalali_start_date.strftime("%Y/%m/%d")
     buttons = KeyboardMarkupGenerator(user_id=user.id).account_buttons()
-    response_english = ("👤 **Account Information**\n\n"
-                        f"👥 User ID: `{user.id}`\n"
-                        "🌍 Language: English 🇺🇸\n"
-                        f"📅 Registered Since: {user_register_date}\n\n"
-                        f"📥 Total Downloads: {user_total_downloads}\n"
-                        f"💾 Total Downloads Size: {formated_user_total_downloads_size} MB\n\n"
-                        f"💰 Balance: {formatted_balance} Toman\n"
-                        f"🤝 Referrals: {user_referrals}\n\n"
-                        f"🚀 To Charge Your Account, Use The '*'Charge Account'*' Button, And For Referral, Use The '*'Invite Users'*' Button!"
-                        f"\n\n@MiTubeRobot")
-
     response = usermanager.return_response_based_on_language(persian=persian.account_details.format(user.id,
                                                                                                     user_jdate_register_date,
+                                                                                                    user_total_downloads,
+                                                                                                    formated_user_total_downloads_size,
+                                                                                                    formatted_balance,
+                                                                                                    user_referrals),
+                                                             english=english.account_details.format(user.id,
+                                                                                                    user_register_date,
                                                                                                     user_total_downloads,
                                                                                                     formated_user_total_downloads_size,
                                                                                                     formatted_balance,

@@ -1,5 +1,5 @@
-from telebot.types import KeyboardButton, ReplyKeyboardMarkup, InlineKeyboardMarkup, InlineKeyboardButton
 from bot.user_management.utils.user_utils import UserManager
+from telebot.types import KeyboardButton, ReplyKeyboardMarkup, InlineKeyboardMarkup, InlineKeyboardButton
 
 
 class KeyboardMarkupGenerator:
@@ -130,7 +130,7 @@ class KeyboardMarkupGenerator:
         channel_link = "https://t.me/DiarDev"
         if user_language == 'en':
             buttons = [InlineKeyboardButton("👉 Join Channel", url=channel_link),
-                       InlineKeyboardButton("✅ Joined", callback_data="check_joined")]
+                       InlineKeyboardButton("✅ I Joined", callback_data="check_joined")]
         else:
             buttons = [InlineKeyboardButton("👉 عضویت در کانال", url=channel_link),
                        InlineKeyboardButton("✅ عضو شدم", callback_data="check_joined")]

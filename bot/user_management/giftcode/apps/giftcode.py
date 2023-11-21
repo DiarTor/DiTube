@@ -3,10 +3,12 @@ import secrets
 import string
 
 import telebot.types
-from config.database import giftcodes_collection, users_collection
 from bot.user_management.utils.button_utils import KeyboardMarkupGenerator
 from bot.user_management.utils.user_utils import UserManager
-from languages import persian
+from config.database import giftcodes_collection, users_collection
+from languages import persian, english
+
+
 def generate_code(msg: telebot.types.Message, bot: telebot.TeleBot):
     admin = 1154909190
     if msg.from_user.id == admin:
@@ -21,7 +23,9 @@ def generate_code(msg: telebot.types.Message, bot: telebot.TeleBot):
         giftcodes_collection.insert_one(
             {"code": code, "credit": int(credit), "used": False,
              "date": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")})
-        bot.send_message(chat_id=msg.chat.id, text="The Code Generated Successfuly !\nYour code : `{}`\nCredit : {} Toman".format(code, credit), parse_mode="Markdown")
+        bot.send_message(chat_id=msg.chat.id,
+                         text=f"The Code Generated Successfuly !\nYour code : `{code}`\nCredit : {credit} Toman",
+                         parse_mode="Markdown")
     else:
         pass
 
@@ -32,16 +36,20 @@ def redeem_giftcode(msg: telebot.types.Message, bot: telebot.TeleBot):
     code_db = giftcodes_collection.find_one({"code": code})
     if code_db:
         if code_db["used"] == False:
-            response = UserManager(user.id).return_response_based_on_language(persian=persian.redeem_successful)
+            response = UserManager(user.id).return_response_based_on_language(persian=persian.redeem_successful,
+                                                                              english=english.redeem_successful)
             users_collection.update_one({"user_id": user.id}, {"$inc": {"balance": code_db["credit"]}})
             bot.send_message(chat_id=msg.chat.id,
                              text=response.format(
-                                 users_collection.find_one({"user_id": user.id})["balance"]), reply_markup=KeyboardMarkupGenerator(user.id).homepage_buttons())
+                                 users_collection.find_one({"user_id": user.id})["balance"]),
+                             reply_markup=KeyboardMarkupGenerator(user.id).homepage_buttons())
             giftcodes_collection.update_one({"code": code}, {"$set": {"used": True}})
             users_collection.update_one({"user_id": user.id}, {"$set": {"metadata.redeeming_code": False}})
         else:
-            response = UserManager(user.id).return_response_based_on_language(persian=persian.code_already_redeemed)
+            response = UserManager(user.id).return_response_based_on_language(persian=persian.code_already_redeemed,
+                                                                              english=english.code_already_redeemed)
             bot.send_message(chat_id=msg.chat.id, text=response)
     else:
-        response = UserManager(user.id).return_response_based_on_language(persian=persian.invalid_giftcode)
+        response = UserManager(user.id).return_response_based_on_language(persian=persian.invalid_giftcode,
+                                                                          english=english.invalid_giftcode)
         bot.send_message(chat_id=msg.chat.id, text=response)

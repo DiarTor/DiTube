@@ -1,13 +1,13 @@
 import datetime
-import re
 
 import telebot.types
+from bot.user_management.referral.apps.referral import referral_handler
 from bot.user_management.settings.apps.language import join_in_selecting_lang
 from bot.user_management.utils.button_utils import KeyboardMarkupGenerator
 from bot.user_management.utils.user_utils import UserManager
 from config.database import users_collection
-from languages import persian
-from bot.user_management.referral.apps.referral import referral_handler
+from languages import persian, english
+
 
 class StartCommandHandler:
     def create_default_user_data(self, msg: telebot.types.Message):
@@ -90,14 +90,16 @@ class StartCommandHandler:
             referral_handler(msg=msg, bot=bot, referral_user_id=args)
 
         if not user_manager.is_subscribed_to_channel(msg, bot):
-            response = user_manager.return_response_based_on_language(persian=persian.subscribe_to_channel)
+            response = user_manager.return_response_based_on_language(persian=persian.subscribe_to_channel,
+                                                                      english=english.subscribe_to_channel)
             bot.send_message(msg.chat.id, response,
-                                  reply_markup=KeyboardMarkupGenerator(msg.from_user.id).subscribe_to_channel_buttons())
+                             reply_markup=KeyboardMarkupGenerator(msg.from_user.id).subscribe_to_channel_buttons())
             return
 
         if self.the_user["settings"]["language"] == "not_selected":
             join_in_selecting_lang(msg, bot)
         else:
-            response = user_manager.return_response_based_on_language(persian=persian.greeting)
+            response = user_manager.return_response_based_on_language(persian=persian.greeting,
+                                                                      english=english.greeting)
             bot.send_message(chat_id=msg.chat.id, text=response,
-                                  reply_markup=KeyboardMarkupGenerator(msg.from_user.id).homepage_buttons())
+                             reply_markup=KeyboardMarkupGenerator(msg.from_user.id).homepage_buttons())
