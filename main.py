@@ -13,7 +13,7 @@ logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s
 logging.getLogger("httpx").setLevel(logging.WARNING)
 logger = logging.getLogger(__name__)
 
-bot = telebot.TeleBot("6545347914:AAF0-kxh-8Ztn8JNXTCkmiumfdR3Z7K8vKs")
+bot = telebot.TeleBot("6733319461:AAGu-aDfogVkWTEOa60o1SG35--_lr8y49U")
 
 bot.register_message_handler(StartCommandHandler().process_start_command, commands=["start"], pass_bot=True)
 bot.register_message_handler(giftcode.generate_code, commands=['gift'], pass_bot=True)
