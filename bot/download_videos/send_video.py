@@ -13,11 +13,13 @@ def send_video(msg: telebot.types.Message, bot: telebot.TeleBot, yt, chat_id, vi
             user_manager.return_response_based_on_language(persian=persian.creator_channel,
                                                            english=english.creator_channel), url=yt.channel_url))
         media_type = "video" if video_path.endswith(".mp4") else "audio"
+        publish_date = yt.publish_date.strftime("%Y/%m/%d")
+        description = yt.description[:850] if yt.description else ""
         caption = user_manager.return_response_based_on_language(
-            persian=persian.caption.format(yt.title, yt.views, yt.description[:850] if yt.description else "",
-                                           yt.publish_date.strftime("%Y/%m/%d")),
-            english=english.caption.format(yt.title, yt.views, yt.description[:850] if yt.description else "",
-                                           yt.publish_date.strftime("%Y/%m/%d")))
+            persian=persian.caption.format(yt.title, yt.views, description,
+                                           publish_date),
+            english=english.caption.format(yt.title, yt.views, description,
+                                           publish_date))
     try:
         if media_type == "video":
             bot.send_video(chat_id=chat_id, video=open(video_path, "rb"), caption=caption, supports_streaming=True,
