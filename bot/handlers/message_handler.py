@@ -60,7 +60,11 @@ class MessageHandler:
             r'https://youtu.be/',
             r'https://www.youtube.com/watch\?v=',
             r'https://www.youtube.com/shorts/',
-            r'https://youtube.com/shorts/'
+            r'https://youtube.com/shorts/',
+            r'http://youtu.be/',
+            r'http://www.youtube.com/watch\?v=',
+            r'http://www.youtube.com/shorts/',
+            r'http://youtube.com/shorts/'
         ]):
             YouTubeVideoHandler().process_video(msg, bot)
             return
