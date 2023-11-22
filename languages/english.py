@@ -64,6 +64,7 @@ account_details = ("""
 
 💰 Balance: {} Toman
 🤝 Number of Referrals: {}
+💲 Your Profit From Referrals: {} Toman
 
 🚀 To recharge your account, use the '*'Recharge Account'*' button, and for referrals, use the '*'Referral*' button!
 

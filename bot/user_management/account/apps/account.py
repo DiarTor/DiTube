@@ -22,6 +22,7 @@ def show_account_details(msg: telebot.types.Message, bot: telebot.TeleBot):
     formated_user_total_downloads_size = "{:.1f}".format(user_total_downloads_size)
     formatted_balance = format_number_with_commas(users_collection.find_one({"user_id": user.id})["balance"])
     user_referrals = len(users_collection.find_one({"user_id": user.id})["referrals"])
+    formatted_profit = format_number_with_commas(users_collection.find_one({"user_id": user.id})["referral_total_profit"])
     jalali_start_date = jdatetime.fromgregorian(
         datetime=datetime.datetime.strptime(user_register_date, "%Y-%m-%d %H:%M:%S"))
     user_jdate_register_date = jalali_start_date.strftime("%Y/%m/%d")
@@ -31,13 +32,15 @@ def show_account_details(msg: telebot.types.Message, bot: telebot.TeleBot):
                                                                                                     user_total_downloads,
                                                                                                     formated_user_total_downloads_size,
                                                                                                     formatted_balance,
-                                                                                                    user_referrals),
+                                                                                                    user_referrals,
+                                                                                                    formatted_profit),
                                                              english=english.account_details.format(user.id,
                                                                                                     user_register_date,
                                                                                                     user_total_downloads,
                                                                                                     formated_user_total_downloads_size,
                                                                                                     formatted_balance,
-                                                                                                    user_referrals))
+                                                                                                    user_referrals,
+                                                                                                    formatted_profit))
 
     bot.send_message(chat_id=msg.chat.id, text=response,
                      reply_markup=KeyboardMarkupGenerator(user.id).account_buttons(),
