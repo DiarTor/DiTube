@@ -56,7 +56,7 @@ youre_connected_to_support = "You are now connected to the support section. Plea
 
 account_details = ("""
 👥 User ID: `{}`
-🌍 Language: Persian 🇮🇷
+🌍 Language: English 🇺🇸
 📅 Join Date: {}
 
 📥 Total Downloads: {}
