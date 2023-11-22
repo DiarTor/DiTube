@@ -1,6 +1,6 @@
 import telebot.types
 from bot.download_videos.get_video_information import get_only_filesize
-from bot.download_videos.process_video import process
+from bot.download_videos.process_video import process_video
 from bot.handlers.start_handler import StartCommandHandler
 from bot.user_management.utils.subscription_utils import SubscriptionManager
 from bot.user_management.utils.user_utils import UserManager
@@ -52,7 +52,7 @@ class CallbackHandler:
                 english=english.processing_message)
             self.bot.edit_message_text(processing_message, self.chat_id, message_id=self.callback.message.id)
 
-            process(msg=telebot.types.Message, bot=self.bot, link=link, quality_or_audio=res_code_or_vc,
+            process_video(msg=telebot.types.Message, bot=self.bot, link=link, quality_or_audio=res_code_or_vc,
                     chat_id=self.chat_id, user_id=self.callback.from_user.id)
 
             self.bot.delete_message(chat_id=self.chat_id, message_id=self.callback.message.message_id)
