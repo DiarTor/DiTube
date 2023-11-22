@@ -24,7 +24,7 @@ def send_video(msg: telebot.types.Message, bot: telebot.TeleBot, yt, chat_id, vi
     try:
         if media_type == "video":
             bot.send_video(chat_id=chat_id, video=open(video_path, "rb"), caption=caption, supports_streaming=True, thumbnail=thumbnail_url,
-                           duration=yt.duration,
+                           duration=yt.length,
                            reply_markup=keyboard)
         elif media_type == "audio":
             bot.send_audio(chat_id=chat_id, audio=open(video_path, "rb"), caption=caption, reply_markup=keyboard)
