@@ -21,7 +21,8 @@ def generate_code(msg: telebot.types.Message, bot: telebot.TeleBot):
             bot.send_message(chat_id=msg.chat.id, text="Please specify a credit amount. /gift <credit>")
             return
         giftcodes_collection.insert_one(
-            {"code": code, "credit": int(credit), "used": False,
+            {"code": code, "credit": int(credit), "created_by": msg.from_user.id, "used": False,
+             "used_by": None,
              "date": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")})
         bot.send_message(chat_id=msg.chat.id,
                          text=f"The Code Generated Successfuly !\nYour code : `{code}`\nCredit : {credit} Toman",
@@ -43,7 +44,7 @@ def redeem_giftcode(msg: telebot.types.Message, bot: telebot.TeleBot):
                              text=response.format(
                                  users_collection.find_one({"user_id": user.id})["balance"]),
                              reply_markup=KeyboardMarkupGenerator(user.id).homepage_buttons())
-            giftcodes_collection.update_one({"code": code}, {"$set": {"used": True}})
+            giftcodes_collection.update_one({"code": code}, {"$set": {"used": True, "used_by": user.id}})
             users_collection.update_one({"user_id": user.id}, {"$set": {"metadata.redeeming_code": False}})
         else:
             response = UserManager(user.id).return_response_based_on_language(persian=persian.code_already_redeemed,
