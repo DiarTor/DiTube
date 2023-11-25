@@ -3,8 +3,10 @@ class Plans:
     discount_percent = 20
     premiun_30_price = 48000
     premiun_60_price = 78000
-    premiun_30_final_price = premiun_30_price * discount_percent // 100 - premiun_30_price
-    premiun_60_final_price = premiun_60_price * discount_percent // 100 - premiun_60_price
+    premiun_30_final_price = premiun_30_price * discount_percent // 100
+    premiun_30_final_price = premiun_30_price - premiun_30_final_price
+    premiun_60_final_price = premiun_60_price * discount_percent // 100
+    premiun_60_final_price = premiun_60_price - premiun_60_final_price
 
     # download_links_last = 1 means 1 Hour
     free = {
