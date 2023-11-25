@@ -16,7 +16,7 @@ from bot.user_management.utils.button_utils import KeyboardMarkupGenerator
 from bot.user_management.utils.user_utils import UserManager
 from config.database import users_collection
 from languages import persian, english
-
+from bot.user_management.subscription.apps.buy_subscription import BuySubscription
 
 class MessageHandler:
     def __init__(self):
@@ -122,10 +122,7 @@ class MessageHandler:
 
     def handle_buy_subscription(self):
         # Handle the "Buy Subscription" Button
-        response = self.usermanager.return_response_based_on_language(
-            persian=persian.buy_subscription_currently_not_available,
-            english=english.buy_subscription_currently_not_available)
-        self.bot.reply_to(self.msg, response)
+        BuySubscription().list_subscriptions(self.msg, self.bot)
 
     def handle_account(self):
         # Handle the "Account" Button

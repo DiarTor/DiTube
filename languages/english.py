@@ -71,11 +71,10 @@ account_details = ("""
 @DiTubebot
 """)
 
-subscription_details = ("""🔸 Type: {}
-🟢 Status: {}
-💲 Price: {}
-📅 Start Date: {}
-❌ Expiry Date: {}
+subscription_details = ("""
+🔸 Type: {}
+⌛ Days Left: {} Days
+
 📏 Maximum Size per File: {} MB
 📆 Maximum Size per Day: {} MB
 💾 Used Size: {} MB
@@ -134,3 +133,41 @@ not_subscribed_to_channel = "You are not subscribed to our channel!"
 coming_soon = "⚡️Coming Soon..."
 
 buy_subscription_currently_not_available = "Currently not available, You can use the bot with the free subscription."
+
+subscriptions_list = """
+✳️ Subscription Plans:
+
+💥 By purchasing a premium subscription, you can access all the features of the bot!
+➕ Some features of the premium subscription include: increased download capacity, ad-free experience, and more...
+Just click on your desired subscription 😁
+➖➖➖➖➖➖
+🤖 @DiTubebot"""
+
+subscriptions_details = """
+🛍️ Type: Premium
+⏳️ Subscription Duration: {} Days
+🔽 Maximum Daily Download Volume: {} GB
+⏬ Maximum File Size: {}GB
+
+🌟 Subscription Features:
+1. Download in 1080p and higher !
+2. Ad-free experience!
+
+💸 Price: {} Toman
+🔥 Discount: {}% ({} Toman)
+🔰 Amount deducted from the account: {} Toman
+💲 Amount to be paid: {} Tomans
+
+❗ Please note that if your account balance is equal to the subscription amount, the subscription fee will be deducted from your account, and there is no need for online payment.
+➖➖➖➖➖➖
+🤖 @DiTubebot"""
+
+insufficient_balance = """
+❌ Your balance is not sufficient.
+⚜️ You can recharge your account in the *👤 Account* section.
+➖➖➖➖➖➖
+🤖 @DiTubebot"""
+
+subscription_bought = "You have successfully purchased a premium subscription."
+
+subscription_already_bought = "You already have a premium subscription."

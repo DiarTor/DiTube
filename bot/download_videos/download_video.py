@@ -2,16 +2,15 @@ import datetime
 import os
 
 from bot.common.utils import replace_invalid_characters_with_underscore
-from config.config import VIDEO_DOWNLOAD_DIR
 from moviepy.editor import VideoFileClip, AudioFileClip
 
 
 def download_yt_video(yt, quality):
     datetimenow = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
-
+    download_video_dir = "/videos/"
     def download_stream(stream, filename):
-        stream.download(output_path=VIDEO_DOWNLOAD_DIR, filename=filename)
-        return os.path.join(VIDEO_DOWNLOAD_DIR, filename)
+        stream.download(output_path=download_video_dir, filename=filename)
+        return os.path.join(download_video_dir, filename)
 
     if quality == "vc":
         audio = yt.streams.filter(only_audio=True).last()
@@ -33,7 +32,7 @@ def download_yt_video(yt, quality):
         if audio_of_video is not None:
             audio_title = replace_invalid_characters_with_underscore(yt.title)
             audio_path = download_stream(audio_of_video, f"{audio_title} {datetimenow}.mp3")
-            combined_output_path = os.path.join(VIDEO_DOWNLOAD_DIR, f"combined_{video_title}.mp4")
+            combined_output_path = os.path.join(download_video_dir, f"combined_{video_title}.mp4")
 
             with tempfile.NamedTemporaryFile(suffix=".mp4", delete=False) as temp_file:
                 temp_file_path = temp_file.name

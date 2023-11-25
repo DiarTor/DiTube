@@ -135,3 +135,45 @@ class KeyboardMarkupGenerator:
             buttons = [InlineKeyboardButton("👉 عضویت در کانال", url=channel_link),
                        InlineKeyboardButton("✅ عضو شدم", callback_data="check_joined")]
         return self._create_inline_keyboard(buttons)
+
+    def subscriptions_list_buttons(self):
+        """
+        Create subscriptions list buttons based on user language
+        :return:
+        list of buttons (InlineButton)
+        """
+        user_language = self.user_language
+        if user_language == 'en':
+            buttons = [InlineKeyboardButton("🥇 Premium (30 Days)", callback_data="premium_30_in_list"),
+                       InlineKeyboardButton("💎 Premium (60 Days)", callback_data="premium_60_in_list")]
+        else:
+            buttons = [InlineKeyboardButton("🥇 پرمیوم (30 روز)", callback_data="premium_30_in_list"),
+                       InlineKeyboardButton("💎 پرمیوم (60 روز)", callback_data="premium_60_in_list")]
+        return self._create_inline_keyboard(buttons)
+
+    def subscription_details_buttons(self, subscription_info):
+        """
+        Create subscription details buttons based on user language
+        :param subscription_info: pass in this format premium_30 or _60
+        :return:
+        list of buttons (InlineButton)
+        """
+        user_language = self.user_language
+        if user_language == 'en':
+            if subscription_info == "premium_30":
+                buttons = [InlineKeyboardButton("💳 Direct Payment", callback_data="buy_premium_30_direct_payment"),
+                           InlineKeyboardButton("🔋 From Account Charge", callback_data="buy_premium_30_account_charge")]
+            elif subscription_info == "premium_60":
+                buttons = [InlineKeyboardButton("💳 Buy Directly", callback_data="buy_premium_60_direct_payment"),
+                           InlineKeyboardButton("🔋 From Account Charge", callback_data="buy_premium_60_account_charge")]
+            buttons += [InlineKeyboardButton("↩️ Back", callback_data="back_to_subscriptions_list")]
+        else:
+            if subscription_info == "premium_30":
+                buttons = [InlineKeyboardButton("💳 پرداخت مستقیم", callback_data="buy_premium_30_direct_payment"),
+                           InlineKeyboardButton("🔋 پرداخت از شارژ حساب", callback_data="buy_premium_30_account_charge")]
+            elif subscription_info == "premium_60":
+                buttons = [InlineKeyboardButton("💳 پرداخت مستقیم", callback_data="buy_premium_60_direct_payment"),
+                           InlineKeyboardButton("🔋 پرداخت از شارژ حساب", callback_data="buy_premium_60_account_charge")]
+            buttons += [InlineKeyboardButton("↩️ بازگشت", callback_data="back_to_subscriptions_list")]
+
+        return self._create_inline_keyboard(buttons)
