@@ -2,9 +2,8 @@ import logging
 import threading
 
 import telebot
-from bot.handlers import start_handler, message_handler, callback_handler
-from bot.user_management.giftcode.apps import giftcode
-from bot.common.utils import reset_daily_data
+from bot.user_management.account.apps import giftcode
+from bot.common.utils import modify_daily_data
 from bot.handlers.start_handler import StartCommandHandler
 from bot.handlers.message_handler import MessageHandler
 from bot.handlers.callback_handler import CallbackHandler
@@ -24,6 +23,6 @@ bot.register_callback_query_handler(CallbackHandler().process_callback, pass_bot
 
 
 if __name__ == "__main__":
-    reset_thread = threading.Thread(target=reset_daily_data)
+    reset_thread = threading.Thread(target=modify_daily_data)
     reset_thread.start()
     bot.infinity_polling()

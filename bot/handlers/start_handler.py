@@ -1,8 +1,8 @@
 import datetime
 
 import telebot.types
-from bot.user_management.referral.apps.referral import referral_handler
-from bot.user_management.settings.apps.language import join_in_selecting_lang
+from bot.user_management.account.apps.referral import referral_handler
+from bot.user_management.account.apps.settings.language import join_in_selecting_lang
 from bot.user_management.utils.button_utils import KeyboardMarkupGenerator
 from bot.user_management.utils.user_utils import UserManager
 from config.database import users_collection
@@ -29,14 +29,9 @@ class StartCommandHandler:
                 "referraled": None,
                 "registered_at": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                 "subscription": {
-                    "type": "bronze",
-                    "status": "active",
-                    "price": 0,
-                    "start_date": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                    "expire_date": None,
-                    "auto_renew": False,
+                    "type": "free",
                     "max_file_size": 200,
-                    "max_data_per_day": 800,
+                    "max_data_per_day": 500,
                     "used_data": 0,
                     "remaining_data": 800,
                     "last_reset_date": datetime.date.today().strftime("%Y-%m-%d"),
