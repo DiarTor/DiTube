@@ -3,12 +3,12 @@ import re
 import telebot.types
 from bot.handlers.yt_link_handler import YouTubeVideoHandler
 from bot.user_management.account.apps.account import show_account_details
-from bot.user_management.giftcode.apps.giftcode import redeem_giftcode
-from bot.user_management.guide.apps.guide import send_guide_message
-from bot.user_management.my_subscription.apps.my_subscription import show_user_subscription_details
-from bot.user_management.settings.apps.language import join_in_selecting_lang
-from bot.user_management.settings.apps.language import selected_lang_is_en, selected_lang_is_fa
-from bot.user_management.settings.apps.settings import join_in_settings
+from bot.user_management.account.apps.giftcode import redeem_giftcode
+from bot.user_management.support.apps.guide import send_guide_message
+from bot.user_management.subscription.apps.my_subscription import show_user_subscription_details
+from bot.user_management.account.apps.settings.language import join_in_selecting_lang
+from bot.user_management.account.apps.settings.language import selected_lang_is_en, selected_lang_is_fa
+from bot.user_management.account.apps.settings.settings import join_in_settings
 from bot.user_management.support.apps.support import join_in_support, send_user_msg_to_support, \
     send_user_photo_to_support, \
     reply_to_user_support_msg
