@@ -4,9 +4,10 @@ from languages import persian, english
 from requests.exceptions import ConnectionError
 from telebot.apihelper import ApiTelegramException
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
+from pytube import YouTube
 
-
-def send_video(msg: telebot.types.Message, bot: telebot.TeleBot, yt, chat_id, video_path, user_id):
+def send_video(msg: telebot.types.Message, bot: telebot.TeleBot, link, chat_id, video_path, user_id):
+    yt = YouTube(link)
     if video_path.endswith((".mp4", ".mp3")):
         user_manager = UserManager(user_id)
         keyboard = InlineKeyboardMarkup().row(InlineKeyboardButton(

@@ -10,9 +10,9 @@ from pytube import YouTube
 
 
 def process_video(msg: telebot.types.Message, bot: telebot.TeleBot, link, quality_or_audio, chat_id, user_id):
+    video_path = download_yt_video(link, quality_or_audio)
     yt = YouTube(link)
-    video_path = download_yt_video(yt, quality_or_audio)
-    send_video(msg=msg, bot=bot, yt=yt, chat_id=chat_id, video_path=video_path, user_id=user_id)
+    send_video(msg=msg, bot=bot, link=link, chat_id=chat_id, video_path=video_path, user_id=user_id)
     os.remove(video_path)
     if quality_or_audio != "vc":
         res_code = quality_or_audio
