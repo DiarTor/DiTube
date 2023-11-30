@@ -122,7 +122,7 @@ class MessageHandler:
 
     def handle_buy_subscription(self):
         # Handle the "Buy Subscription" Button
-        BuySubscription().list_subscriptions(self.msg, self.bot)
+        BuySubscription().list_subscriptions(self.msg, self.bot, self.msg.from_user.id)
 
     def handle_account(self):
         # Handle the "Account" Button
