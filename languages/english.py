@@ -79,10 +79,12 @@ my_subscribtion_details = ("""
 📆 Maximum Size per Day: {} MB
 💾 Used Size: {} MB
 💼 Remaining Size: {} MB
-➖➖➖➖➖➖➖➖➖➖➖
+
+📔 Every *1* GB is equal to *1000* MB
 
 ⏱️ The daily subscription volume will be restarted and your subscription consumption will start again from zero.
 
+➖➖➖➖➖➖➖➖➖➖➖
 @DiTubebot""")
 
 joined_in_settings = "Please use the buttons below."
@@ -145,18 +147,20 @@ Just click on your desired subscription 😁
 
 subscriptions_details = """
 🛍️ Type: Premium
-⏳️ Subscription Duration: {} Days
-🔽 Maximum Daily Download Volume: {} GB
-⏬ Maximum File Size: {}GB
+⏳️ Subscription Duration: *{}* Days
+🔽 Maximum Daily Download Volume: *{}* GB
+⏬ Maximum File Size: *{}* GB
 
-🌟 Subscription Features:
+📔 Every *1* GB is equal to *1000* MB
+
+🌟 Subscription Sepcial Features:
 1. Download in 1080p and higher !
 2. Ad-free experience!
 
-💸 Price: {} Toman
-🔥 Discount: {}% ({} Toman)
-🔰 Amount deducted from the account: {} Toman
-💲 Amount to be paid: {} Tomans
+💸 Price: *{}* Toman
+🔥 Discount: *{}*% (*{}* Toman)
+🔰 Account Balance: *{}* Toman
+💲 Final Price: *{}* Toman
 
 ❗ Please note that if your account balance is equal to the subscription amount, the subscription fee will be deducted from your account, and there is no need for online payment.
 ➖➖➖➖➖➖

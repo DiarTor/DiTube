@@ -19,7 +19,7 @@ class BuySubscription(Plans):
 
     def show_subscription_details(self, msg: telebot.types.Message, bot: telebot.TeleBot, subscription, user_id):
         keyboard = KeyboardMarkupGenerator(user_id).subscription_details_buttons(subscription)
-        response = UserManager(msg.from_user.id).return_response_based_on_language(persian=persian.subscription_details,
+        response = UserManager(user_id).return_response_based_on_language(persian=persian.subscription_details,
                                                                                    english=english.subscriptions_details)
         format_number_with_commas = lambda number: f"{number:,}"
         if subscription == 'premium_30':
