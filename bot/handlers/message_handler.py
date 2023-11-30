@@ -74,7 +74,7 @@ class MessageHandler:
             "↩️ Return": self.handle_return,
             "🛒 Buy Subscription": self.handle_buy_subscription,
             "👤 Account": self.handle_account,
-            "📋 My Subscription": self.handle_subscription,
+            "📋 My Subscription": self.handle_my_subscription,
             "🎁 Gift Code": self.handle_gift_code,
             "📖 Guide": self.handle_guide,
             "⚙️ Settings": self.handle_settings,
@@ -82,7 +82,7 @@ class MessageHandler:
             "↩️ بازگشت": self.handle_return,
             "🛒 خرید اشتراک": self.handle_buy_subscription,
             "👤 حساب کاربری": self.handle_account,
-            "📋 اشتراک من": self.handle_subscription,
+            "📋 اشتراک من": self.handle_my_subscription,
             "🎁 کد هدیه": self.handle_gift_code,
             "📖 راهنما": self.handle_guide,
             "⚙️ تنظیمات": self.handle_settings,
@@ -128,7 +128,7 @@ class MessageHandler:
         # Handle the "Account" Button
         show_account_details(self.msg, self.bot)
 
-    def handle_subscription(self):
+    def handle_my_subscription(self):
         # Handle the "My Subscription" Button
         show_user_subscription_details(self.msg, self.bot)
 

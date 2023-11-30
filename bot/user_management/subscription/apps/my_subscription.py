@@ -20,7 +20,7 @@ def show_user_subscription_details(msg: telebot.types.Message, bot: telebot.Tele
         max_file_size = subscription_data['max_file_size']
         max_data_per_day = subscription_data['max_data_per_day']
         formatted_subscription_type = type[subscription_type]
-        response = user_manager.return_response_based_on_language(english=english.subscription_details)
+        response = user_manager.return_response_based_on_language(english=english.my_subscribtion_details)
         response = response.format(formatted_subscription_type, days_left, max_file_size, max_data_per_day,
                                    formatted_used_data, formatted_remaining_data)
 
@@ -38,4 +38,4 @@ def show_user_subscription_details(msg: telebot.types.Message, bot: telebot.Tele
         response = response.format(formatted_subscription_type, days_left, max_file_size, max_data_per_day,
                                    formatted_used_data, formatted_remaining_data)
 
-        bot.send_message(msg.chat.id, response, parse_mode='markdown')
+    bot.send_message(msg.chat.id, response, parse_mode='markdown')

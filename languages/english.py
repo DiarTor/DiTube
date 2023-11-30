@@ -71,7 +71,7 @@ account_details = ("""
 @DiTubebot
 """)
 
-subscription_details = ("""
+my_subscribtion_details = ("""
 🔸 Type: {}
 ⌛ Days Left: {} Days
 
@@ -81,7 +81,7 @@ subscription_details = ("""
 💼 Remaining Size: {} MB
 ➖➖➖➖➖➖➖➖➖➖➖
 
-✨ If you want your subscription to be automatically renewed at a 10% discount after it expires, enable the auto-renewal option.
+⏱️ The daily subscription volume will be restarted and your subscription consumption will start again from zero.
 
 @DiTubebot""")
 
