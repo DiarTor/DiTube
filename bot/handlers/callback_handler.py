@@ -85,7 +85,7 @@ class CallbackHandler:
             BuySubscription().show_subscription_details(msg=self.callback.message, bot=self.bot,
                                                         subscription="premium_60", user_id=self.callback.from_user.id)
         elif data in {"buy_premium_30_account_charge", "buy_premium_60_account_charge"}:
-            BuySubscription().buy_via_account_charge(msg=self.callback.message, bot=self.bot, subscription=data, user_id=self.callback.from_user.id)
+            BuySubscription().buy_via_account_charge(msg=self.callback.message, bot=self.bot, subscription=data, user_id=self.callback.from_user.id, msg_id=self.callback.message.message_id)
         elif data == "back_to_subscriptions_list":
             BuySubscription().return_to_subscriptions_list(msg=self.callback.message, bot=self.bot, user_id=self.callback.from_user.id)
         elif data in {"charge_account", "auto_renew", "buy_premium_30_direct_payment", "buy_premium_60_direct_payment"}:

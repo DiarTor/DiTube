@@ -36,23 +36,20 @@ def modify_daily_data(interval_in_seconds=86400):
 
                     # Ensure 'days_left' doesn't go below zero
                     new_days_left = max(subscription_days_left - 1, 0)
-
-                    result = users_collection.update_one(
-                        {'_id': user['_id']},
-                        {"$set": {
-                            "subscription.days_left": new_days_left,
-                            "subscription.used_data": 0,
-                            "subscription.remaining_data": daily_limit,
-                            "subscription.last_reset_date": current_date
-                        }}
-                    )
-
-                    print(
-                        f"User: {user['_id']}, Days Left: {new_days_left}, Matched: {result.matched_count}, Modified: {result.modified_count}")
                     if new_days_left == 0:
                         users_collection.update_one(
                             {'_id': user['_id']},
                             {"$set": {"subscription": Plans().free}}
+                        )
+                    else:
+                        result = users_collection.update_one(
+                            {'_id': user['_id']},
+                            {"$set": {
+                                "subscription.days_left": new_days_left,
+                                "subscription.used_data": 0,
+                                "subscription.remaining_data": daily_limit,
+                                "subscription.last_reset_date": current_date
+                            }}
                         )
                 elif user['subscription']['type'] == 'free':
                     users_collection.update_one(
@@ -63,7 +60,7 @@ def modify_daily_data(interval_in_seconds=86400):
                             "subscription.last_reset_date": current_date
                         }}
                     )
-
+            print(f"{current_date} - Daily data modified successfully!")
             time.sleep(interval_in_seconds)
         except Exception as e:
             print(f"An error occurred: {str(e)}")

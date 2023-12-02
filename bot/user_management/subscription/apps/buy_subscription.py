@@ -48,7 +48,7 @@ class BuySubscription(Plans):
                                                                   persian=persian.subscriptions_list)
         bot.send_message(msg.chat.id, response, reply_markup=keyboard.subscriptions_list_buttons())
 
-    def buy_via_account_charge(self, msg: telebot.types.Message, bot: telebot.TeleBot, subscription, user_id):
+    def buy_via_account_charge(self, msg: telebot.types.Message, bot: telebot.TeleBot, subscription, user_id, msg_id):
         if re.search("premium_30", subscription):
             sub = self.premium_30
             sub_price = self.premiun_30_final_price
@@ -56,7 +56,7 @@ class BuySubscription(Plans):
             if user_balance < sub_price:
                 response = UserManager(user_id).return_response_based_on_language(
                     persian=persian.insufficient_balance, english=english.insufficient_balance)
-                bot.send_message(msg.chat.id, response, parse_mode='Markdown')
+                bot.edit_message_text(chat_id=msg.chat.id, message_id=msg_id, text=response, parse_mode='Markdown')
                 return
             elif user_balance >= sub_price:
                 if users_collection.find_one({"user_id": user_id})['subscription']['type'] == "free":
@@ -64,11 +64,17 @@ class BuySubscription(Plans):
                     users_collection.update_one({"user_id": user_id}, {"$set": {"subscription": sub}})
                     response = UserManager(user_id).return_response_based_on_language(
                         persian=persian.subscription_bought, english=english.subscription_bought)
-                    bot.send_message(msg.chat.id, response, parse_mode='Markdown')
+                    if UserManager(user_id).get_user_language() == 'en':
+                        formatted_price = "{:,}".format(sub_price)
+                        response = response.format("30-day premium", formatted_price)
+                    elif UserManager(user_id).get_user_language() == 'fa':
+                        formatted_price = "{:,}".format(sub_price)
+                        response = response.format("پرمیوم 30 روزه", formatted_price)
+                    bot.edit_message_text(chat_id=msg.chat.id, message_id=msg_id, text=response, parse_mode='Markdown')
                 else:
                     response = UserManager(user_id).return_response_based_on_language(
                         persian=persian.subscription_already_bought, english=english.subscription_already_bought)
-                    bot.send_message(msg.chat.id, response, parse_mode='Markdown')
+                    bot.edit_message_text(chat_id=msg.chat.id, message_id=msg_id, text=response, parse_mode='Markdown')
         elif re.search("premium_60", subscription):
             sub = self.premium_60
             sub_price = self.premiun_60_final_price
@@ -76,7 +82,7 @@ class BuySubscription(Plans):
             if user_balance < sub_price:
                 response = UserManager(user_id).return_response_based_on_language(
                     persian=persian.insufficient_balance, english=english.insufficient_balance)
-                bot.send_message(msg.chat.id, response, parse_mode='Markdown')
+                bot.edit_message_text(chat_id=msg.chat.id, message_id=msg_id, text=response, parse_mode='Markdown')
                 return
             elif user_balance >= sub_price:
                 if users_collection.find_one({"user_id": user_id})['subscription']['type'] == "free":
@@ -84,8 +90,8 @@ class BuySubscription(Plans):
                     users_collection.update_one({"user_id": user_id}, {"$set": {"subscription": sub}})
                     response = UserManager(user_id).return_response_based_on_language(
                         persian=persian.subscription_bought, english=english.subscription_bought)
-                    bot.send_message(msg.chat.id, response, parse_mode='Markdown')
+                    bot.edit_message_text(chat_id=msg.chat.id, message_id=msg_id, text=response, parse_mode='Markdown')
                 else:
                     response = UserManager(user_id).return_response_based_on_language(
                         persian=persian.subscription_already_bought, english=english.subscription_already_bought)
-                    bot.send_message(msg.chat.id, response, parse_mode='Markdown')
+                    bot.edit_message_text(chat_id=msg.chat.id, message_id=msg_id, text=response, parse_mode='Markdown')

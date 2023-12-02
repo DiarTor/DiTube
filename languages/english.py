@@ -188,6 +188,6 @@ insufficient_balance = """
 ➖➖➖➖➖➖
 🤖 @DiTubebot"""
 
-subscription_bought = "You have successfully purchased a premium subscription."
+subscription_bought = "✅ You have successfully purchased *{}* subscription for *{}* Toman."
 
 subscription_already_bought = "You already have a premium subscription."
