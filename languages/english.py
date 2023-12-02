@@ -22,13 +22,29 @@ Use the buttons below to interact with the bot.
 unknown_request = "Sorry, I didn't understand your request. 🧐"
 
 guide = """
-         How to use *DiTube*:
-1. Send the video link.
-2. Choose the download option.
-3. Enjoy your downloaded video!
+😁 Downloading through our bot is very easy...
 
-🌐 *@DiarDev*
-🤖 *@DiTubebot*"""
+💫 *How to download from YouTube*:
+
+• Go to YouTube.
+• Copy the link of the video you want to download (both web address and video address work).
+• Send the link to the bot whenever you want, and it will download it for you.
+• That's it! 😄
+
+🔱 Examples of YouTube links:
+
+- https://youtu.be/
+- https://www.youtube.com/watch/
+- https://www.youtube.com/shorts/
+- https://youtube.com/shorts/
+
+➕ The bot supports both https:// and http:// addresses!
+
+❓ If you have any questions, you can contact us through support!
+
+➖➖➖➖➖➖
+🌐 @DiarDev
+🤖 @DiTubebot"""
 
 donate = "You can support the developer using one of the following methods. 😊\n\nGuide: \nCoffeete for Rial donations\nTron for digital currency donations\n\nCoffeete: [link](https://www.coffeete.ir/DiarTor)\nTron (TRX): `TJXeM5puLgWu8sHu96riZrrpxLxanvUB59`"
 
