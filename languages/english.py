@@ -156,7 +156,7 @@ subscriptions_list = """
 ✳️ Subscription Plans:
 
 💥 By purchasing a premium subscription, you can access all the features of the bot!
-➕ Some features of the premium subscription include: increased download capacity, ad-free experience, and more...
+➕ Some features of the premium subscription include: increased download capacity, ad-free experience, more download qualities and more...
 Just click on your desired subscription 😁
 ➖➖➖➖➖➖
 🤖 @DiTubebot"""
