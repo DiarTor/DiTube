@@ -134,9 +134,16 @@ cant_download_larger_than_50mb = "Unfortunately, you cannot currently download f
 
 connection_error = "❌Error connecting to the server"
 
-caption = "{}\n\n👀 Views: {}\n📝 Description:\n{}\n\n📅 Release Date: {} \n\n@DiTubebot"
+caption = """
+🎈 Title: *{}*
+📽️ Quality: *{}*
+👀 Views: *{}*
 
-creator_channel = "🆑 | Creator's YouTube Channel"
+🔗 Description: {}
+
+📅 Publication Date: *{}*
+➖➖➖➖➖➖
+🤖 @DiTubebot"""
 
 file_data_exceeded = "🚫 File size limit exceeded!"
 

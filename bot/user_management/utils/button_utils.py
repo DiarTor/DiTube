@@ -189,3 +189,18 @@ class KeyboardMarkupGenerator:
         else:
             buttons = [InlineKeyboardButton("💳 شارژ حساب", callback_data="charge_account")]
         return self._create_inline_keyboard(buttons)
+
+    def post_caption_buttons(self, channel_url, post_url):
+        """
+        Create post caption buttons based on user language
+        :return:
+        list of buttons (InlineButton)
+        """
+        user_language = self.user_language
+        if user_language == 'en':
+            buttons = [InlineKeyboardButton("🆑 | Creator YouTube Channel", url=channel_url),
+                       InlineKeyboardButton("🎥 | Watch in YouTube", url=post_url)]
+        else:
+            buttons = [InlineKeyboardButton("🆑 | کانال یوتیوب سازنده", url=channel_url),
+                       InlineKeyboardButton("🎥 | تماشا در یوتیوب", url=post_url)]
+        return self._create_inline_keyboard(buttons)
