@@ -177,3 +177,15 @@ class KeyboardMarkupGenerator:
             buttons += [InlineKeyboardButton("↩️ بازگشت", callback_data="back_to_subscriptions_list")]
 
         return self._create_inline_keyboard(buttons)
+    def charge_account_buttons(self):
+        """
+        Create charge account buttons based on user language
+        :return:
+        list of buttons (InlineButton)
+        """
+        user_language = self.user_language
+        if user_language == 'en':
+            buttons = [InlineKeyboardButton("💳 Charge Account", callback_data="charge_account")]
+        else:
+            buttons = [InlineKeyboardButton("💳 شارژ حساب", callback_data="charge_account")]
+        return self._create_inline_keyboard(buttons)
