@@ -75,7 +75,7 @@ class BuySubscription(Plans):
                     bot.edit_message_text(chat_id=msg.chat.id, message_id=msg_id, text=response, parse_mode='Markdown')
                 else:
                     response = UserManager(user_id).return_response_based_on_language(
-                        persian=persian.subscription_already_bought, english=english.subscription_already_bought)
+                        persian=persian.subscription_already_bought.format("پرمیوم 30 روزه"), english=english.subscription_already_bought.format("30-day premium"))
                     bot.edit_message_text(chat_id=msg.chat.id, message_id=msg_id, text=response, parse_mode='Markdown')
         elif re.search("premium_60", subscription):
             sub = self.premium_60
@@ -93,8 +93,14 @@ class BuySubscription(Plans):
                     users_collection.update_one({"user_id": user_id}, {"$set": {"subscription": sub}})
                     response = UserManager(user_id).return_response_based_on_language(
                         persian=persian.subscription_bought, english=english.subscription_bought)
+                    if UserManager(user_id).get_user_language() == 'en':
+                        formatted_price = "{:,}".format(sub_price)
+                        response = response.format("60-day premium", formatted_price)
+                    elif UserManager(user_id).get_user_language() == 'fa':
+                        formatted_price = "{:,}".format(sub_price)
+                        response = response.format("پرمیوم 60 روزه", formatted_price)
                     bot.edit_message_text(chat_id=msg.chat.id, message_id=msg_id, text=response, parse_mode='Markdown')
                 else:
                     response = UserManager(user_id).return_response_based_on_language(
-                        persian=persian.subscription_already_bought, english=english.subscription_already_bought)
+                        persian=persian.subscription_already_bought.format("پرمیوم 60 روزه"), english=english.subscription_already_bought.format("60-day premium"))
                     bot.edit_message_text(chat_id=msg.chat.id, message_id=msg_id, text=response, parse_mode='Markdown')

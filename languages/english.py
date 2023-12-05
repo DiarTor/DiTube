@@ -188,6 +188,15 @@ insufficient_balance = """❌ Your balance is not sufficient to purchase this su
 ➖➖➖➖➖➖
 🤖 @DiTubebot"""
 
-subscription_bought = "✅ You have successfully purchased *{}* subscription for *{}* Toman."
+subscription_bought = """
+✅ You have successfully purchased the *{}* subscription for *{}* Toman.
 
-subscription_already_bought = "You already have a premium subscription."
+🎉 Now you can enjoy all the features of the bot!
+"""
+
+
+subscription_already_bought = """
+❌ You have already purchased the {} subscription.
+
+♻️ Therefore, you cannot purchase this subscription again at the moment. Please wait until your current subscription expires to renew it.
+"""
