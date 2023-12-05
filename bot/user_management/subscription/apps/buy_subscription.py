@@ -58,8 +58,7 @@ class BuySubscription(Plans):
                 keyboard = KeyboardMarkupGenerator(user_id).charge_account_buttons()
                 response = UserManager(user_id).return_response_based_on_language(
                     persian=persian.insufficient_balance, english=english.insufficient_balance)
-                bot.edit_message_text(chat_id=msg.chat.id, message_id=msg_id, text=response, parse_mode='Markdown',
-                                      reply_markup=keyboard)
+                bot.send_message(msg.chat.id, response, reply_markup=keyboard, parse_mode='Markdown')
                 return
             elif user_balance >= sub_price:
                 if users_collection.find_one({"user_id": user_id})['subscription']['type'] == "free":
@@ -86,8 +85,7 @@ class BuySubscription(Plans):
                 keyboard = KeyboardMarkupGenerator(user_id).charge_account_buttons()
                 response = UserManager(user_id).return_response_based_on_language(
                     persian=persian.insufficient_balance, english=english.insufficient_balance)
-                bot.edit_message_text(chat_id=msg.chat.id, message_id=msg_id, text=response, parse_mode='Markdown',
-                                      reply_markup=keyboard)
+                bot.send_message(msg.chat.id, response, reply_markup=keyboard, parse_mode='Markdown')
                 return
             elif user_balance >= sub_price:
                 if users_collection.find_one({"user_id": user_id})['subscription']['type'] == "free":
