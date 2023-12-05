@@ -149,15 +149,13 @@ file_data_exceeded = "🚫 File size limit exceeded!"
 
 daily_limit_exceeded = "🚫 Daily limit exceeded!"
 
-cant_download_1080p = "❌You can't download 1080p! To gain access to this quality, please buy a subscription."
+cant_download_1080p = "❌You can't download 1080p! To gain access to this quality,from buy subscription section, buy a subscription."
 
 processing_message = "✨Processing..."
 
 not_subscribed_to_channel = "You are not subscribed to our channel!"
 
 coming_soon = "⚡️Coming Soon..."
-
-buy_subscription_currently_not_available = "Currently not available, You can use the bot with the free subscription."
 
 subscriptions_list = """
 ✳️ Subscription Plans:
