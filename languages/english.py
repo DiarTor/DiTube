@@ -184,7 +184,7 @@ subscriptions_details = """
 
 insufficient_balance = """
 ❌ Your balance is not sufficient.
-⚜️ You can recharge your account in the *👤 Account* section.
+⚜️ You can recharge your account in the *👤 Account* section, or you can use the button bloew.
 ➖➖➖➖➖➖
 🤖 @DiTubebot"""
 
