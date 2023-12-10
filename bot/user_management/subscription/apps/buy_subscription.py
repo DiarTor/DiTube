@@ -22,10 +22,10 @@ class BuySubscription(Plans):
         response = UserManager(user_id).return_response_based_on_language(persian=persian.subscription_details,
                                                                           english=english.subscriptions_details)
         format_number_with_commas = lambda number: f"{number:,}"
-        if subscription == 'premium_30':
-            sub = self.premium_30
-        elif subscription == 'premium_60':
-            sub = self.premium_60
+        if subscription == 'id_1':
+            sub = self.plans[1]
+        elif subscription == 'id_2':
+            sub = self.plans[2]
         formatted_max_data_per_day = sub['max_data_per_day'] // 1000
         formatted_max_file_size = sub['max_file_size'] // 1000
         user_balance = users_collection.find_one({"user_id": user_id})['balance']
@@ -50,9 +50,10 @@ class BuySubscription(Plans):
         bot.send_message(msg.chat.id, response, reply_markup=keyboard.subscriptions_list_buttons())
 
     def buy_via_account_charge(self, msg: telebot.types.Message, bot: telebot.TeleBot, subscription, user_id, msg_id):
-        if re.search("premium_30", subscription):
-            sub = self.premium_30
-            sub_price = self.premiun_30_final_price
+        if re.search("id_1", subscription):
+            the_user = users_collection.find_one({"user_id": user_id})
+            sub = self.plans[1]
+            sub_price = self.id_1_final_price
             user_balance = users_collection.find_one({"user_id": user_id})['balance']
             if user_balance < sub_price:
                 keyboard = KeyboardMarkupGenerator(user_id).charge_account_buttons()
@@ -75,11 +76,11 @@ class BuySubscription(Plans):
                     bot.edit_message_text(chat_id=msg.chat.id, message_id=msg_id, text=response, parse_mode='Markdown')
                 else:
                     response = UserManager(user_id).return_response_based_on_language(
-                        persian=persian.subscription_already_bought.format("پرمیوم 30 روزه"), english=english.subscription_already_bought.format("30-day premium"))
+                        persian=persian.subscription_already_bought.format("پرمیوم"), english=english.subscription_already_bought.format("Premium"))
                     bot.edit_message_text(chat_id=msg.chat.id, message_id=msg_id, text=response, parse_mode='Markdown')
-        elif re.search("premium_60", subscription):
-            sub = self.premium_60
-            sub_price = self.premiun_60_final_price
+        elif re.search("id_2", subscription):
+            sub = self.plans[2]
+            sub_price = self.id_2_final_price
             user_balance = users_collection.find_one({"user_id": user_id})['balance']
             if user_balance < sub_price:
                 keyboard = KeyboardMarkupGenerator(user_id).charge_account_buttons()
@@ -95,12 +96,12 @@ class BuySubscription(Plans):
                         persian=persian.subscription_bought, english=english.subscription_bought)
                     if UserManager(user_id).get_user_language() == 'en':
                         formatted_price = "{:,}".format(sub_price)
-                        response = response.format("60-day premium", formatted_price)
+                        response = response.format("90-day premium", formatted_price)
                     elif UserManager(user_id).get_user_language() == 'fa':
                         formatted_price = "{:,}".format(sub_price)
-                        response = response.format("پرمیوم 60 روزه", formatted_price)
+                        response = response.format("پرمیوم 90 روزه", formatted_price)
                     bot.edit_message_text(chat_id=msg.chat.id, message_id=msg_id, text=response, parse_mode='Markdown')
                 else:
                     response = UserManager(user_id).return_response_based_on_language(
-                        persian=persian.subscription_already_bought.format("پرمیوم 60 روزه"), english=english.subscription_already_bought.format("60-day premium"))
+                        persian=persian.subscription_already_bought.format("پرمیوم"), english=english.subscription_already_bought.format("Premium"))
                     bot.edit_message_text(chat_id=msg.chat.id, message_id=msg_id, text=response, parse_mode='Markdown')

@@ -144,11 +144,11 @@ class KeyboardMarkupGenerator:
         """
         user_language = self.user_language
         if user_language == 'en':
-            buttons = [InlineKeyboardButton("🥇 Premium (30 Days)", callback_data="premium_30_in_list"),
-                       InlineKeyboardButton("💎 Premium (60 Days)", callback_data="premium_60_in_list")]
+            buttons = [InlineKeyboardButton("🥇 Premium (30 Days)", callback_data="id_1_in_list"),
+                       InlineKeyboardButton("💎 Premium (90 Days)", callback_data="id_2_in_list")]
         else:
-            buttons = [InlineKeyboardButton("🥇 پرمیوم (30 روز)", callback_data="premium_30_in_list"),
-                       InlineKeyboardButton("💎 پرمیوم (60 روز)", callback_data="premium_60_in_list")]
+            buttons = [InlineKeyboardButton("🥇 پرمیوم (30 روز)", callback_data="id_1_in_list"),
+                       InlineKeyboardButton("💎 پرمیوم (90 روز)", callback_data="id_2_in_list")]
         return self._create_inline_keyboard(buttons)
 
     def subscription_details_buttons(self, subscription_info):
@@ -160,20 +160,20 @@ class KeyboardMarkupGenerator:
         """
         user_language = self.user_language
         if user_language == 'en':
-            if subscription_info == "premium_30":
-                buttons = [InlineKeyboardButton("💳 Direct Payment", callback_data="buy_premium_30_direct_payment"),
-                           InlineKeyboardButton("🔋 From Account Charge", callback_data="buy_premium_30_account_charge")]
-            elif subscription_info == "premium_60":
-                buttons = [InlineKeyboardButton("💳 Buy Directly", callback_data="buy_premium_60_direct_payment"),
-                           InlineKeyboardButton("🔋 From Account Charge", callback_data="buy_premium_60_account_charge")]
+            if subscription_info == "id_1":
+                buttons = [InlineKeyboardButton("💳 Direct Payment", callback_data="buy_id_1_direct_payment"),
+                           InlineKeyboardButton("🔋 From Account Charge", callback_data="buy_id_1_account_charge")]
+            elif subscription_info == "id_2":
+                buttons = [InlineKeyboardButton("💳 Buy Directly", callback_data="buy_id_2_direct_payment"),
+                           InlineKeyboardButton("🔋 From Account Charge", callback_data="buy_id_2_account_charge")]
             buttons += [InlineKeyboardButton("↩️ Back", callback_data="back_to_subscriptions_list")]
         else:
-            if subscription_info == "premium_30":
-                buttons = [InlineKeyboardButton("💳 پرداخت مستقیم", callback_data="buy_premium_30_direct_payment"),
-                           InlineKeyboardButton("🔋 پرداخت از شارژ حساب", callback_data="buy_premium_30_account_charge")]
-            elif subscription_info == "premium_60":
-                buttons = [InlineKeyboardButton("💳 پرداخت مستقیم", callback_data="buy_premium_60_direct_payment"),
-                           InlineKeyboardButton("🔋 پرداخت از شارژ حساب", callback_data="buy_premium_60_account_charge")]
+            if subscription_info == "id_1":
+                buttons = [InlineKeyboardButton("💳 پرداخت مستقیم", callback_data="buy_id_1_direct_payment"),
+                           InlineKeyboardButton("🔋 پرداخت از شارژ حساب", callback_data="buy_id_1_account_charge")]
+            elif subscription_info == "id_2":
+                buttons = [InlineKeyboardButton("💳 پرداخت مستقیم", callback_data="buy_id_2_direct_payment"),
+                           InlineKeyboardButton("🔋 پرداخت از شارژ حساب", callback_data="buy_id_2_account_charge")]
             buttons += [InlineKeyboardButton("↩️ بازگشت", callback_data="back_to_subscriptions_list")]
 
         return self._create_inline_keyboard(buttons)

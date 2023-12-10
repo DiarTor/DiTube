@@ -1,3 +1,5 @@
+import re
+
 import telebot.types
 from bot.download_videos.get_video_information import get_only_filesize
 from bot.download_videos.process_video import process_video
@@ -34,16 +36,22 @@ class CallbackHandler:
         user_lang = the_user["settings"]["language"]
         data = callback.data
         self.chat_id = callback.message.chat.id
-        if data not in {"invite_referrals", "charge_account", "auto_renew", "check_joined", "premium_30_in_list",
-                        "premium_60_in_list", "account_charge", "back_to_subscriptions_list",
-                        "buy_premium_30_direct_payment", "buy_premium_30_account_charge",
-                        "buy_premium_60_account_charge", "buy_premium_60_direct_payment"}:
+        print(data)
+        if any(re.search(pattern, data) for pattern in [
+            r'vc',
+            r'1080p',
+            r'720p',
+            r'480p',
+            r'360p',
+            r'240p',
+            r'144p',
+        ]):
             video_id, res_code_or_vc, chat_id = data.split(" ", 2)
             link = f"https://www.youtube.com/watch?v={video_id}"
             filesize = get_only_filesize(link, res_code_or_vc) if res_code_or_vc != "vc" else get_only_filesize(link)
 
             if not res_code_or_vc == "vc":
-                if res_code_or_vc == "1080p" and the_user['subscription']['type'] == "bronze":
+                if res_code_or_vc == "1080p" and the_user['subscription']['type'] == "free":
                     response = self.user_manager.return_response_based_on_language(persian=persian.cant_download_1080p,
                                                                                    english=english.cant_download_1080p)
                     self.send_error_message(response)
@@ -78,17 +86,20 @@ class CallbackHandler:
                 response = self.user_manager.return_response_based_on_language(
                     persian=persian.not_subscribed_to_channel, english=english.not_subscribed_to_channel)
                 self.bot.answer_callback_query(self.callback.id, response, show_alert=True)
-        elif data == "premium_30_in_list":
+        elif data == "id_1_in_list":
             BuySubscription().show_subscription_details(msg=self.callback.message, bot=self.bot,
-                                                        subscription="premium_30", user_id=self.callback.from_user.id)
-        elif data == "premium_60_in_list":
+                                                        subscription="id_1", user_id=self.callback.from_user.id)
+        elif data == "id_2_in_list":
             BuySubscription().show_subscription_details(msg=self.callback.message, bot=self.bot,
-                                                        subscription="premium_60", user_id=self.callback.from_user.id)
-        elif data in {"buy_premium_30_account_charge", "buy_premium_60_account_charge"}:
-            BuySubscription().buy_via_account_charge(msg=self.callback.message, bot=self.bot, subscription=data, user_id=self.callback.from_user.id, msg_id=self.callback.message.message_id)
+                                                        subscription="id_2", user_id=self.callback.from_user.id)
+        elif data in {"buy_id_1_account_charge", "buy_id_2_account_charge"}:
+            BuySubscription().buy_via_account_charge(msg=self.callback.message, bot=self.bot, subscription=data,
+                                                     user_id=self.callback.from_user.id,
+                                                     msg_id=self.callback.message.message_id)
         elif data == "back_to_subscriptions_list":
-            BuySubscription().return_to_subscriptions_list(msg=self.callback.message, bot=self.bot, user_id=self.callback.from_user.id)
-        elif data in {"charge_account", "auto_renew", "buy_premium_30_direct_payment", "buy_premium_60_direct_payment"}:
+            BuySubscription().return_to_subscriptions_list(msg=self.callback.message, bot=self.bot,
+                                                           user_id=self.callback.from_user.id)
+        elif data in {"charge_account", "auto_renew", "buy_id_1_direct_payment", "buy_id_2_direct_payment"}:
             response = self.user_manager.return_response_based_on_language(persian=persian.coming_soon,
                                                                            english=english.coming_soon)
             self.bot.answer_callback_query(self.callback.id, response)

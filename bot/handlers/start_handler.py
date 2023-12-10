@@ -35,16 +35,6 @@ class StartCommandHandler:
                     "used_data": 0,
                     "remaining_data": 800,
                     "last_reset_date": datetime.date.today().strftime("%Y-%m-%d"),
-                    "history": [
-                        {
-                            "event_type": "subscription_created",
-                            "subscription_type": "bronze",
-                            "price": 0,
-                            "subscription_date": "",
-                            "date": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                            "details": "User upgraded to free subscription",
-                        }
-                    ],
                 },
                 "downloads": [],
                 "settings": {
