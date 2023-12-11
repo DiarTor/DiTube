@@ -16,8 +16,9 @@ class ChargeAccount:
         keyboard = KeyboardMarkupGenerator(user_id).send_factor_to_admins_buttons(price=factor['price'],
                                                                                   factor_id=factor['id'],
                                                                                   user_id=user_id)
+        formatted_price = f"{factor['price']:,}"
         response = response.format("شارژ اکانت", factor['method'], factor['id'], user_id, username,
-                                   factor['price'], factor['created_date'],factor['status'])
+                                   formatted_price, factor['created_date'],factor['status'])
         bot.send_message(chat_id=factors_manager_gp, text=response, reply_markup=keyboard, parse_mode="markdown")
 
     def handle_return(self, msg: telebot.types.Message, bot: telebot.TeleBot, user_id, return_to):
