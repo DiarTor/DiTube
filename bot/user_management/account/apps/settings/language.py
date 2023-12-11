@@ -1,5 +1,5 @@
 import telebot.types
-from bot.user_management.utils.button_utils import KeyboardMarkupGenerator
+from bot.common.button_utils import KeyboardMarkupGenerator
 from config.database import users_collection
 from languages import persian, english
 from telebot.types import ReplyKeyboardMarkup, KeyboardButton

@@ -12,7 +12,7 @@ from bot.user_management.account.apps.settings.settings import join_in_settings
 from bot.user_management.support.apps.support import join_in_support, send_user_msg_to_support, \
     send_user_photo_to_support, \
     reply_to_user_support_msg
-from bot.user_management.utils.button_utils import KeyboardMarkupGenerator
+from bot.common.button_utils import KeyboardMarkupGenerator
 from bot.user_management.utils.user_utils import UserManager
 from config.database import users_collection
 from languages import persian, english

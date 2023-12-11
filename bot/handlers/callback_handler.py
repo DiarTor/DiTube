@@ -36,7 +36,6 @@ class CallbackHandler:
         user_lang = the_user["settings"]["language"]
         data = callback.data
         self.chat_id = callback.message.chat.id
-        print(data)
         if any(re.search(pattern, data) for pattern in [
             r'vc',
             r'1080p',
