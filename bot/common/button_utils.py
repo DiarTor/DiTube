@@ -1,3 +1,4 @@
+from bot.user_management.account.charge_account_plans import AccountChargePlans
 from bot.user_management.utils.user_utils import UserManager
 from telebot.types import KeyboardButton, ReplyKeyboardMarkup, InlineKeyboardMarkup, InlineKeyboardButton
 
@@ -177,6 +178,7 @@ class KeyboardMarkupGenerator:
             buttons += [InlineKeyboardButton("↩️ بازگشت", callback_data="back_to_subscriptions_list")]
 
         return self._create_inline_keyboard(buttons)
+
     def charge_account_buttons(self):
         """
         Create charge account buttons based on user language
@@ -203,4 +205,64 @@ class KeyboardMarkupGenerator:
         else:
             buttons = [InlineKeyboardButton("🆑 | کانال یوتیوب سازنده", url=channel_url),
                        InlineKeyboardButton("🎥 | تماشا در یوتیوب", url=post_url)]
+        return self._create_inline_keyboard(buttons)
+
+    def charge_account_methods_buttons(self):
+        """
+        Create charge account methods buttons based on user language
+        :return:
+        list of buttons (InlineButton)
+        """
+        user_language = self.user_language
+        if user_language == 'en':
+            buttons = [InlineKeyboardButton("📲 Payment Gateway", callback_data="payment_gateway"),
+                       InlineKeyboardButton("💳 Card to Card", callback_data="card_to_card"),
+                       InlineKeyboardButton("💲 Digital Currency", callback_data="digital_currency")]
+            buttons += [InlineKeyboardButton("↩️ Return", callback_data="return_to_my_account")]
+        else:
+            buttons = [InlineKeyboardButton("📲 درگاه پرداخت", callback_data="payment_gateway"),
+                       InlineKeyboardButton("💳 کارت به کارت", callback_data="card_to_card"),
+                       InlineKeyboardButton("💲 ارز دیجیتال", callback_data="digital_currency")]
+            buttons += [InlineKeyboardButton("↩️ بازگشت", callback_data="return_to_my_account")]
+
+        return self._create_inline_keyboard(buttons)
+
+    def charge_account_plans_buttons(self, method):
+        """
+        Create charge account plans buttons based on user language
+        m is method
+        p is price
+        :return:
+        list of buttons (InlineButton)
+        """
+        user_language = self.user_language
+        buttons = []
+        if user_language == 'en':
+            for i in AccountChargePlans.plans:
+                format_number_with_commas = lambda number: f"{number:,}"
+                formatted_price = format_number_with_commas(i)
+                button = InlineKeyboardButton(text=f"💵 {str(formatted_price)} Toman",
+                                              callback_data=f"m:{method} p:{str(i)}")
+                buttons.append(button)
+            buttons += [InlineKeyboardButton(text="↩️ Return", callback_data="return_to_charge_methods")]
+        elif user_language == 'fa':
+            for i in AccountChargePlans.plans:
+                format_number_with_commas = lambda number: f"{number:,}"
+                formatted_price = format_number_with_commas(i)
+                button = InlineKeyboardButton(text=f"💵 {str(formatted_price)} تومان",
+                                              callback_data=f"m:{method} p:{str(i)}")
+                buttons.append(button)
+            buttons += [InlineKeyboardButton(text="↩️ بازگشت", callback_data="return_to_charge_methods")]
+        return self._create_inline_keyboard(buttons)
+
+    def send_factor_to_admins_buttons(self, price, user_id, factor_id):
+        """
+        Create send factor to admins buttons based on user language
+        :return:
+        list of buttons (InlineButton)
+        """
+        user_language = self.user_language
+        buttons = [InlineKeyboardButton(text="✅ تایید", callback_data=f"confirm_factor {factor_id}"),
+                   InlineKeyboardButton(text="❌ رد", callback_data=f"deny_factor {factor_id}")]
+
         return self._create_inline_keyboard(buttons)

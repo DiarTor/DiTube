@@ -17,7 +17,7 @@ def join_in_support(msg: telebot.types.Message, bot: telebot.TeleBot):
 
 
 def send_user_msg_to_support(msg: telebot.types.Message, bot: telebot.TeleBot):
-    support_group_id = -4043182903
+    support_group_id = -4061658551
     response = UserManager(msg.from_user.id).return_response_based_on_language(
         persian=persian.your_message_was_sent_to_support,
         english=english.your_message_was_sent_to_support)
@@ -30,7 +30,7 @@ def send_user_msg_to_support(msg: telebot.types.Message, bot: telebot.TeleBot):
 
 
 def send_user_photo_to_support(msg: telebot.types.Message, bot: telebot.TeleBot):
-    support_group_id = -4043182903
+    support_group_id = -4061658551
     response = UserManager(msg.from_user.id).return_response_based_on_language(
         persian=persian.your_message_was_sent_to_support,
         english=english.your_message_was_sent_to_support)

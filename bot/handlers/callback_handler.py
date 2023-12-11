@@ -4,6 +4,7 @@ import telebot.types
 from bot.download_videos.get_video_information import get_only_filesize
 from bot.download_videos.process_video import process_video
 from bot.handlers.start_handler import StartCommandHandler
+from bot.user_management.account.apps.charge_account import ChargeAccount
 from bot.user_management.subscription.apps.buy_subscription import BuySubscription
 from bot.user_management.utils.subscription_utils import SubscriptionManager
 from bot.user_management.utils.user_utils import UserManager
@@ -98,7 +99,25 @@ class CallbackHandler:
         elif data == "back_to_subscriptions_list":
             BuySubscription().return_to_subscriptions_list(msg=self.callback.message, bot=self.bot,
                                                            user_id=self.callback.from_user.id)
-        elif data in {"charge_account", "auto_renew", "buy_id_1_direct_payment", "buy_id_2_direct_payment"}:
+        elif data == "charge_account":
+            ChargeAccount().show_charge_methods(msg=self.callback.message, bot=self.bot,
+                                                user_id=self.callback.from_user.id)
+        elif data in {"card_to_card"}:
+            ChargeAccount().show_plans_list(msg=self.callback.message, bot=self.bot, method=data,
+                                            user_id=self.callback.from_user.id)
+        elif "m:" in data:
+            # m: to check if selected payment method is in callback data
+            parts = data.split()
+            method = parts[0].split(":")[1]
+            price = int(parts[1].split(":")[1])
+            if method == "card_to_card":
+                ChargeAccount().generate_factor_card_to_card(msg=self.callback.message, bot=self.bot, price=price,
+                                                        user_id=self.callback.from_user.id)
+        elif data in {"return_to_charge_methods", "return_to_my_account"}:
+            ChargeAccount().handle_return(msg=self.callback.message, bot=self.bot, user_id=self.callback.from_user.id,
+                                          return_to=data)
+        elif data in {"auto_renew", "buy_id_1_direct_payment", "buy_id_2_direct_payment", "payment_gateway",
+                      "digital_currency"}:
             response = self.user_manager.return_response_based_on_language(persian=persian.coming_soon,
                                                                            english=english.coming_soon)
             self.bot.answer_callback_query(self.callback.id, response)
