@@ -1,7 +1,7 @@
 import datetime
 
 import telebot.types
-from bot.user_management.utils.button_utils import KeyboardMarkupGenerator
+from bot.common.button_utils import KeyboardMarkupGenerator
 from bot.user_management.utils.user_utils import UserManager
 from config.database import users_collection
 from jdatetime import datetime as jdatetime

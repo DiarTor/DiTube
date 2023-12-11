@@ -5,14 +5,14 @@ from bot.handlers.yt_link_handler import YouTubeVideoHandler
 from bot.user_management.account.apps.account import show_account_details
 from bot.user_management.account.apps.giftcode import redeem_giftcode
 from bot.user_management.support.apps.guide import send_guide_message
-from bot.user_management.subscription.apps.my_subscription import show_user_subscription_details
+from bot.user_management.subscription.apps.my_subscription import my_subscription_details
 from bot.user_management.account.apps.settings.language import join_in_selecting_lang
 from bot.user_management.account.apps.settings.language import selected_lang_is_en, selected_lang_is_fa
 from bot.user_management.account.apps.settings.settings import join_in_settings
 from bot.user_management.support.apps.support import join_in_support, send_user_msg_to_support, \
     send_user_photo_to_support, \
     reply_to_user_support_msg
-from bot.user_management.utils.button_utils import KeyboardMarkupGenerator
+from bot.common.button_utils import KeyboardMarkupGenerator
 from bot.user_management.utils.user_utils import UserManager
 from config.database import users_collection
 from languages import persian, english
@@ -131,7 +131,7 @@ class MessageHandler:
 
     def handle_my_subscription(self):
         # Handle the "My Subscription" Button
-        show_user_subscription_details(self.msg, self.bot)
+        my_subscription_details(self.msg, self.bot)
 
     def handle_gift_code(self):
         # Handle the "Gift Code" Button
