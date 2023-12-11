@@ -42,7 +42,7 @@ class BuySubscription(Plans):
         bot.edit_message_text(chat_id=msg.chat.id, message_id=msg.message_id, text=response, reply_markup=keyboard,
                               parse_mode='Markdown')
 
-    def list_subscriptions(self, msg: telebot.types.Message, bot: telebot.TeleBot, user_id):
+    def subscriptions_list(self, msg: telebot.types.Message, bot: telebot.TeleBot, user_id):
         keyboard = KeyboardMarkupGenerator(user_id)
         user_manager = UserManager(user_id)
         response = user_manager.return_response_based_on_language(english=english.subscriptions_list,

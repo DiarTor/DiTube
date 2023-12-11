@@ -2,7 +2,7 @@ import re
 
 import telebot.types
 from bot.handlers.yt_link_handler import YouTubeVideoHandler
-from bot.user_management.account.apps.account import show_account_details
+from bot.user_management.account.apps.my_account import MyAccount
 from bot.user_management.account.apps.giftcode import redeem_giftcode
 from bot.user_management.support.apps.guide import send_guide_message
 from bot.user_management.subscription.apps.my_subscription import my_subscription_details
@@ -23,7 +23,7 @@ class MessageHandler:
         """
         Initialize the MessageHandler class
         """
-        self.support_group_id = -4043182903
+        self.support_group_id = -4061658551
 
     def handle_message(self, msg: telebot.types.Message, bot: telebot.TeleBot):
         self.usermanager = UserManager(msg.from_user.id)
@@ -123,11 +123,11 @@ class MessageHandler:
 
     def handle_buy_subscription(self):
         # Handle the "Buy Subscription" Button
-        BuySubscription().list_subscriptions(self.msg, self.bot, self.msg.from_user.id)
+        BuySubscription().subscriptions_list(self.msg, self.bot, self.msg.from_user.id)
 
     def handle_account(self):
         # Handle the "Account" Button
-        show_account_details(self.msg, self.bot)
+        MyAccount().show_account_details(self.msg, self.bot)
 
     def handle_my_subscription(self):
         # Handle the "My Subscription" Button
