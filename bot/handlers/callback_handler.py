@@ -116,6 +116,13 @@ class CallbackHandler:
         elif data in {"return_to_charge_methods", "return_to_my_account"}:
             ChargeAccount().handle_return(msg=self.callback.message, bot=self.bot, user_id=self.callback.from_user.id,
                                           return_to=data)
+        elif "confirm_factor" in data or "deny_factor" in data:
+            parts = data.split(" ")
+            status = parts[0]
+            factor_id = parts[1]
+            ChargeAccount().factor_response(msg=self.callback.message, bot=self.bot, user_id=self.callback.from_user.id,
+                                            factor_id=factor_id,
+                                           status=status, callback_id=self.callback.id)
         elif data in {"auto_renew", "buy_id_1_direct_payment", "buy_id_2_direct_payment", "payment_gateway",
                       "digital_currency"}:
             response = self.user_manager.return_response_based_on_language(persian=persian.coming_soon,

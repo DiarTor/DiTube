@@ -255,7 +255,7 @@ class KeyboardMarkupGenerator:
             buttons += [InlineKeyboardButton(text="↩️ بازگشت", callback_data="return_to_charge_methods")]
         return self._create_inline_keyboard(buttons)
 
-    def send_factor_to_admins_buttons(self, price, user_id, factor_id):
+    def send_factor_to_admins_buttons(self, user_id, factor_id):
         """
         Create send factor to admins buttons based on user language
         :return:
