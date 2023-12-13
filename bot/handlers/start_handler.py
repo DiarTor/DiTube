@@ -28,6 +28,8 @@ class StartCommandHandler:
                 "referral_total_profit": 0,
                 "referraled": None,
                 "registered_at": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                "register_date": datetime.date.today().strftime("%Y-%m-%d"),
+                "register_time": datetime.datetime.now().strftime("%H:%M:%S"),
                 "subscription": {
                     "type": "free",
                     "max_file_size": 200,
