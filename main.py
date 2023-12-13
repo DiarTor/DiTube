@@ -6,7 +6,8 @@ from bot.common.utils import modify_daily_data
 from bot.handlers.callback_handler import CallbackHandler
 from bot.handlers.message_handler import MessageHandler
 from bot.handlers.start_handler import StartCommandHandler
-from bot.user_management.account.apps import giftcode
+from bot.user_management.admin.giftcode import generate_code
+from bot.user_management.admin.bot_stats import BotStats
 from config.token import bot_token
 
 logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO)
@@ -16,7 +17,8 @@ logger = logging.getLogger(__name__)
 bot = telebot.TeleBot(bot_token)
 
 bot.register_message_handler(StartCommandHandler().process_start_command, commands=["start"], pass_bot=True)
-bot.register_message_handler(giftcode.generate_code, commands=['gift'], pass_bot=True)
+bot.register_message_handler(generate_code, commands=['gift'], pass_bot=True)
+bot.register_message_handler(BotStats().process_command, commands=['stats'], pass_bot=True)
 bot.register_message_handler(MessageHandler().handle_message, content_types=['text'], pass_bot=True)
 bot.register_message_handler(MessageHandler().handle_photo, content_types=['photo'], pass_bot=True)
 
