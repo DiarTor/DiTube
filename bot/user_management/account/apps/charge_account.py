@@ -49,7 +49,9 @@ class ChargeAccount:
             "type": "charge_account",
             "created_date": iranian_time,
             "status": "pending",
+            "check_date_time": None,
             "check_date": None,
+            "check_time": None,
             "check_method": None,
             "payment_method": "card_to_card",
         }
@@ -63,7 +65,9 @@ class ChargeAccount:
 
     def factor_response(self, msg: telebot.types.Message, bot: telebot.TeleBot, user_id, factor_id, status,
                         callback_id):
-        date = JalaliDateTime.now().strftime("%Y-%m-%d %H:%M:%S")
+        date_time = JalaliDateTime.now().strftime("%Y-%m-%d %H:%M:%S")
+        date = JalaliDateTime.now().strftime("%Y-%m-%d")
+        time = JalaliDateTime.now().strftime("%H:%M:%S")
         factor_id = int(factor_id)
         factor = factors_collection.find_one({"id": factor_id})
         if factor['status'] in {"confirmed", "denied"}:
@@ -75,7 +79,7 @@ class ChargeAccount:
             factor_price = factor["price"] // 10
             users_collection.update_one({"user_id": user_id}, {"$inc": {"balance": factor_price}})
             factors_collection.update_one({"id": factor_id}, {
-                "$set": {"check_date": date, "status": "confirmed", "check_method": "manual"}})
+                "$set": {"check_date_time": date_time, "check_date": date, "check_time": time, "status": "confirmed", "check_method": "manual"}})
             response = UserManager(user_id).return_response_based_on_language(
                 persian=persian.charge_account_factor_confired)
             formatted_price = "{:,}".format(factor_price)
@@ -85,7 +89,7 @@ class ChargeAccount:
             bot.send_message(chat_id=user_id, text=response, parse_mode="markdown")
         elif status == "deny_factor":
             factors_collection.update_one({"id": factor_id},
-                                          {"$set": {"check_date": date, "status": "denied", "check_method": "manual"}})
+                                          {"$set": {"check_date_time": date_time, "check_date": date, "check_time": time, "status": "denied", "check_method": "manual"}})
             response = UserManager(user_id).return_response_based_on_language(
                 persian=persian.charge_account_factor_denied)
             response = response.format(factor_id)
