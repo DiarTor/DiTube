@@ -18,7 +18,7 @@ bot = telebot.TeleBot(bot_token)
 
 bot.register_message_handler(StartCommandHandler().process_start_command, commands=["start"], pass_bot=True)
 bot.register_message_handler(generate_code, commands=['gift'], pass_bot=True)
-bot.register_message_handler(BotStats().process_command, commands=['stats'], pass_bot=True)
+bot.register_message_handler(BotStats().process_command, commands=['stat'], pass_bot=True)
 bot.register_message_handler(MessageHandler().handle_message, content_types=['text'], pass_bot=True)
 bot.register_message_handler(MessageHandler().handle_photo, content_types=['photo'], pass_bot=True)
 
