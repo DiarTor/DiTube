@@ -67,7 +67,7 @@ class BotStats:
         for period, factors_filter in factors.items():
             factors_cursor = factors_collection.find(factors_filter)
             total_price = sum(factor["price"] for factor in factors_cursor)
-            formatted_total_price = f"{total_price:,} ریال"
+            formatted_total_price = f"{total_price:,}"
             factors_sum[period] = formatted_total_price
 
         response = persian.stats.format(
