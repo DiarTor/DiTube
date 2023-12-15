@@ -128,7 +128,7 @@ class KeyboardMarkupGenerator:
         """
 
         user_language = self.user_language
-        channel_link = "https://t.me/DiarDev"
+        channel_link = "https://t.me/DiTube"
         if user_language == 'en':
             buttons = [InlineKeyboardButton("👉 Join Channel", url=channel_link),
                        InlineKeyboardButton("✅ I Joined", callback_data="check_joined")]

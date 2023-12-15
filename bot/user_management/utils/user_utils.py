@@ -71,7 +71,7 @@ class UserManager:
         :param bot: An instance Of telebot.TeleBot
         :return: True if the user is subscribed to the channel, False otherwise
         """
-        channel_id = -1001594818741
+        channel_id = -1001992857973
         chat_member = bot.get_chat_member(chat_id=channel_id, user_id=msg.from_user.id)
         if chat_member.status in ["member", "administrator", "creator"]:
             return True
