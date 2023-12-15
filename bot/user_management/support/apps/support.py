@@ -2,50 +2,38 @@ import re
 
 import telebot.types
 from bot.common.button_utils import KeyboardMarkupGenerator
-from bot.user_management.utils.user_utils import UserManager
 from config.database import users_collection
-from languages import persian, english
+from languages import persian
 
 
 def join_in_support(msg: telebot.types.Message, bot: telebot.TeleBot):
-    response = UserManager(msg.from_user.id).return_response_based_on_language(
-        persian=persian.youre_connected_to_support,
-        english=english.youre_connected_to_support)
     users_collection.update_one({'user_id': msg.from_user.id}, {'$set': {"metadata.joined_in_support": True}})
-    bot.send_message(msg.chat.id, response,
+    bot.send_message(msg.chat.id, persian.youre_connected_to_support,
                      reply_markup=KeyboardMarkupGenerator(msg.from_user.id).return_buttons())
 
 
 def send_user_msg_to_support(msg: telebot.types.Message, bot: telebot.TeleBot):
     support_group_id = -4061658551
-    response = UserManager(msg.from_user.id).return_response_based_on_language(
-        persian=persian.your_message_was_sent_to_support,
-        english=english.your_message_was_sent_to_support)
     bot.send_message(chat_id=support_group_id,
                      text=f"Username: {msg.from_user.username}\nUser ID: `{msg.from_user.id}`\nChat ID : `{msg.chat.id}`\nMessage:\n\n {msg.text}",
                      parse_mode="Markdown")
-    bot.send_message(chat_id=msg.chat.id, text=response,
+    bot.send_message(chat_id=msg.chat.id, text=persian.your_message_was_sent_to_support,
                      reply_markup=KeyboardMarkupGenerator(msg.from_user.id).homepage_buttons())
     users_collection.update_one({'user_id': msg.from_user.id}, {'$set': {"metadata.joined_in_support": False}})
 
 
 def send_user_photo_to_support(msg: telebot.types.Message, bot: telebot.TeleBot):
     support_group_id = -4061658551
-    response = UserManager(msg.from_user.id).return_response_based_on_language(
-        persian=persian.your_message_was_sent_to_support,
-        english=english.your_message_was_sent_to_support)
     bot.send_photo(chat_id=support_group_id, photo=msg.photo[-1].file_id,
                    caption=f"Username: {msg.from_user.username}\nUser ID: `{msg.from_user.id}`\nChat ID : `{msg.chat.id}`",
                    parse_mode="Markdown")
-    bot.send_message(chat_id=msg.chat.id, text=response,
+    bot.send_message(chat_id=msg.chat.id, text=persian.your_message_was_sent_to_support,
                      reply_markup=KeyboardMarkupGenerator(msg.from_user.id).homepage_buttons())
     users_collection.update_one({'user_id': msg.from_user.id}, {'$set': {"metadata.joined_in_support": False}})
 
 
 def reply_to_user_support_msg(msg: telebot.types.Message, bot: telebot.TeleBot):
-    reply_response_template = UserManager(msg.from_user.id).return_response_based_on_language(
-        persian=persian.reciving_message_from_support,
-        english=english.reciving_message_from_support)
+    reply_response_template = persian.reciving_message_from_support
     reply_response = msg.reply_to_message
     if reply_response.text:
         reply_response = reply_response.text

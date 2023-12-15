@@ -2,9 +2,8 @@ from urllib.error import HTTPError, URLError
 
 import telebot
 from bot.download_videos.get_video_information import get_video_options, get_only_filesize
-from bot.user_management.utils.user_utils import UserManager
 from config.database import users_collection
-from languages import persian, english
+from languages import persian
 from pytube import YouTube
 from pytube.exceptions import AgeRestrictedError
 from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup
@@ -33,13 +32,10 @@ class YouTubeVideoHandler:
             return sorted(video_options, key=lambda x: int(x.split()[0].split('p')[0]), reverse=True)
         except (AgeRestrictedError, HTTPError, URLError):
             if AgeRestrictedError:
-                text_fa = persian.age_restricted_exception
-                text_en = english.age_restricted_exception
+                error_response = persian.age_restricted_exception
             else:
-                text_fa = persian.server_error
-                text_en = english.server_error
-            response = self.usermanager.return_response_based_on_language(persian=text_fa, english=text_en)
-            self.handle_exceptions(response, msg_id=self.msg.message_id)
+                error_response = persian.server_error
+            self.handle_exceptions(error_response, msg_id=self.msg.message_id)
             return []
 
     def create_keyboard(self, video_options):
@@ -82,11 +78,7 @@ class YouTubeVideoHandler:
         self.user_message_text = msg.text
         self.chat_id = msg.chat.id
         self.user_lang = users_collection.find_one({"user_id": self.user.id})["settings"]["language"]
-        self.usermanager = UserManager(self.user.id)
-        geting_info_response = self.usermanager.return_response_based_on_language(
-            persian=persian.getting_media_link_information,
-            english=english.getting_media_link_information)
-        message_info = bot.send_message(self.chat_id, geting_info_response,
+        message_info = bot.send_message(self.chat_id, persian.getting_media_link_information,
                                         reply_to_message_id=msg.message_id)
 
         self.yt = YouTube(self.user_message_text)
@@ -95,7 +87,5 @@ class YouTubeVideoHandler:
             return
 
         reply_markup = self.create_keyboard(video_options)
-        response = self.usermanager.return_response_based_on_language(persian=persian.select_download_option,
-                                                                      english=english.select_download_option)
-        bot.edit_message_text(text=response, chat_id=self.chat_id, message_id=message_info.id,
+        bot.edit_message_text(text=persian.select_download_option, chat_id=self.chat_id, message_id=message_info.id,
                               reply_markup=reply_markup)

@@ -1,43 +1,27 @@
 import datetime
 
+import jdatetime
 import telebot
 from config.database import users_collection, factors_collection
 from languages import persian
-from persiantools.jdatetime import JalaliDate
 
 
 class BotStats:
-    def _get_today_date(self):
-        return datetime.datetime.now().date().strftime("%Y-%m-%d")
+    def _get_today_jdate(self):
+        return jdatetime.date.today().strftime("%Y/%m/%d")
 
     def _get_yesterday_date(self):
-        yesterday = datetime.datetime.now().date() - datetime.timedelta(days=1)
-        return yesterday.strftime("%Y-%m-%d")
+        yesterday = jdatetime.date.today() - datetime.timedelta(days=1)
+        return yesterday.strftime("%Y/%m/%d")
 
     def _get_this_week_start_date(self):
-        today = datetime.datetime.now().date()
+        today = jdatetime.date.today()
         this_week_start = today - datetime.timedelta(days=today.weekday())
         this_week_dates = [this_week_start + datetime.timedelta(days=i) for i in range(7)]
-        return [date.strftime("%Y-%m-%d") for date in this_week_dates]
+        return [date.strftime("%Y/%m/%d") for date in this_week_dates]
 
     def _get_this_month_start_date(self):
-        return datetime.date.today().replace(day=1).strftime("%Y-%m-%d")
-
-    def _get_today_jdate(self):
-        return JalaliDate.today().strftime("%Y-%m-%d")
-
-    def _get_yesterday_jdate(self):
-        yesterday = JalaliDate.today() - datetime.timedelta(days=1)
-        return yesterday.strftime("%Y-%m-%d")
-
-    def _get_this_week_start_jdate(self):
-        today = JalaliDate.today()
-        this_week_start = today - datetime.timedelta(days=today.weekday())
-        this_week_dates = [this_week_start + datetime.timedelta(days=i) for i in range(7)]
-        return [date.strftime("%Y-%m-%d") for date in this_week_dates]
-
-    def _get_this_month_start_jdate(self):
-        return JalaliDate.today().replace(day=1).strftime("%Y-%m-%d")
+        return jd.date().today().replace(day=1).strftime("%Y/%m/%d")
 
     def get_bot_stats(self, msg: telebot.types.Message, bot: telebot.TeleBot):
         # users:
@@ -58,9 +42,9 @@ class BotStats:
         # income:
         factors = {
             "امروز": {"check_date": self._get_today_jdate(), "status": "confirmed"},
-            "دیروز": {"check_date": self._get_yesterday_jdate(), "status": "confirmed"},
-            "این هفته": {"check_date": {"$in": self._get_this_week_start_jdate()}, "status": "confirmed"},
-            "این ماه": {"check_date": {"$gte": self._get_this_month_start_jdate()}, "status": "confirmed"},
+            "دیروز": {"check_date": self._get_yesterday_date(), "status": "confirmed"},
+            "این هفته": {"check_date": {"$in": self._get_this_week_start_date()}, "status": "confirmed"},
+            "این ماه": {"check_date": {"$gte": self._get_this_month_start_date()}, "status": "confirmed"},
             "کل": {"status": "confirmed"},
         }
         factors_sum = {}

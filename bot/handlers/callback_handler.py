@@ -9,7 +9,7 @@ from bot.user_management.subscription.apps.buy_subscription import BuySubscripti
 from bot.user_management.utils.subscription_utils import SubscriptionManager
 from bot.user_management.utils.user_utils import UserManager
 from config.database import users_collection
-from languages import persian, english
+from languages import persian
 
 
 class CallbackHandler:
@@ -20,11 +20,9 @@ class CallbackHandler:
         subscription_manager = SubscriptionManager(self.callback.from_user.id, filesize)
         if subscription_manager.is_file_size_exceeded() or subscription_manager.is_daily_data_exceeded():
             if subscription_manager.is_file_size_exceeded():
-                response = self.user_manager.return_response_based_on_language(persian=persian.file_data_exceeded,
-                                                                               english=english.file_data_exceeded)
+                response = persian.file_data_exceeded
             elif subscription_manager.is_daily_data_exceeded():
-                response = self.user_manager.return_response_based_on_language(persian=persian.daily_limit_exceeded,
-                                                                               english=english.daily_limit_exceeded)
+                response = persian.daily_limit_exceeded
             self.send_error_message(response)
             return True
         return False
@@ -34,7 +32,6 @@ class CallbackHandler:
         self.bot = bot
         the_user = users_collection.find_one({"user_id": callback.from_user.id})
         self.user_manager = UserManager(callback.from_user.id)
-        user_lang = the_user["settings"]["language"]
         data = callback.data
         self.chat_id = callback.message.chat.id
         if any(re.search(pattern, data) for pattern in [
@@ -52,16 +49,13 @@ class CallbackHandler:
 
             if not res_code_or_vc == "vc":
                 if res_code_or_vc == "1080p" and the_user['subscription']['type'] == "free":
-                    response = self.user_manager.return_response_based_on_language(persian=persian.cant_download_1080p,
-                                                                                   english=english.cant_download_1080p)
-                    self.send_error_message(response)
+                    self.send_error_message(persian.cant_download_1080p)
                     return
 
             if self.check_subscription_limit(filesize):
                 return
 
-            processing_message = self.user_manager.return_response_based_on_language(persian=persian.processing_message,
-                                                                                     english=english.processing_message)
+            processing_message = persian.processing_message
             self.bot.edit_message_text(processing_message, self.chat_id, message_id=self.callback.message.id)
 
             process_video(msg=telebot.types.Message, bot=self.bot, link=link, quality_or_audio=res_code_or_vc,
@@ -71,21 +65,17 @@ class CallbackHandler:
             SubscriptionManager(self.callback.from_user.id, filesize).change_user_subscription_data()
 
         elif data == "invite_referrals":
-            referral_banner = self.user_manager.return_response_based_on_language(
-                persian=persian.invite_referral_banner, english=english.invite_referral_banner)
+            referral_banner = persian.invite_referral_banner
             referral_link = f'https://t.me/DitubeBot?start=ref_{self.callback.from_user.id}'
             self.bot.send_message(self.chat_id, referral_banner.format(referral_link))
-            self.bot.send_message(self.chat_id, self.user_manager.return_response_based_on_language(
-                persian=persian.invite_referral_guide, english=english.invite_referral_guide))
+            self.bot.send_message(self.chat_id, persian.invite_referral_guide)
 
         elif data == "check_joined":
             if self.user_manager.is_subscribed_to_channel(callback, bot):
                 StartCommandHandler().process_start_command(callback.message, bot)
                 bot.delete_message(chat_id=self.chat_id, message_id=self.callback.message.message_id)
             else:
-                response = self.user_manager.return_response_based_on_language(
-                    persian=persian.not_subscribed_to_channel, english=english.not_subscribed_to_channel)
-                self.bot.answer_callback_query(self.callback.id, response, show_alert=True)
+                self.bot.answer_callback_query(self.callback.id, persian.not_subscribed_to_channel, show_alert=True)
         elif data == "id_1_in_list":
             BuySubscription().show_subscription_details(msg=self.callback.message, bot=self.bot,
                                                         subscription="id_1", user_id=self.callback.from_user.id)
@@ -112,7 +102,7 @@ class CallbackHandler:
             price = int(parts[1].split(":")[1])
             if method == "card_to_card":
                 ChargeAccount().generate_factor_card_to_card(msg=self.callback.message, bot=self.bot, price=price,
-                                                        user_id=self.callback.from_user.id)
+                                                             user_id=self.callback.from_user.id)
         elif data in {"return_to_charge_methods", "return_to_my_account"}:
             ChargeAccount().handle_return(msg=self.callback.message, bot=self.bot, user_id=self.callback.from_user.id,
                                           return_to=data)
@@ -122,9 +112,7 @@ class CallbackHandler:
             factor_id = parts[1]
             ChargeAccount().factor_response(msg=self.callback.message, bot=self.bot,
                                             factor_id=factor_id,
-                                           status=status, callback_id=self.callback.id)
+                                            status=status, callback_id=self.callback.id)
         elif data in {"auto_renew", "buy_id_1_direct_payment", "buy_id_2_direct_payment", "payment_gateway",
                       "digital_currency"}:
-            response = self.user_manager.return_response_based_on_language(persian=persian.coming_soon,
-                                                                           english=english.coming_soon)
-            self.bot.answer_callback_query(self.callback.id, response)
+            self.bot.answer_callback_query(self.callback.id, persian.coming_soon)

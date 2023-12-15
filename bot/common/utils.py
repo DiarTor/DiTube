@@ -1,8 +1,8 @@
-import datetime
 import time
 
 from bot.user_management.subscription.plans import Plans
 from config.database import users_collection
+import jdatetime
 
 
 def replace_invalid_characters_with_underscore(input_string: str) -> str:
@@ -26,7 +26,7 @@ def modify_daily_data(interval_in_seconds=86400):
     """
     while True:
         try:
-            current_date = datetime.date.today().strftime("%Y-%m-%d")
+            current_date = jdatetime.date.today().strftime("%Y/%m/%d")
             users = users_collection.find({"subscription.last_reset_date": {"$ne": current_date}})
 
             for user in users:

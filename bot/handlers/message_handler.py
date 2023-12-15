@@ -1,22 +1,20 @@
 import re
 
 import telebot.types
+from bot.common.button_utils import KeyboardMarkupGenerator
 from bot.handlers.yt_link_handler import YouTubeVideoHandler
-from bot.user_management.account.apps.my_account import MyAccount
 from bot.user_management.account.apps.giftcode import redeem_giftcode
-from bot.user_management.support.apps.guide import send_guide_message
+from bot.user_management.account.apps.my_account import MyAccount
+from bot.user_management.subscription.apps.buy_subscription import BuySubscription
 from bot.user_management.subscription.apps.my_subscription import my_subscription_details
-from bot.user_management.account.apps.settings.language import join_in_selecting_lang
-from bot.user_management.account.apps.settings.language import selected_lang_is_en, selected_lang_is_fa
-from bot.user_management.account.apps.settings.settings import join_in_settings
+from bot.user_management.support.apps.guide import send_guide_message
 from bot.user_management.support.apps.support import join_in_support, send_user_msg_to_support, \
     send_user_photo_to_support, \
     reply_to_user_support_msg
-from bot.common.button_utils import KeyboardMarkupGenerator
 from bot.user_management.utils.user_utils import UserManager
 from config.database import users_collection
-from languages import persian, english
-from bot.user_management.subscription.apps.buy_subscription import BuySubscription
+from languages import persian
+
 
 class MessageHandler:
     def __init__(self):
@@ -35,20 +33,13 @@ class MessageHandler:
         self.the_user = users_collection.find_one({"user_id": msg.from_user.id})
         # Check if the user is subscribed to the channel
         if not self.usermanager.is_subscribed_to_channel(msg, bot):
-            response = self.usermanager.return_response_based_on_language(persian=persian.subscribe_to_channel,
-                                                                          english=english.subscribe_to_channel)
-            bot.send_message(self.chat_id, response,
+            bot.send_message(self.chat_id, persian.subscribe_to_channel,
                              reply_markup=self.keyboardgenerator.subscribe_to_channel_buttons())
             return
 
         # Check if the user is new and requires a restart
         if not users_collection.find_one({"user_id": msg.from_user.id}):
-            bot.reply_to(msg, f"{persian.restart_required}\n\n{english.restart_required}")
-            return
-
-        if self.the_user['settings']['language'] == 'not_selected' and self.user_message_text not in {'🇮🇷فارسی',
-                                                                                                      '🇺🇸English'}:
-            join_in_selecting_lang(msg, bot)
+            bot.reply_to(msg, persian.restart_required)
             return
 
         # Check if the message is a reply in the support group
@@ -72,21 +63,12 @@ class MessageHandler:
 
         # Handle specific commands
         command_handlers = {
-            "↩️ Return": self.handle_return,
-            "🛒 Buy Subscription": self.handle_buy_subscription,
-            "👤 Account": self.handle_account,
-            "📋 My Subscription": self.handle_my_subscription,
-            "🎁 Gift Code": self.handle_gift_code,
-            "📖 Guide": self.handle_guide,
-            "⚙️ Settings": self.handle_settings,
-            "📞 Support": self.handle_support,
             "↩️ بازگشت": self.handle_return,
             "🛒 خرید اشتراک": self.handle_buy_subscription,
             "👤 حساب کاربری": self.handle_account,
             "📋 اشتراک من": self.handle_my_subscription,
             "🎁 کد هدیه": self.handle_gift_code,
             "📖 راهنما": self.handle_guide,
-            "⚙️ تنظیمات": self.handle_settings,
             "📞 پشتیبانی": self.handle_support
         }
 
@@ -98,27 +80,19 @@ class MessageHandler:
         # Check for other conditions
         if self.the_user['metadata']["redeeming_code"]:
             redeem_giftcode(msg, bot)
-        elif self.the_user['metadata']["joined_in_settings"]:
-            self.handle_joined_settings()
-        elif self.the_user['metadata']["selecting_language"]:
-            self.handle_selecting_language()
+
+
         elif self.the_user['metadata']["joined_in_support"]:
             send_user_msg_to_support(msg, bot)
-        elif self.usermanager.get_user_language() == "not_selected":
-            self.the_user['metadata']["selecting_language"] = True
-            bot.reply_to(msg, f"{persian.restart_required}\n\n{english.restart}")
+
         else:
-            if not self.the_user['settings']['language'] == 'not_selected':
-                response = self.usermanager.return_response_based_on_language(persian=persian.unknown_request,
-                                                                              english=english.unknown_request)
-                bot.reply_to(msg, response)
+            bot.reply_to(msg, persian.unknown_request)
 
     def handle_return(self):
         # Handle the "Return" command
-        response = self.usermanager.return_response_based_on_language(persian=persian.returned_to_homepage,
-                                                                      english=english.returned_to_homepage)
-        self.bot.send_message(self.chat_id, response, reply_markup=self.keyboardgenerator.homepage_buttons())
-        for field in ["selecting_language", "joined_in_settings", "redeeming_code", "joined_in_support"]:
+        self.bot.send_message(self.chat_id, persian.returned_to_homepage,
+                              reply_markup=self.keyboardgenerator.homepage_buttons())
+        for field in ["redeeming_code", "joined_in_support"]:
             users_collection.update_one({"_id": self.the_user["_id"]}, {"$set": {"metadata." + field: False}})
 
     def handle_buy_subscription(self):
@@ -135,9 +109,8 @@ class MessageHandler:
 
     def handle_gift_code(self):
         # Handle the "Gift Code" Button
-        response = self.usermanager.return_response_based_on_language(persian=persian.send_the_giftcode,
-                                                                      english=english.send_the_giftcode)
-        self.bot.send_message(self.chat_id, response, reply_markup=self.keyboardgenerator.return_buttons())
+        self.bot.send_message(self.chat_id, persian.send_the_giftcode,
+                              reply_markup=self.keyboardgenerator.return_buttons())
         users_collection.update_one(filter={"_id": self.the_user["_id"]},
                                     update={"$set": {"metadata.redeeming_code": True}})
 
@@ -145,31 +118,9 @@ class MessageHandler:
         # Handle the "Guide" Button
         send_guide_message(self.msg, self.bot)
 
-    def handle_settings(self):
-        # Handle the "Settings" Button
-        join_in_settings(self.msg, self.bot)
-
     def handle_support(self):
         # Handle the "Support" Button
         join_in_support(self.msg, self.bot)
-
-    def handle_joined_settings(self):
-        # Handle when the user has joined settings
-        if self.user_message_text == "🌐 Change Language" or self.user_message_text == "🌐 تغییر زبان":
-            join_in_selecting_lang(self.msg, self.bot)
-            users_collection.update_one(filter={"_id": self.the_user["_id"]},
-                                        update={"$set": {"metadata.joined_in_settings": False}})
-        else:
-            response = self.usermanager.return_response_based_on_language(persian=persian.unknown_request,
-                                                                          english=english.unknown_request)
-            self.bot.reply_to(self.msg, self.response)
-
-    def handle_selecting_language(self):
-        # Handle when the user is selecting a language
-        if self.user_message_text == "🇮🇷فارسی":
-            selected_lang_is_fa(self.msg, self.bot)
-        elif self.user_message_text == "🇺🇸English":
-            selected_lang_is_en(self.msg, self.bot)
 
     def handle_photo(self, msg: telebot.types.Message, bot: telebot.TeleBot):
         the_user = users_collection.find_one({"user_id": msg.from_user.id})
@@ -177,3 +128,4 @@ class MessageHandler:
             reply_to_user_support_msg(msg, bot)
         if the_user['metadata']["joined_in_support"] == True:
             send_user_photo_to_support(msg, bot)
+        # todo : test if the bot response if the user send a photo

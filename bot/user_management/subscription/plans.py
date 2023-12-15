@@ -1,8 +1,8 @@
-import datetime
+from jdatetime import datetime
 class Plans:
-    discount_percent = 30
+    discount_percent = 20
     id_1_price = 48000
-    id_2_price = 120000
+    id_2_price = 118000
     id_1_final_price = id_1_price * discount_percent // 100
     id_1_final_price = id_1_price - id_1_final_price
     id_2_final_price = id_2_price * discount_percent // 100
@@ -20,7 +20,7 @@ class Plans:
             "quality_limit": "720p",
             "ads": True,
             "download_links_last": 1,
-            "last_reset_date": datetime.date.today().strftime("%Y-%m-%d"),
+            "last_reset_date": datetime.today().strftime("%Y-%m-%d"),
         },
         {
             "id": 1,
@@ -37,7 +37,7 @@ class Plans:
             "quality_limit": "1080p",
             "ads": False,
             "download_links_last": 24,
-            "last_reset_date": datetime.date.today().strftime("%Y-%m-%d"),
+            "last_reset_date": datetime.today().strftime("%Y-%m-%d"),
         },
         {
             "id": 2,
@@ -54,6 +54,6 @@ class Plans:
             "quality_limit": "1080p",
             "ads": False,
             "download_links_last": 24,
-            "last_reset_date": datetime.date.today().strftime("%Y-%m-%d"),
+            "last_reset_date": datetime.today().strftime("%Y-%m-%d"),
         }
     ]

@@ -1,7 +1,7 @@
-import datetime
 import random
 import string
 
+import jdatetime
 import telebot
 from config.database import giftcodes_collection
 
@@ -21,10 +21,12 @@ def generate_code(msg: telebot.types.Message, bot: telebot.TeleBot):
             giftcodes_collection.insert_one(
                 {"code": code, "credit": int(credit), "created_by": msg.from_user.id, "used": False,
                  "used_by": None,
-                 "date": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")})
+                 "used_date": None,
+                 "create_date": jdatetime.datetime.now().strftime("%Y/%m/%d %H:%M:%S")})
             formatted_credit = "{:,}".format(int(credit))
             bot.send_message(chat_id=msg.chat.id,
-                             text="✅ کد هدیه با موفقیت ایجاد شد. \nکد: `{}` \nاعتبار: `{}` تومان".format(code, formatted_credit),
+                             text="✅ کد هدیه با موفقیت ایجاد شد. \nکد: `{}` \nاعتبار: `{}` تومان".format(code,
+                                                                                                         formatted_credit),
                              parse_mode="Markdown")
         except ValueError:
             bot.send_message(chat_id=msg.chat.id, text="❌ لطفا اعتبار را به صورت عدد وارد کنید.")

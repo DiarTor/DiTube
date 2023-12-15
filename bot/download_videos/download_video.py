@@ -1,13 +1,13 @@
-import datetime
 import os
 
+import jdatetime
 from bot.common.utils import replace_invalid_characters_with_underscore
 from pytube import YouTube
 
 
 def download_yt_video(link, quality):
     yt = YouTube(link)
-    datetimenow = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+    datetimenow = jdatetime.datetime.now().strftime("%Y%m%d%H%M%S")
     download_video_dir = "/videos/"
 
     def download_stream(stream, filename):

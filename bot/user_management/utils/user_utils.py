@@ -29,18 +29,6 @@ class UserManager:
             logging.error(f"Error retrieving user data: {e}")
             return None
 
-    def get_user_language(self) -> str:
-        """
-        Get the language setting for the user.
-
-        :return: fa(Farsi), en(English), or not_selected(if the user has not selected a language)
-        """
-
-        if self.user:
-            return self.user['settings']['language']
-        else:
-            return "not_selected"
-
     def get_user_subscription_details(self) -> dict:
         """
         Get details about the user's subscription.
@@ -51,18 +39,6 @@ class UserManager:
             return self.user.get("subscription", {})
         else:
             return {}
-
-    def return_response_based_on_language(self, english=None, persian=None) -> str:
-        """
-        Generate a response based on the user's language setting.
-        :param english: The response in English.
-        :param persian: The response in Persian.
-        :return: The response based on the user's language setting.
-        """
-
-        user_language = self.get_user_language()
-        response = english if user_language == "en" else persian
-        return response
 
     def is_subscribed_to_channel(self, msg, bot):
         """
