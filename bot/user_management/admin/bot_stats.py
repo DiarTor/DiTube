@@ -110,7 +110,7 @@ class BotStats:
             bot.send_message(user_id,
                              persian.your_balance_changed_by_admin.format(formatted_old_balance, formatted_new_balance,
                                                                           message), parse_mode="Markdown")
-        except IndexError:
+        except (IndexError, ValueError):
             bot.send_message(msg.chat.id,
                              "❌ لطفا دستور را به این صورت وارد کنید:\n /inc_balance [ایدی عددی کاربر] [اعتبار] [پیام]")
 
