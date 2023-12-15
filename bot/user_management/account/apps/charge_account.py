@@ -42,6 +42,7 @@ class ChargeAccount:
 
     def generate_factor_card_to_card(self, msg: telebot.types.Message, bot: telebot.TeleBot, price, user_id):
         iranian_time = JalaliDateTime.now().strftime("%Y-%m-%d %H:%M:%S")
+        user_username = users_collection.find_one({"user_id": user_id})["user_name"]
         data = {
             "id": random.Random().randint(100000, 999999),
             "user_id": user_id,
@@ -61,15 +62,18 @@ class ChargeAccount:
         formatted_price = "{:,}".format(factor["price"])
         response = response.format(factor["id"], formatted_price)
         bot.edit_message_text(response, msg.chat.id, message_id=msg.message_id, parse_mode="markdown")
-        self.send_factor_to_admins(msg, bot, user_id, msg.from_user.username, factor)
+        self.send_factor_to_admins(msg, bot, user_id, f"@{user_username}", factor)
 
-    def factor_response(self, msg: telebot.types.Message, bot: telebot.TeleBot, user_id, factor_id, status,
+    def factor_response(self, msg: telebot.types.Message, bot: telebot.TeleBot, factor_id, status,
                         callback_id):
         date_time = JalaliDateTime.now().strftime("%Y-%m-%d %H:%M:%S")
         date = JalaliDateTime.now().strftime("%Y-%m-%d")
         time = JalaliDateTime.now().strftime("%H:%M:%S")
         factor_id = int(factor_id)
         factor = factors_collection.find_one({"id": factor_id})
+        user = users_collection.find_one({"user_id": factor['user_id']})
+        user_id = user['user_id']
+        user_username = user['user_name']
         if factor['status'] in {"confirmed", "denied"}:
             response = UserManager(user_id).return_response_based_on_language(
                 persian=persian.charge_account_factor_already_confirmed_denined)

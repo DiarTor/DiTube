@@ -120,7 +120,7 @@ class CallbackHandler:
             parts = data.split(" ")
             status = parts[0]
             factor_id = parts[1]
-            ChargeAccount().factor_response(msg=self.callback.message, bot=self.bot, user_id=self.callback.from_user.id,
+            ChargeAccount().factor_response(msg=self.callback.message, bot=self.bot,
                                             factor_id=factor_id,
                                            status=status, callback_id=self.callback.id)
         elif data in {"auto_renew", "buy_id_1_direct_payment", "buy_id_2_direct_payment", "payment_gateway",
