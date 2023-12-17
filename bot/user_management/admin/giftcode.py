@@ -15,7 +15,7 @@ def generate_code(msg: telebot.types.Message, bot: telebot.TeleBot):
         except IndexError:
             credit = None
         if not credit:
-            bot.send_message(chat_id=msg.chat.id, text="❌ لطفا دستور را به این صورت وارد کنید:\n/generate_giftcode [اعتبار]")
+            bot.send_message(chat_id=msg.chat.id, text="❌ لطفا دستور را به این صورت وارد کنید:\n /generate_giftcode [Credit]")
             return
         try:
             giftcodes_collection.insert_one(

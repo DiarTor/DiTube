@@ -17,9 +17,11 @@ logger = logging.getLogger(__name__)
 
 bot = telebot.TeleBot(bot_token)
 
-bot.register_message_handler(BotAdministration().send_message_to_all_users, commands=['send_message_to_all'], pass_bot=True)
-bot.register_message_handler(UserAdministration().include_user_balance, commands=['include_balance'], pass_bot=True)
+bot.register_message_handler(UserAdministration().send_message_to_premium_users, commands=['send_message_to_premium_users'], pass_bot=True)
+bot.register_message_handler(UserAdministration().send_message_to_free_users, commands=['send_message_to_free_users'], pass_bot=True)
+bot.register_message_handler(UserAdministration().send_message_to_all_users, commands=['send_message_to_all'], pass_bot=True)
 bot.register_message_handler(UserAdministration().send_message_to_user, commands=['send_message_to_user'], pass_bot=True)
+bot.register_message_handler(UserAdministration().include_user_balance, commands=['include_balance'], pass_bot=True)
 bot.register_message_handler(StartCommandHandler().process_start_command, commands=["start"], pass_bot=True)
 bot.register_message_handler(BotAdministration().admin_commands_help, commands=['ahelp'], pass_bot=True)
 bot.register_message_handler(UserAdministration().get_user_stat, commands=['user_stat'], pass_bot=True)

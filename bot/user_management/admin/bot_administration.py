@@ -78,23 +78,6 @@ class BotAdministration:
 
         bot.send_message(msg.chat.id, response, parse_mode="Markdown")
 
-    def send_message_to_all_users(self, msg: telebot.types.Message, bot: telebot.TeleBot):
-        if not self._is_admin(msg.from_user.id):
-            return
-
-        try:
-            args = msg.text.split()
-            msg.text = " ".join(args[1:])
-            message = msg.text
-            users = users_collection.find()
-            for user in users:
-                if user['user_id'] == 6967607104:
-                    continue
-                bot.send_message(user['user_id'], message)
-            bot.send_message(msg.chat.id, "✅ پیام شما به همه کاربران ارسال شد")
-        except (IndexError, ValueError, ApiTelegramException) as e:
-            bot.send_message(msg.chat.id, "❌ لطفا دستور را به این صورت وارد کنید: /send_message_to_all <پیام>")
-
     def admin_commands_help(self, msg: telebot.types.Message, bot: telebot.TeleBot):
         if not self._is_admin(msg.from_user.id):
             return
