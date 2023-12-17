@@ -6,7 +6,8 @@ from bot.common.utils import modify_daily_data
 from bot.handlers.callback_handler import CallbackHandler
 from bot.handlers.message_handler import MessageHandler
 from bot.handlers.start_handler import StartCommandHandler
-from bot.user_management.admin.bot_stats import BotStats
+from bot.user_management.admin.bot_administration import BotAdministration
+from bot.user_management.admin.user_administration import UserAdministration
 from bot.user_management.admin.giftcode import generate_code
 from config.token import bot_token
 
@@ -16,11 +17,14 @@ logger = logging.getLogger(__name__)
 
 bot = telebot.TeleBot(bot_token)
 
+bot.register_message_handler(BotAdministration().send_message_to_all_users, commands=['send_message_to_all'], pass_bot=True)
+bot.register_message_handler(UserAdministration().include_user_balance, commands=['include_balance'], pass_bot=True)
+bot.register_message_handler(UserAdministration().send_message_to_user, commands=['send_message_to_user'], pass_bot=True)
 bot.register_message_handler(StartCommandHandler().process_start_command, commands=["start"], pass_bot=True)
-bot.register_message_handler(BotStats().include_user_balance, commands=['inc_balance'], pass_bot=True)
-bot.register_message_handler(BotStats().get_user_stat, commands=['user_stat'], pass_bot=True)
-bot.register_message_handler(BotStats().get_bot_stats, commands=['stat'], pass_bot=True)
-bot.register_message_handler(generate_code, commands=['gift'], pass_bot=True)
+bot.register_message_handler(BotAdministration().admin_commands_help, commands=['ahelp'], pass_bot=True)
+bot.register_message_handler(UserAdministration().get_user_stat, commands=['user_stat'], pass_bot=True)
+bot.register_message_handler(BotAdministration().get_bot_stats, commands=['stat'], pass_bot=True)
+bot.register_message_handler(generate_code, commands=['generate_giftcode'], pass_bot=True)
 bot.register_message_handler(MessageHandler().handle_message, content_types=['text'], pass_bot=True)
 bot.register_message_handler(MessageHandler().handle_photo, content_types=['photo'], pass_bot=True)
 

@@ -23,7 +23,7 @@ class StartCommandHandler:
                 "register_time": jdatetime.datetime.now().strftime("%H:%M:%S"),
                 "subscription": {"type": "free", "max_file_size": 200, "max_data_per_day": 500, "used_data": 0,
                     "remaining_data": 500, "last_reset_date": jdatetime.date.today().strftime("%Y/%m/%d"), },
-                "downloads": [], "settings": {},
+                "downloads": [],
                 "metadata": {"first_time_starting": True, "redeeming_code": False, "joined_in_support": False
 
                 }, }
