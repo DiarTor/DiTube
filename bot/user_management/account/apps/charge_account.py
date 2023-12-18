@@ -91,7 +91,7 @@ class ChargeAccount:
             factors_collection.update_one({"id": factor_id},
                                           {"$set": {"check_date_time": date_time, "check_date": date,
                                                     "check_time": time, "status": "denied", "check_method": "manual"}})
-            response = persian.charge_account_factor_confired
+            response = persian.charge_account_factor_denied
             response = response.format(factor_id)
             bot.reply_to(msg, response, parse_mode="markdown")
             bot.send_message(chat_id=user_id, text=response, parse_mode="markdown")

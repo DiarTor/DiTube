@@ -56,12 +56,7 @@ class YouTubeVideoHandler:
 
         audio_file_size = get_only_filesize(self.user_message_text)
         formatted_size = "{:.1f}".format(audio_file_size)
-
-        if self.user_lang == "en":
-            kb.append([InlineKeyboardButton(f"Download Audio ({formatted_size} MB)",
-                                            callback_data=f"{self.yt.video_id} vc {self.chat_id}")])
-        else:
-            kb.append([InlineKeyboardButton(f"دانلود صدا ({formatted_size} MB)",
+        kb.append([InlineKeyboardButton(f"دانلود صدا ({formatted_size} MB)",
                                             callback_data=f"{self.yt.video_id} vc {self.chat_id}")])
 
         return InlineKeyboardMarkup(kb)
@@ -77,7 +72,6 @@ class YouTubeVideoHandler:
         self.user = msg.from_user
         self.user_message_text = msg.text
         self.chat_id = msg.chat.id
-        self.user_lang = users_collection.find_one({"user_id": self.user.id})["settings"]["language"]
         message_info = bot.send_message(self.chat_id, persian.getting_media_link_information,
                                         reply_to_message_id=msg.message_id)
 
