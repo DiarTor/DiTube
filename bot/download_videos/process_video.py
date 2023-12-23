@@ -30,6 +30,6 @@ def process_video(msg: telebot.types.Message, bot: telebot.TeleBot, link, qualit
             'type'],
         "date_time": jdatetime.datetime.now().strftime("%Y/%m/%d %H:%M:%S"),
         "date": jdatetime.date.today().strftime("%Y/%m/%d"),
-        "time": jdatetime.time.strftime("%H:%M:%S")
+        "time": jdatetime.datetime.now().strftime("%H:%M:%S")
     }
     users_collection.update_one({"user_id": user_id}, {"$push": {"downloads": download_entry}})

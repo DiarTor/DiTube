@@ -48,7 +48,8 @@ class CallbackHandler:
             filesize = get_only_filesize(link, res_code_or_vc) if res_code_or_vc != "vc" else get_only_filesize(link)
 
             if not res_code_or_vc == "vc":
-                if res_code_or_vc == "1080p" and the_user['subscription']['type'] == "free":
+                #todo : when you fix download 1080p add the line (and the_user['subscription']['type'] == "free")
+                if res_code_or_vc == "1080p":
                     self.send_error_message(persian.cant_download_1080p)
                     return
 
