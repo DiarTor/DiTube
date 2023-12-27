@@ -7,6 +7,17 @@ from telebot.apihelper import ApiTelegramException
 
 
 def send_video(msg: telebot.types.Message, bot: telebot.TeleBot, link, chat_id, video_path, user_id, quality):
+    """
+
+    :param msg: telebot.types.Message instance
+    :param bot: telebot.TeleBot instance
+    :param link: YouTube Video Link
+    :param chat_id: The telegram chat id
+    :param video_path: The downloaded video path on disk
+    :param user_id: The user id
+    :param quality: Resolution code (1080p,etc... or vc for audio)
+    :return: It send the video if everything is fine
+    """
     yt = YouTube(link)
     kb = KeyboardMarkupGenerator(user_id)
     if video_path.endswith((".mp4", ".mp3")):

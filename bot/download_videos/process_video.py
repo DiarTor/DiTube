@@ -10,6 +10,16 @@ from pytube import YouTube
 
 
 def process_video(msg: telebot.types.Message, bot: telebot.TeleBot, link, quality_or_audio, chat_id, user_id):
+    """
+
+    :param msg: telebot.types.Message instance
+    :param bot: telebot.TeleBot instance
+    :param link: YouTube Video Link
+    :param quality_or_audio: Resolution code (1080p,etc... or vc for audio)
+    :param chat_id: The telegram chat id
+    :param user_id: The user id
+    :return: it send the video and save some data in the database if everything is fine
+    """
     video_path = download_yt_video(link, quality_or_audio)
     yt = YouTube(link)
     send_video(msg=msg, bot=bot, link=link, chat_id=chat_id, video_path=video_path, user_id=user_id,

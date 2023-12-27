@@ -10,7 +10,19 @@ from languages import persian
 
 
 class ChargeAccount:
+    """
+    This handles charge account feature
+    """
     def send_factor_to_admins(self, msg: telebot.types.Message, bot: telebot.TeleBot, user_id, username, factor):
+        """
+        Send the factor details to the admin group
+        :param msg: telebot.types.Message instance
+        :param bot: telebot.TeleBot instance
+        :param user_id: The user id
+        :param username: the user telegram username (@example)
+        :param factor: the factor instance from the database
+        :return:
+        """
         factors_manager_gp = -4032391882
         response = persian.send_factor_message_to_admin
         keyboard = KeyboardMarkupGenerator(user_id).send_factor_to_admins_buttons(factor_id=factor['id'])
@@ -20,6 +32,14 @@ class ChargeAccount:
         bot.send_message(chat_id=factors_manager_gp, text=response, reply_markup=keyboard, parse_mode="markdown")
 
     def handle_return(self, msg: telebot.types.Message, bot: telebot.TeleBot, user_id, return_to):
+        """
+        it returns the user to the demaned message
+        :param msg: telebot.types.Message instance
+        :param bot: telebot.TeleBot instance
+        :param user_id: The user id
+        :param return_to: the message id you want to return the user to
+        :return: it return the user to the demanded message
+        """
         if return_to == 'return_to_my_account':
             kb = KeyboardMarkupGenerator(user_id).account_buttons()
             response = MyAccount().return_only_user_details_response(user_id=user_id)
@@ -29,15 +49,38 @@ class ChargeAccount:
             self.show_charge_methods(msg, bot, user_id)
 
     def show_charge_methods(self, msg: telebot.types.Message, bot: telebot.TeleBot, user_id):
+        """
+        Shows charge account methods
+        :param msg: telebot.types.Message instance
+        :param bot: telebot.TeleBot instance
+        :param user_id: The user id
+        :return: List of InlineKeyboard buttons showing charge account methods
+        """
         user_manager = UserManager(user_id)
         kb = KeyboardMarkupGenerator(user_id).charge_account_methods_buttons()
         bot.edit_message_text(persian.charge_account_methods, msg.chat.id, message_id=msg.message_id, reply_markup=kb)
 
     def show_plans_list(self, msg: telebot.types.Message, bot: telebot.TeleBot, method, user_id):
+        """
+        It shows charge account plans
+        :param msg: telebot.types.Message instance
+        :param bot: telebot.TeleBot instance
+        :param method: the method the user selected to pay for charging account
+        :param user_id: The user id
+        :return: a list of InlineKeyboard buttons with charge prices
+        """
         kb = KeyboardMarkupGenerator(user_id).charge_account_plans_buttons(method)
         bot.edit_message_text(persian.charge_account_plans, msg.chat.id, message_id=msg.message_id, reply_markup=kb)
 
     def generate_factor_card_to_card(self, msg: telebot.types.Message, bot: telebot.TeleBot, price, user_id):
+        """
+        it generate a factor with card_to_card method
+        :param msg: telebot.types.Message instance
+        :param bot: telebot.TeleBot instance
+        :param price: the choosen price of the factor
+        :param user_id: The user id
+        :return: it creates and send the factor if everything is fine
+        """
         date_time = jdatetime.datetime.now().strftime("%Y/%m/%d %H:%M:%S")
         user_username = users_collection.find_one({"user_id": user_id})["user_name"]
         data = {
@@ -63,6 +106,15 @@ class ChargeAccount:
 
     def factor_response(self, msg: telebot.types.Message, bot: telebot.TeleBot, factor_id, status,
                         callback_id):
+        """
+        Deny or confirm the factor
+        :param msg: telebot.types.Message instance
+        :param bot: telebot.TeleBot instance
+        :param factor_id: the factor id
+        :param status: the factor aproval status
+        :param callback_id: the callback id
+        :return: the factor result (confirmed, denied)
+        """
         date_time = jdatetime.datetime.now().strftime("%Y/%m/%d %H:%M:%S")
         date = jdatetime.date.today().strftime("%Y/%m/%d")
         time = jdatetime.datetime.now().strftime("%H:%M:%S")

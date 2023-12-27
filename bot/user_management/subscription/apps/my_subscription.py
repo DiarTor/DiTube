@@ -4,6 +4,11 @@ from languages import persian
 
 
 def my_subscription_details(msg: telebot.types.Message, bot: telebot.TeleBot):
+    """
+    Show my subscription details (type, days, remaining days, etc...)
+    :param msg: telebot.types.Message instance
+    :param bot: telebot.TeleBot instance
+    """
     user_manager = UserManager(msg.from_user.id)
     subscription_data = user_manager.get_user_subscription_details()
     used_data = subscription_data['used_data']

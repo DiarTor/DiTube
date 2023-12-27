@@ -5,6 +5,12 @@ from config.database import users_collection
 
 
 def referral_handler(msg: telebot.types.Message, bot: telebot.TeleBot, referral_user_id: int):
+    """
+    it proccess the user invited by referral link
+    :param msg: telebot.types.Message instance
+    :param bot: telebot.TeleBot instance
+    :param referral_user_id: the user id in the referral link
+    """
     the_user = users_collection.find_one({"user_id": msg.from_user.id})
     user_id = msg.from_user.id
     referral_code_match = re.search(r"ref_(\d+)", msg.text)

@@ -13,6 +13,9 @@ from languages import persian
 
 
 class CallbackHandler:
+    """
+    This class handles all Callback Queries
+    """
     def send_error_message(self, error_message):
         self.bot.answer_callback_query(self.callback.id, error_message, show_alert=True)
 

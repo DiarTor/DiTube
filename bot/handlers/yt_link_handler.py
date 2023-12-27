@@ -10,6 +10,9 @@ from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 
 class YouTubeVideoHandler:
+    """
+    This class handle YouTube Video Link
+    """
     def handle_exceptions(self, response, msg_id=None):
         """
         Handle exceptions by sending an error response to the user.

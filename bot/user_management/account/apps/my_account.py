@@ -7,6 +7,12 @@ from languages import persian
 
 class MyAccount:
     def show_account_details(self, msg: telebot.types.Message, bot: telebot.TeleBot):
+        """
+        show the user account details
+        :param msg: telebot.types.Message instance
+        :param bot: telebot.TeleBot instance
+        :return: Message that shows the user account details
+        """
         user = msg.from_user
         format_number_with_commas = lambda number: f"{number:,}"
         user_register_date = users_collection.find_one({"user_id": user.id})["register_date"]
@@ -29,6 +35,11 @@ class MyAccount:
                          reply_markup=KeyboardMarkupGenerator(user.id).account_buttons(), parse_mode="markdown")
 
     def return_only_user_details_response(self, user_id):
+        """
+        get user account details
+        :param user_id: the user id
+        :return: the user account details (dosent send it)
+        """
         usermanager = UserManager(user_id)
         format_number_with_commas = lambda number: f"{number:,}"
         user_register_date = users_collection.find_one({"user_id": user_id})["register_date"]

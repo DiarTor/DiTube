@@ -6,6 +6,12 @@ from pytube import YouTube
 
 
 def download_yt_video(link, quality):
+    """
+    This function download the YouTube Link with the specefic quality
+    :param link: YouTube Video Link
+    :param quality: Wanted Quality (1080p,etc... or vc for audio)
+    :return: The Downloaded Video Path In Disk
+    """
     yt = YouTube(link)
     datetimenow = jdatetime.datetime.now().strftime("%Y%m%d%H%M%S")
     download_video_dir = "/videos/"

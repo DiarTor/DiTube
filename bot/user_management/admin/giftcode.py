@@ -7,6 +7,12 @@ from config.database import giftcodes_collection
 
 
 def generate_code(msg: telebot.types.Message, bot: telebot.TeleBot):
+    """
+    Generate giftcode
+    :param msg: telebot.types.Message instance
+    :param bot: telebot.TeleBot instance
+    :return: the generated code
+    """
     admin = 1154909190
     if msg.from_user.id == admin:
         code = ''.join(random.choice(string.ascii_letters + string.digits) for i in range(10))

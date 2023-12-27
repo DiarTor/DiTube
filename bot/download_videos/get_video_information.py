@@ -2,6 +2,11 @@ from pytube import YouTube
 
 
 def get_video_options(yt):
+    """
+    Get the pytube.YouTube() instance video download options
+    :param yt: pytube.YouTube(link) instance
+    :return: sorted list of qualities ordered by resolution
+    """
     delay = 3
     retries = 3
     video_options = []
@@ -24,6 +29,12 @@ def get_video_options(yt):
 
 
 def get_only_filesize(url, res_code=None):
+    """
+    Get the video link with specefic quality file size
+    :param url: YouTube Video URL
+    :param res_code: Resolution Code (1080p,etc... or vc for audio)
+    :return: The filzesize of the YouTube Video
+    """
     yt = YouTube(url=url)
     if res_code == "1080p":
         filesize = yt.streams.filter(resolution="1080p").first().filesize_mb

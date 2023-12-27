@@ -4,20 +4,49 @@ from languages import persian
 from telebot.apihelper import ApiTelegramException
 
 class UserAdministration:
+    """
+    User managing commands
+    """
     def _is_admin(self, user_id):
+        """
+        Check if the user is admin
+        :param user_id: the user id
+        :return: True if admins False if not
+        """
         return user_id in {1154909190}
 
     def _get_user_by_id(self, user_id):
+        """
+        get the user from the database by user_id
+        :param user_id: the user id
+        :return: the user instance from database
+        """
         return users_collection.find_one({"user_id": user_id})
 
     def _get_formatted_balance(self, user):
+        """
+        format the user balance (ex: 1000000 -> 1,000,000)
+        :param user: the user instance from the database
+        :return: formatted user balance
+        """
         return f"{user['balance']:,}"
 
     def _get_formatted_total_charges(self, total_money_charged):
+        """
+        it format the total charges from the user confirmed factors
+        it also convert them into Toman insteaf of rial
+        :param total_money_charged: the user total charges
+        :return: formatted total users charges
+        """
         total_money_charged_to_toman = total_money_charged // 10
         return f"{total_money_charged_to_toman:,}"
 
     def include_user_balance(self, msg: telebot.types.Message, bot: telebot.TeleBot):
+        """
+        includes to the user balance
+        :param msg: telebot.types.Message instance
+        :param bot: telebot.TeleBot instance
+        """
         if not self._is_admin(msg.from_user.id):
             return
 
@@ -51,6 +80,12 @@ class UserAdministration:
                              "❌ لطفا دستور را به این صورت وارد کنید:\n /include_balance [User_id] [Credit] [Text]")
 
     def get_user_stat(self, msg: telebot.types.Message, bot: telebot.TeleBot):
+        """
+        get the user data from database (balance, downloads, etc...)
+        :param msg: telebot.types.Message instance
+        :param bot: telebot.TeleBot instance
+        :return: sends the message if everything is fine
+        """
         if not self._is_admin(msg.from_user.id):
             return
 
@@ -97,6 +132,12 @@ class UserAdministration:
             bot.send_message(msg.chat.id, "❌ لطفا دستور را به این صورت وارد کنید:\n/user_stat [User_id]")
 
     def send_message_to_user(self, msg: telebot.types.Message, bot: telebot.TeleBot):
+        """
+        sends a message to the user by their user_id
+        :param msg: telebot.types.Message instance
+        :param bot: telebot.TeleBot instance
+        :return: sends the message
+        """
         if not self._is_admin(msg.from_user.id):
             return
 
@@ -111,6 +152,12 @@ class UserAdministration:
                              "❌ لطفا دستور را به این صورت وارد کنید:\n/send_message_to_user [User_id] [Text]")
 
     def send_message_to_all_users(self, msg: telebot.types.Message, bot: telebot.TeleBot):
+        """
+        sends the message to all users
+        :param msg: telebot.types.Message instance
+        :param bot: telebot.TeleBot instance
+        :return: sends the message
+        """
         if not self._is_admin(msg.from_user.id):
             return
         try:
@@ -127,6 +174,12 @@ class UserAdministration:
             bot.send_message(msg.chat.id, "❌ لطفا دستور را به این صورت وارد کنید:\n/send_message_to_all [Text]")
 
     def send_message_to_free_users(self, msg:telebot.types.Message, bot:telebot.TeleBot):
+        """
+        send a message to the users with free subscription only
+        :param msg: telebot.types.Message instance
+        :param bot: telebot.TeleBot instance
+        :return: sends the message
+        """
         if not self._is_admin(msg.from_user.id):
             return
         try:
@@ -142,6 +195,12 @@ class UserAdministration:
         except (IndexError, ValueError, ApiTelegramException):
             bot.send_message(msg.chat.id, "❌ لطفا دستور را به این صورت وارد کنید:\n/send_message_to_free_users [Text]")
     def send_message_to_premium_users(self, msg:telebot.types.Message, bot:telebot.TeleBot):
+        """
+        send a message to the users with premium subscription only
+        :param msg: telebot.types.Message instance
+        :param bot: telebot.TeleBot instance
+        :return: sends the message
+        """
         if not self._is_admin(msg.from_user.id):
             return
         try:

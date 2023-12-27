@@ -1,5 +1,8 @@
 from jdatetime import datetime
 class Plans:
+    """
+    premium plans
+    """
     discount_percent = 20
     id_1_price = 48000
     id_2_price = 118000

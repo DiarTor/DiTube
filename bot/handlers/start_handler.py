@@ -8,6 +8,9 @@ from languages import persian
 
 
 class StartCommandHandler:
+    """
+    This Class hande /start Command and starting the bot by the user
+    """
     def create_default_user_data(self, msg: telebot.types.Message):
         """
         Create default user data if the user is new.

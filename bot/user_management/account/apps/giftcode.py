@@ -6,6 +6,12 @@ from languages import persian
 
 
 def redeem_giftcode(msg: telebot.types.Message, bot: telebot.TeleBot):
+    """
+    redeems the giftcode
+    :param msg: telebot.types.Message instance
+    :param bot: telebot.TeleBot instance
+    :return: Charge the account if True
+    """
     user = msg.from_user
     code = msg.text
     code_db = giftcodes_collection.find_one({"code": code})

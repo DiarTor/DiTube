@@ -17,6 +17,9 @@ from languages import persian
 
 
 class MessageHandler:
+    """
+    This Class Handle Diffrent Messages From User
+    """
     def __init__(self):
         """
         Initialize the MessageHandler class
@@ -24,6 +27,12 @@ class MessageHandler:
         self.support_group_id = -4061658551
 
     def handle_message(self, msg: telebot.types.Message, bot: telebot.TeleBot):
+        """
+
+        :param msg: telebot.types.Message instance
+        :param bot: telebot.TeleBot instance
+        :return: it handles the users message if the user message is text
+        """
         self.usermanager = UserManager(msg.from_user.id)
         self.msg = msg
         self.bot = bot
@@ -123,6 +132,12 @@ class MessageHandler:
         join_in_support(self.msg, self.bot)
 
     def handle_photo(self, msg: telebot.types.Message, bot: telebot.TeleBot):
+        """
+
+        :param msg: telebot.types.Message instance
+        :param bot: telebot.TeleBot instance
+        :return: it handles the user message if the message is a photo
+        """
         the_user = users_collection.find_one({"user_id": msg.from_user.id})
         if msg.chat.id == self.support_group_id and msg.reply_to_message:
             reply_to_user_support_msg(msg, bot)

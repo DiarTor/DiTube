@@ -7,12 +7,22 @@ from languages import persian
 
 
 def join_in_support(msg: telebot.types.Message, bot: telebot.TeleBot):
+    """
+    join in support (set metadata.joined_in_support to True) to let the user send a message to support
+    :param msg: telebot.types.Message instance
+    :param bot: telebot.TeleBot instance
+    """
     users_collection.update_one({'user_id': msg.from_user.id}, {'$set': {"metadata.joined_in_support": True}})
     bot.send_message(msg.chat.id, persian.youre_connected_to_support,
                      reply_markup=KeyboardMarkupGenerator(msg.from_user.id).return_buttons())
 
 
 def send_user_msg_to_support(msg: telebot.types.Message, bot: telebot.TeleBot):
+    """
+    send user message to support group
+    :param msg: telebot.types.Message instance
+    :param bot: telebot.TeleBot instance
+    """
     support_group_id = -4061658551
     bot.send_message(chat_id=support_group_id,
                      text=f"Username: {msg.from_user.username}\nUser ID: `{msg.from_user.id}`\nChat ID : `{msg.chat.id}`\nMessage:\n\n {msg.text}",
@@ -23,6 +33,11 @@ def send_user_msg_to_support(msg: telebot.types.Message, bot: telebot.TeleBot):
 
 
 def send_user_photo_to_support(msg: telebot.types.Message, bot: telebot.TeleBot):
+    """
+    send user photo to support group
+    :param msg: telebot.types.Message instance
+    :param bot: telebot.TeleBot instance
+    """
     support_group_id = -4061658551
     bot.send_photo(chat_id=support_group_id, photo=msg.photo[-1].file_id,
                    caption=f"Username: {msg.from_user.username}\nUser ID: `{msg.from_user.id}`\nChat ID : `{msg.chat.id}`",
@@ -33,6 +48,11 @@ def send_user_photo_to_support(msg: telebot.types.Message, bot: telebot.TeleBot)
 
 
 def reply_to_user_support_msg(msg: telebot.types.Message, bot: telebot.TeleBot):
+    """
+    reply to the user message sent to support  (in group)
+    :param msg: telebot.types.Message instance
+    :param bot: telebot.TeleBot instance
+    """
     reply_response_template = persian.reciving_message_from_support
     reply_response = msg.reply_to_message
     if reply_response.text:

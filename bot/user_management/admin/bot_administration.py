@@ -8,6 +8,9 @@ from telebot.apihelper import ApiTelegramException
 
 
 class BotAdministration:
+    """
+    Bot managing commands
+    """
     def __init__(self):
         self.admin = {1154909190}
         self.today = self._get_today_date()
@@ -16,25 +19,48 @@ class BotAdministration:
         self.this_month = self._get_this_month_start_date()
 
     def _is_admin(self, user_id):
+        """
+        Check if the user is admin
+        :param user_id: the user id
+        :return: True if admins False if not
+        """
         return user_id in self.admin
 
     def _get_today_date(self):
+        """
+        :return: today jdate (Y/m/d)
+        """
         return jdatetime.date.today().strftime("%Y/%m/%d")
 
     def _get_yesterday_date(self):
+        """
+        :return: yesteday jdate (Y/m/d)
+        """
         yesterday = jdatetime.date.today() - datetime.timedelta(days=1)
         return yesterday.strftime("%Y/%m/%d")
 
     def _get_this_week_start_date(self):
+        """
+        :return: the first day of the week jdate (Y/m/d)
+        """
         today = jdatetime.date.today()
         this_week_start = today - datetime.timedelta(days=today.weekday())
         this_week_dates = [this_week_start + datetime.timedelta(days=i) for i in range(7)]
         return [date.strftime("%Y/%m/%d") for date in this_week_dates]
 
     def _get_this_month_start_date(self):
+        """
+        :return: the first day pf the month jdate (Y/m/d)
+        """
         return jdatetime.date.today().replace(day=1).strftime("%Y/%m/%d")
 
     def get_bot_stats(self, msg: telebot.types.Message, bot: telebot.TeleBot):
+        """
+        get the bot stats (users, income, etc...)
+        :param msg: telebot.types.Message instance
+        :param bot: telebot.TeleBot instance
+        :return: sends the bot stat message
+        """
         if not self._is_admin(msg.from_user.id):
             return
 
@@ -79,6 +105,11 @@ class BotAdministration:
         bot.send_message(msg.chat.id, response, parse_mode="Markdown")
 
     def admin_commands_help(self, msg: telebot.types.Message, bot: telebot.TeleBot):
+        """
+        :param msg: telebot.types.Message instance
+        :param bot: telebot.TeleBot instance
+        :return: list of the admins commands
+        """
         if not self._is_admin(msg.from_user.id):
             return
 

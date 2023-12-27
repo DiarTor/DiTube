@@ -8,12 +8,29 @@ from languages import persian
 
 
 class BuySubscription(Plans):
+    """
+    Buy Subscription App
+    """
+
     def return_to_subscriptions_list(self, msg: telebot.types.Message, bot: telebot.TeleBot, user_id):
+        """
+        Return to subscriptions list
+        :param msg: telebot.types.Message instance
+        :param bot: telebot.TeleBot instance
+        :param user_id: the user id
+        """
         keyboard = KeyboardMarkupGenerator(user_id)
         bot.edit_message_text(chat_id=msg.chat.id, message_id=msg.message_id, text=persian.subscriptions_list,
                               reply_markup=keyboard.subscriptions_list_buttons())
 
     def show_subscription_details(self, msg: telebot.types.Message, bot: telebot.TeleBot, subscription, user_id):
+        """
+        Show the selected subscription plan details
+        :param msg: telebot.types.Message instance
+        :param bot: telebot.TeleBot instance
+        :param subscription: the selected subscription plan
+        :param user_id: the user id
+        """
         keyboard = KeyboardMarkupGenerator(user_id).subscription_details_buttons(subscription)
         response = persian.subscription_details
         format_number_with_commas = lambda number: f"{number:,}"
@@ -38,10 +55,24 @@ class BuySubscription(Plans):
                               parse_mode='Markdown')
 
     def subscriptions_list(self, msg: telebot.types.Message, bot: telebot.TeleBot, user_id):
+        """
+        Show subscriptions plans list
+        :param msg: telebot.types.Message instance
+        :param bot: telebot.TeleBot instance
+        :param user_id: the user id
+        """
         keyboard = KeyboardMarkupGenerator(user_id)
         bot.send_message(msg.chat.id, persian.subscriptions_list, reply_markup=keyboard.subscriptions_list_buttons())
 
     def buy_via_account_charge(self, msg: telebot.types.Message, bot: telebot.TeleBot, subscription, user_id, msg_id):
+        """
+        Buy subscription via account charge
+        :param msg: telebot.types.Message instance
+        :param bot: telebot.TeleBot instance
+        :param subscription: the selected subscription plan
+        :param user_id: the user id
+        :param msg_id: the subscription detail message id (for edit message)
+        """
         if re.search("id_1", subscription):
             the_user = users_collection.find_one({"user_id": user_id})
             sub = self.plans[1]

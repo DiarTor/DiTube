@@ -3,6 +3,9 @@ from telebot.types import KeyboardButton, ReplyKeyboardMarkup, InlineKeyboardMar
 
 
 class KeyboardMarkupGenerator:
+    """
+    This Class have the functions to create KeyBoardMarkups
+    """
     def __init__(self, user_id):
         """
         initialize class with user_id
