@@ -137,7 +137,7 @@ class ChargeAccount:
             formatted_price = "{:,}".format(factor_price)
             response = response.format(factor_id, formatted_price)
 
-            bot.reply_to(msg, response, parse_mode="markdown")
+            bot.reply_to(msg, "✅این فاکتور تایید شد.", parse_mode="markdown")
             bot.send_message(chat_id=user_id, text=response, parse_mode="markdown")
         elif status == "deny_factor":
             factors_collection.update_one({"id": factor_id},
@@ -145,5 +145,5 @@ class ChargeAccount:
                                                     "check_time": time, "status": "denied", "check_method": "manual"}})
             response = persian.charge_account_factor_denied
             response = response.format(factor_id)
-            bot.reply_to(msg, response, parse_mode="markdown")
+            bot.reply_to(msg, "❌این فاکتور رد شد.", parse_mode="markdown")
             bot.send_message(chat_id=user_id, text=response, parse_mode="markdown")
