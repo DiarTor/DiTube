@@ -1,4 +1,4 @@
-from bot.user_management.account.charge_account_plans import AccountChargePlans
+from bot.user.payment.apps.account_credit.charge_account_plans import AccountChargePlans
 from telebot.types import KeyboardButton, ReplyKeyboardMarkup, InlineKeyboardMarkup, InlineKeyboardButton
 
 
@@ -6,6 +6,7 @@ class KeyboardMarkupGenerator:
     """
     This Class have the functions to create KeyBoardMarkups
     """
+
     def __init__(self, user_id):
         """
         initialize class with user_id
@@ -51,7 +52,7 @@ class KeyboardMarkupGenerator:
         """
 
         buttons = [[KeyboardButton("🛒 خرید اشتراک")], [KeyboardButton("📋 اشتراک من")],
-                   [KeyboardButton("🎁 کد هدیه"),KeyboardButton("👤 حساب کاربری"),],
+                   [KeyboardButton("🎁 کد هدیه"), KeyboardButton("👤 حساب کاربری"), ],
                    [KeyboardButton("📞 پشتیبانی"), KeyboardButton("📖 راهنما")]]
         return self._create_reply_keyboard(buttons)
 
@@ -81,9 +82,8 @@ class KeyboardMarkupGenerator:
         :return:
         list of buttons (InlineButton)
         """
-
-        buttons = [InlineKeyboardButton(text="💳 شارژ حساب", callback_data="charge_account"),
-                   InlineKeyboardButton(text="📢 زیر مجموعه گیری", callback_data="invite_referrals")]
+        # InlineKeyboardButton(text="💳 شارژ حساب", callback_data="charge_account"),
+        buttons = [InlineKeyboardButton(text="📢 زیر مجموعه گیری", callback_data="invite_referrals")]
         return self._create_inline_keyboard(buttons)
 
     def my_subscription_buttons(self):
@@ -144,6 +144,15 @@ class KeyboardMarkupGenerator:
         buttons = [InlineKeyboardButton("💳 شارژ حساب", callback_data="charge_account")]
         return self._create_inline_keyboard(buttons)
 
+    def get_referral_buttons(self):
+        """
+        Create get referral buttons
+        :return:
+        list of buttons (InlineButton)
+        """
+        buttons = [InlineKeyboardButton(text="📢 زیر مجموعه گیری", callback_data="invite_referrals")]
+        return self._create_inline_keyboard(buttons)
+
     def post_caption_buttons(self, channel_url, post_url):
         """
         Create post caption buttons
@@ -160,9 +169,8 @@ class KeyboardMarkupGenerator:
         :return:
         list of buttons (InlineButton)
         """
-        buttons = [InlineKeyboardButton("📲 درگاه پرداخت", callback_data="payment_gateway"),
-                   InlineKeyboardButton("💳 کارت به کارت", callback_data="card_to_card"),
-                   InlineKeyboardButton("💲 ارز دیجیتال", callback_data="digital_currency")]
+        buttons = [InlineKeyboardButton("📲 درگاه پرداخت", callback_data="payment_gateway_charge"),
+                   InlineKeyboardButton("💳 کارت به کارت", callback_data="card_to_card_charge")]
         buttons += [InlineKeyboardButton("↩️ بازگشت", callback_data="return_to_my_account")]
 
         return self._create_inline_keyboard(buttons)
@@ -180,7 +188,7 @@ class KeyboardMarkupGenerator:
             format_number_with_commas = lambda number: f"{number:,}"
             formatted_price = format_number_with_commas(i)
             button = InlineKeyboardButton(text=f"💵 {str(formatted_price)} تومان",
-                                          callback_data=f"m:{method} p:{str(i)}")
+                                          callback_data=f"m:{method} p:{str(i)} charge")
             buttons.append(button)
         buttons += [InlineKeyboardButton(text="↩️ بازگشت", callback_data="return_to_charge_methods")]
         return self._create_inline_keyboard(buttons)
@@ -191,7 +199,7 @@ class KeyboardMarkupGenerator:
         :return:
         list of buttons (InlineButton)
         """
-        buttons = [InlineKeyboardButton(text="✅ تایید", callback_data=f"confirm_factor {factor_id}"),
-                   InlineKeyboardButton(text="❌ رد", callback_data=f"deny_factor {factor_id}")]
+        buttons = [InlineKeyboardButton(text="✅ تایید", callback_data=f"confirm_charge_factor {factor_id}"),
+                   InlineKeyboardButton(text="❌ رد", callback_data=f"deny_charge_factor {factor_id}")]
 
         return self._create_inline_keyboard(buttons)

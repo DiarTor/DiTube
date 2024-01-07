@@ -6,9 +6,9 @@ from bot.common.utils import modify_daily_data
 from bot.handlers.callback_handler import CallbackHandler
 from bot.handlers.message_handler import MessageHandler
 from bot.handlers.start_handler import StartCommandHandler
-from bot.user_management.admin.bot_administration import BotAdministration
-from bot.user_management.admin.user_administration import UserAdministration
-from bot.user_management.admin.giftcode import generate_code
+from bot.admin.bot_administration import BotAdministration
+from bot.admin.user_administration import UserAdministration
+from bot.admin.giftcode import generate_code
 from config.token import bot_token
 
 logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO)

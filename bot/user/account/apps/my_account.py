@@ -1,6 +1,6 @@
 import telebot.types
 from bot.common.button_utils import KeyboardMarkupGenerator
-from bot.user_management.utils.user_utils import UserManager
+from bot.user.utils.user_utils import UserManager
 from config.database import users_collection
 from languages import persian
 

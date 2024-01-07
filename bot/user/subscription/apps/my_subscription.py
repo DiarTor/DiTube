@@ -1,5 +1,5 @@
 import telebot.types
-from bot.user_management.utils.user_utils import UserManager
+from bot.user.utils.user_utils import UserManager
 from languages import persian
 
 

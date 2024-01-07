@@ -3,15 +3,14 @@ import re
 import telebot.types
 from bot.common.button_utils import KeyboardMarkupGenerator
 from bot.handlers.yt_link_handler import YouTubeVideoHandler
-from bot.user_management.account.apps.giftcode import redeem_giftcode
-from bot.user_management.account.apps.my_account import MyAccount
-from bot.user_management.subscription.apps.buy_subscription import BuySubscription
-from bot.user_management.subscription.apps.my_subscription import my_subscription_details
-from bot.user_management.support.apps.guide import send_guide_message
-from bot.user_management.support.apps.support import join_in_support, send_user_msg_to_support, \
-    send_user_photo_to_support, \
+from bot.user.account.apps.giftcode import redeem_giftcode
+from bot.user.account.apps.my_account import MyAccount
+from bot.user.subscription.apps.buy_subscription import BuySubscription
+from bot.user.subscription.apps.my_subscription import my_subscription_details
+from bot.user.support.apps.guide import send_guide_message
+from bot.user.support.apps.support import join_in_support, send_user_msg_to_support, send_user_photo_to_support, \
     reply_to_user_support_msg
-from bot.user_management.utils.user_utils import UserManager
+from bot.user.utils.user_utils import UserManager
 from config.database import users_collection
 from languages import persian
 
@@ -20,6 +19,7 @@ class MessageHandler:
     """
     This Class Handle Diffrent Messages From User
     """
+
     def __init__(self):
         """
         Initialize the MessageHandler class
@@ -57,29 +57,17 @@ class MessageHandler:
             return
 
         # Check for YouTube video links
-        if any(re.search(pattern, self.user_message_text) for pattern in [
-            r'https://youtu.be/',
-            r'https://www.youtube.com/watch\?v=',
-            r'https://www.youtube.com/shorts/',
-            r'https://youtube.com/shorts/',
-            r'http://youtu.be/',
-            r'http://www.youtube.com/watch\?v=',
-            r'http://www.youtube.com/shorts/',
-            r'http://youtube.com/shorts/'
-        ]):
+        if any(re.search(pattern, self.user_message_text) for pattern in
+               [r'https://youtu.be/', r'https://www.youtube.com/watch\?v=', r'https://www.youtube.com/shorts/',
+                   r'https://youtube.com/shorts/', r'http://youtu.be/', r'http://www.youtube.com/watch\?v=',
+                   r'http://www.youtube.com/shorts/', r'http://youtube.com/shorts/']):
             YouTubeVideoHandler().process_video(msg, bot)
             return
 
         # Handle specific commands
-        command_handlers = {
-            "↩️ بازگشت": self.handle_return,
-            "🛒 خرید اشتراک": self.handle_buy_subscription,
-            "👤 حساب کاربری": self.handle_account,
-            "📋 اشتراک من": self.handle_my_subscription,
-            "🎁 کد هدیه": self.handle_gift_code,
-            "📖 راهنما": self.handle_guide,
-            "📞 پشتیبانی": self.handle_support
-        }
+        command_handlers = {"↩️ بازگشت": self.handle_return, "🛒 خرید اشتراک": self.handle_buy_subscription,
+            "👤 حساب کاربری": self.handle_account, "📋 اشتراک من": self.handle_my_subscription,
+            "🎁 کد هدیه": self.handle_gift_code, "📖 راهنما": self.handle_guide, "📞 پشتیبانی": self.handle_support}
 
         # Check if the message corresponds to a known command
         if self.user_message_text in command_handlers:
@@ -143,4 +131,5 @@ class MessageHandler:
             reply_to_user_support_msg(msg, bot)
         if the_user['metadata']["joined_in_support"] == True:
             send_user_photo_to_support(msg, bot)
-        # todo : test if the bot response if the user send a photo
+        else:
+            bot.reply_to(msg, persian.unknown_request)

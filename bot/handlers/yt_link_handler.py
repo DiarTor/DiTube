@@ -1,8 +1,7 @@
 from urllib.error import HTTPError, URLError
 
 import telebot
-from bot.download_videos.get_video_information import get_video_options, get_only_filesize
-from config.database import users_collection
+from bot.youtube.get_video_information import get_video_options, get_only_filesize
 from languages import persian
 from pytube import YouTube
 from pytube.exceptions import AgeRestrictedError

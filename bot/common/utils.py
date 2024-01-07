@@ -1,6 +1,6 @@
 import time
 
-from bot.user_management.subscription.plans import Plans
+from bot.user.subscription.plans import Plans
 from config.database import users_collection
 import jdatetime
 

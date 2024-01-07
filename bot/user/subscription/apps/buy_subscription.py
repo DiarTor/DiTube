@@ -2,7 +2,7 @@ import re
 
 import telebot
 from bot.common.button_utils import KeyboardMarkupGenerator
-from bot.user_management.subscription.plans import Plans
+from bot.user.subscription.plans import Plans
 from config.database import users_collection
 from languages import persian
 
@@ -79,7 +79,7 @@ class BuySubscription(Plans):
             sub_price = self.id_1_final_price
             user_balance = users_collection.find_one({"user_id": user_id})['balance']
             if user_balance < sub_price:
-                keyboard = KeyboardMarkupGenerator(user_id).charge_account_buttons()
+                keyboard = KeyboardMarkupGenerator(user_id).get_referral_buttons()
                 bot.send_message(msg.chat.id, persian.insufficient_balance, reply_markup=keyboard,
                                  parse_mode='Markdown')
                 return
@@ -99,7 +99,7 @@ class BuySubscription(Plans):
             sub_price = self.id_2_final_price
             user_balance = users_collection.find_one({"user_id": user_id})['balance']
             if user_balance < sub_price:
-                keyboard = KeyboardMarkupGenerator(user_id).charge_account_buttons()
+                keyboard = KeyboardMarkupGenerator(user_id).get_referral_buttons()
                 bot.send_message(msg.chat.id, persian.insufficient_balance, reply_markup=keyboard,
                                  parse_mode='Markdown')
                 return
