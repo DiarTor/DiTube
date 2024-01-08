@@ -1,4 +1,4 @@
-from bot.user.payment.apps.account_credit.charge_account_plans import AccountChargePlans
+from bot.payments.account_credit.charge_account_plans import AccountChargePlans
 from telebot.types import KeyboardButton, ReplyKeyboardMarkup, InlineKeyboardMarkup, InlineKeyboardButton
 
 

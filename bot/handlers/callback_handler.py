@@ -2,9 +2,9 @@ import re
 
 import telebot.types
 from bot.handlers.start_handler import StartCommandHandler
-from bot.user.payment.apps.account_credit.charge_account import ChargeAccount
-from bot.user.payment.apps.factor.generate_factor import GenerateFactor
-from bot.user.payment.apps.factor.handle_factor import HandleFactor
+from bot.payments.account_credit.charge_account import ChargeAccount
+from bot.payments.factor.generate_factor import GenerateFactor
+from bot.payments.factor.handle_factor import HandleFactor
 from bot.user.subscription.apps.buy_subscription import BuySubscription
 from bot.user.utils.subscription_utils import SubscriptionManager
 from bot.user.utils.user_utils import UserManager
