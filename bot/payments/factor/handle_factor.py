@@ -12,10 +12,13 @@ class HandleFactor:
         self.date_time = self._get_date_time()
         self.date = self._get_date()
         self.time = self._get_time()
+
     def _get_date_time(self):
         return jdatetime.datetime.now().strftime("%Y/%m/%d %H:%M:%S")
+
     def _get_date(self):
         return jdatetime.date.today().strftime("%Y/%m/%d")
+
     def _get_time(self):
         return jdatetime.datetime.now().strftime("%H:%M:%S")
 
@@ -44,13 +47,12 @@ class HandleFactor:
 
         # Update the factor and user balance
         factor_price_to_toman = factor['price'] // 10
-        self.factors_collection.update_one({"id": factor_id}, {"$set": {"status": "confirmed"}})
-        self.factors_collection.update_one({"id": factor_id}, {"$set": {"check_date_time": self.date_time}})
-        self.factors_collection.update_one({"id": factor_id}, {"$set": {"check_date": self.date}})
-        self.factors_collection.update_one({"id": factor_id}, {"$set": {"check_time": self.time}})
-        self.factors_collection.update_one({"id": factor_id}, {"$set": {"check_method": "manual"}})
+        filter = {"id": factor_id}
+        self.factors_collection.update_one({"id": factor_id}, {
+            "$set": {"status": "confirmed", "check_date_time": self.date_time, "check_date": self.date,
+                     "check_time": self.time, "check_method": "manual"}})
         self.users_collection.update_one({"user_id": user_id},
-                                         {"$set": {"balance": user['balance'] + factor_price_to_toman}})
+                                         {"$inc": {"balance": factor_price_to_toman}})
 
         # Generate the response message
         response = persian.charge_account_factor_confired
