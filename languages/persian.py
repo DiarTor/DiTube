@@ -347,3 +347,10 @@ factors = {
     "card_to_card_charge": card_to_card_factor,
     "send_to_admins": send_factor_message_to_admin
 }
+
+payment_gateway_generated = """
+صفحه پرداخت با موفقیت ایجاد شد.
+{}
+"""
+
+payment_success = "پرداخت با موفقیت انجام شد."

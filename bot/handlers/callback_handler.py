@@ -3,6 +3,7 @@ import re
 import telebot.types
 from bot.handlers.start_handler import StartCommandHandler
 from bot.payments.account_credit.charge_account import ChargeAccount
+from bot.payments.direct.call_gateway import CallGateway
 from bot.payments.factor.generate_factor import GenerateFactor
 from bot.payments.factor.handle_factor import HandleFactor
 from bot.user.subscription.apps.buy_subscription import BuySubscription
@@ -119,5 +120,9 @@ class CallbackHandler:
             elif status == "confirm_charge_factor":
                 HandleFactor().confirm_charge_factor(msg=self.callback.message, bot=self.bot, factor_id=factor_id,
                                                      callback_id=self.callback.id)
-        elif data in {"auto_renew", "buy_id_1_direct_payment", "buy_id_2_direct_payment", "payment_gateway_charge", }:
+        elif data == "buy_id_1_direct_payment":
+            CallGateway().process(msg=self.callback.message, bot=self.bot, plan_id=1, user_id=self.callback.from_user.id)
+        elif data == "buy_id_2_direct_payment":
+            CallGateway().process(msg=self.callback.message, bot=self.bot, plan_id=2, user_id=self.callback.from_user.id)
+        elif data in {"auto_renew", "payment_gateway_charge", }:
             self.bot.answer_callback_query(self.callback.id, persian.coming_soon)

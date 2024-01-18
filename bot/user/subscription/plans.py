@@ -10,7 +10,11 @@ class Plans:
     id_1_final_price = id_1_price - id_1_final_price
     id_2_final_price = id_2_price * discount_percent // 100
     id_2_final_price = id_2_price - id_2_final_price
-
+    def _get_plan_by_id(self, plan_id):
+        for plan in self.plans:
+            plan_id = int(plan_id)
+            if plan.get("id") == plan_id:
+                return plan
     # download_links_last = 1 means 1 Hour
     plans = [
         {
