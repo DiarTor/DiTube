@@ -31,6 +31,12 @@ class BuySubscription(Plans):
         :param subscription: the selected subscription plan
         :param user_id: the user id
         """
+        if users_collection.find_one({"user_id": user_id})['subscription']['type'] == 'premium':
+            if users_collection.find_one({"user_id": user_id})['subscription']['id'] == 1:
+                sub_name = Plans()._get_plan_by_id(1)['name']
+            elif users_collection.find_one({"user_id": user_id})['subscription']['id'] == 2:
+                sub_name = Plans()._get_plan_by_id(2)['name']
+            return bot.edit_message_text(chat_id=msg.chat.id, message_id=msg.message_id, text=persian.subscription_already_bought.format(sub_name), parse_mode='markdown')
         keyboard = KeyboardMarkupGenerator(user_id).subscription_details_buttons(subscription)
         response = persian.subscription_details
         format_number_with_commas = lambda number: f"{number:,}"
@@ -38,6 +44,7 @@ class BuySubscription(Plans):
             sub = self.plans[1]
         elif subscription == 'id_2':
             sub = self.plans[2]
+        formatted_days = sub['days']
         formatted_max_data_per_day = sub['max_data_per_day'] // 1000
         formatted_max_file_size = sub['max_file_size'] // 1000
         user_balance = users_collection.find_one({"user_id": user_id})['balance']

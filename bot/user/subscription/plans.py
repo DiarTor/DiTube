@@ -3,7 +3,7 @@ class Plans:
     """
     premium plans
     """
-    discount_percent = 20
+    discount_percent = 0
     id_1_price = 48000
     id_2_price = 118000
     id_1_final_price = id_1_price * discount_percent // 100
@@ -20,6 +20,7 @@ class Plans:
         {
             "id": 0,
             "type": "free",
+            "name": "رایگان",
             "max_file_size": 200,
             "max_data_per_day": 500,
             "used_data": 0,
@@ -32,6 +33,7 @@ class Plans:
         {
             "id": 1,
             "type": "premium",
+            "name": "پرمیوم 30 روزه",
             "price": id_1_price,
             "discount_percent": discount_percent,
             "final_price": id_1_final_price,
@@ -49,6 +51,7 @@ class Plans:
         {
             "id": 2,
             "type": "premium",
+            "name": "پرمیوم 90 روزه",
             "price": id_2_price,
             "discount_percent": discount_percent,
             "final_price": id_2_final_price,

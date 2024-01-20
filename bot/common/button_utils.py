@@ -1,5 +1,6 @@
 from bot.payments.account_credit.charge_account_plans import AccountChargePlans
 from telebot.types import KeyboardButton, ReplyKeyboardMarkup, InlineKeyboardMarkup, InlineKeyboardButton
+from bot.user.subscription.plans import Plans
 
 
 class KeyboardMarkupGenerator:
@@ -114,8 +115,14 @@ class KeyboardMarkupGenerator:
         :return:
         list of buttons (InlineButton)
         """
-        buttons = [InlineKeyboardButton("🥇 پرمیوم (30 روز)", callback_data="id_1_in_list"),
-                   InlineKeyboardButton("💎 پرمیوم (90 روز)", callback_data="id_2_in_list")]
+        final_price_1, final_price_2 = Plans().id_1_final_price, Plans().id_2_final_price
+        formatted_price_1, formatted_price_2 = f"{final_price_1:,} تومان", f"{final_price_2:,} تومان"
+        if Plans().id_1_price != final_price_1:
+            formatted_price_1 += "🔥"
+        if Plans().id_2_price != final_price_2:
+            formatted_price_2 += "🔥"
+        buttons = [InlineKeyboardButton("🥇 پرمیوم (30 روز) - " + str(formatted_price_1), callback_data="id_1_in_list"),
+                   InlineKeyboardButton("💎 پرمیوم (90 روز) - " + str(formatted_price_2), callback_data="id_2_in_list")]
         return self._create_inline_keyboard(buttons)
 
     def subscription_details_buttons(self, subscription_info):

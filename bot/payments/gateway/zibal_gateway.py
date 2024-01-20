@@ -1,9 +1,10 @@
 import requests
 from bot.payments.direct.direct_buy import DirectBuy
 from flask import Flask, request
+from config.token import MERCHANT_ID
 import telebot
 app = Flask(__name__)
-merchant = "zibal"
+merchant = 'zibal'
 callback_url = "http://localhost:8000/verify-payment"
 
 
@@ -23,7 +24,7 @@ def send_request(amount, order_id, mobile=None, description=None, multiplexingIn
     data['description'] = description
     data['multiplexingInfos'] = multiplexingInfos
 
-    response = postTo('request', data)
+    response = post_to('request', data)
     return response
 
 
@@ -37,7 +38,10 @@ def check_payment():
         trackId = request.args.get('trackId')
         result = verify(trackId)
         if result.get('result') == 100:
-            DirectBuy().successful_payment(user_id=int(user_id), plan_id=plan_id)
+            try:
+                DirectBuy().successful_payment(user_id=int(user_id), plan_id=plan_id)
+            except Exception:
+                return "payment error if your money didnt deposited in 48 hrs please contact support"
             return "success return to the bot"
         elif result.get('result') == 201:
             return "previously verifed"
@@ -52,17 +56,17 @@ def inquiry(trackId):
     data = {}
     data['merchant'] = merchant
     data['trackId'] = trackId
-    return postTo('inquiry', data)
+    return post_to('inquiry', data)
 
 
 def verify(trackId):
     data = {}
     data['merchant'] = merchant
     data['trackId'] = trackId
-    return postTo('verify', data)
+    return post_to('verify', data)
 
 
-def postTo(path, parameters):
+def post_to(path, parameters):
     url = "https://gateway.zibal.ir/v1/" + path
 
     response = requests.post(url=url, json=parameters)
