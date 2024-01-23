@@ -115,7 +115,7 @@ class KeyboardMarkupGenerator:
         :return:
         list of buttons (InlineButton)
         """
-        final_price_1, final_price_2 = Plans().id_1_final_price, Plans().id_2_final_price
+        final_price_1, final_price_2 = Plans()._get_plan_by_id(1)["final_price"], Plans()._get_plan_by_id(2)["final_price"]
         formatted_price_1, formatted_price_2 = f"{final_price_1:,} تومان", f"{final_price_2:,} تومان"
         if Plans().id_1_price != final_price_1:
             formatted_price_1 += "🔥"

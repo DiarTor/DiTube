@@ -41,9 +41,9 @@ class BuySubscription(Plans):
         response = persian.subscription_details
         format_number_with_commas = lambda number: f"{number:,}"
         if subscription == 'id_1':
-            sub = self.plans[1]
+            sub = self._get_plan_by_id(1)
         elif subscription == 'id_2':
-            sub = self.plans[2]
+            sub = self._get_plan_by_id(2)
         formatted_days = sub['days']
         formatted_max_data_per_day = sub['max_data_per_day'] // 1000
         formatted_max_file_size = sub['max_file_size'] // 1000

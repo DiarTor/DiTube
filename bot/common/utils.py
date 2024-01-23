@@ -39,7 +39,7 @@ def modify_daily_data(interval_in_seconds=86400):
                     if new_days_left == 0:
                         users_collection.update_one(
                             {'_id': user['_id']},
-                            {"$set": {"subscription": Plans().free}}
+                            {"$set": {"subscription": Plans()._get_plan_by_id(0)}}
                         )
                     else:
                         result = users_collection.update_one(

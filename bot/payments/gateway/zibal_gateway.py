@@ -39,7 +39,7 @@ def check_payment():
         result = verify(trackId)
         if result.get('result') == 100:
             try:
-                DirectBuy().successful_payment(user_id=int(user_id), plan_id=plan_id)
+                DirectBuy().successful_payment(user_id=int(user_id), plan_id=int(plan_id))
             except Exception:
                 return "payment error if your money didnt deposited in 48 hrs please contact support"
             return "success return to the bot"
