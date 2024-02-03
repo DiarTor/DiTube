@@ -1,16 +1,15 @@
 import requests
 from bot.payments.direct.direct_buy import DirectBuy
 from flask import Flask, request
-from config.token import MERCHANT_ID
-import telebot
+
 app = Flask(__name__)
 merchant = 'zibal'
-callback_url = "http://localhost:8000/verify-payment"
+callback_url = "https://diardev.ir/botapi/verify-payment"
 
 
 @app.route('/', methods=['GET'])
 def homepage():
-    return "Hi there"
+    return ""
 
 
 def send_request(amount, order_id, mobile=None, description=None, multiplexingInfos=None):
@@ -28,7 +27,7 @@ def send_request(amount, order_id, mobile=None, description=None, multiplexingIn
     return response
 
 
-@app.route('/verify-payment', methods=['POST', 'GET'])
+@app.route('/botapi/verify-payment', methods=['POST', 'GET'])
 def check_payment():
     order_id = request.args.get('orderId')
     order_id_parts = order_id.split('-')
@@ -36,7 +35,9 @@ def check_payment():
     user_id = order_id_parts[1]
     if request.args.get('success') == '1':
         trackId = request.args.get('trackId')
+        print(trackId)
         result = verify(trackId)
+        print(result)
         if result.get('result') == 100:
             try:
                 DirectBuy().successful_payment(user_id=int(user_id), plan_id=int(plan_id))
@@ -75,4 +76,4 @@ def post_to(path, parameters):
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=8000)
+    app.run(host='0.0.0.0' ,debug=True)
