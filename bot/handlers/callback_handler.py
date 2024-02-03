@@ -9,7 +9,7 @@ from bot.payments.factor.handle_factor import HandleFactor
 from bot.user.subscription.apps.buy_subscription import BuySubscription
 from bot.user.utils.subscription_utils import SubscriptionManager
 from bot.user.utils.user_utils import UserManager
-from bot.youtube import process_video
+from bot.youtube.process_video import process_video
 from bot.youtube.get_video_information import get_only_filesize
 from config.database import users_collection
 from languages import persian
@@ -59,7 +59,7 @@ class CallbackHandler:
             processing_message = persian.processing_message
             self.bot.edit_message_text(processing_message, self.chat_id, message_id=self.callback.message.id)
 
-            process_video(msg=telebot.types.Message, bot=self.bot, link=link, quality_or_audio=res_code_or_vc,
+            process_video(msg=callback.message, bot=bot, link=link, quality_or_audio=res_code_or_vc,
                           chat_id=self.chat_id, user_id=self.callback.from_user.id)
 
             self.bot.delete_message(chat_id=self.chat_id, message_id=self.callback.message.message_id)

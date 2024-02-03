@@ -9,7 +9,7 @@ from config.database import users_collection
 from pytube import YouTube
 
 
-def process_video(msg: telebot.types.Message, bot: telebot.TeleBot, link, quality_or_audio, chat_id, user_id):
+def process_video(msg,bot, link, quality_or_audio, chat_id, user_id):
     """
 
     :param msg: telebot.types.Message instance
