@@ -9,7 +9,6 @@ old_version.py
 test.py
 bot/.env
 videos
-Todo
 .cloud
 /.cloud/
 .cloud/
@@ -18,5 +17,3 @@ share
 share/
 etc
 etc/
-tests
-images

@@ -3,10 +3,12 @@ from config.database import users_collection, factors_collection
 from languages import persian
 from telebot.apihelper import ApiTelegramException
 
+
 class UserAdministration:
     """
     User managing commands
     """
+
     def _is_admin(self, user_id):
         """
         Check if the user is admin
@@ -173,7 +175,7 @@ class UserAdministration:
         except (IndexError, ValueError, ApiTelegramException) as e:
             bot.send_message(msg.chat.id, "❌ لطفا دستور را به این صورت وارد کنید:\n/send_message_to_all [Text]")
 
-    def send_message_to_free_users(self, msg:telebot.types.Message, bot:telebot.TeleBot):
+    def send_message_to_free_users(self, msg: telebot.types.Message, bot: telebot.TeleBot):
         """
         send a message to the users with free subscription only
         :param msg: telebot.types.Message instance
@@ -191,10 +193,12 @@ class UserAdministration:
                 if user['user_id'] == 6967607104:
                     continue
                 bot.send_message(user['user_id'], message, parse_mode="Markdown")
-            bot.send_message(msg.chat.id, "✅ پیام شما به همه کاربرانی که اشتراک *رایگان* دارند ارسال شد",parse_mode="Markdown")
+            bot.send_message(msg.chat.id, "✅ پیام شما به همه کاربرانی که اشتراک *رایگان* دارند ارسال شد",
+                             parse_mode="Markdown")
         except (IndexError, ValueError, ApiTelegramException):
             bot.send_message(msg.chat.id, "❌ لطفا دستور را به این صورت وارد کنید:\n/send_message_to_free_users [Text]")
-    def send_message_to_premium_users(self, msg:telebot.types.Message, bot:telebot.TeleBot):
+
+    def send_message_to_premium_users(self, msg: telebot.types.Message, bot: telebot.TeleBot):
         """
         send a message to the users with premium subscription only
         :param msg: telebot.types.Message instance
@@ -212,6 +216,8 @@ class UserAdministration:
                 if user['user_id'] == 6967607104:
                     continue
                 bot.send_message(user['user_id'], message, parse_mode="Markdown")
-            bot.send_message(msg.chat.id, "✅ پیام شما به همه کاربرانی که اشتراک *پرمیوم* دارند ارسال شد",parse_mode="Markdown")
+            bot.send_message(msg.chat.id, "✅ پیام شما به همه کاربرانی که اشتراک *پرمیوم* دارند ارسال شد",
+                             parse_mode="Markdown")
         except (IndexError, ValueError, ApiTelegramException):
-            bot.send_message(msg.chat.id, "❌ لطفا دستور را به این صورت وارد کنید:\n/send_message_to_premium_users [Text]")
+            bot.send_message(msg.chat.id,
+                             "❌ لطفا دستور را به این صورت وارد کنید:\n/send_message_to_premium_users [Text]")

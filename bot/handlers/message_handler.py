@@ -59,15 +59,16 @@ class MessageHandler:
         # Check for YouTube video links
         if any(re.search(pattern, self.user_message_text) for pattern in
                [r'https://youtu.be/', r'https://www.youtube.com/watch\?v=', r'https://www.youtube.com/shorts/',
-                   r'https://youtube.com/shorts/', r'http://youtu.be/', r'http://www.youtube.com/watch\?v=',
-                   r'http://www.youtube.com/shorts/', r'http://youtube.com/shorts/']):
+                r'https://youtube.com/shorts/', r'http://youtu.be/', r'http://www.youtube.com/watch\?v=',
+                r'http://www.youtube.com/shorts/', r'http://youtube.com/shorts/']):
             YouTubeVideoHandler().process_video(msg, bot)
             return
 
         # Handle specific commands
         command_handlers = {"↩️ بازگشت": self.handle_return, "🛒 خرید اشتراک": self.handle_buy_subscription,
-            "👤 حساب کاربری": self.handle_account, "📋 اشتراک من": self.handle_my_subscription,
-            "🎁 کد هدیه": self.handle_gift_code, "📖 راهنما": self.handle_guide, "📞 پشتیبانی": self.handle_support}
+                            "👤 حساب کاربری": self.handle_account, "📋 اشتراک من": self.handle_my_subscription,
+                            "🎁 کد هدیه": self.handle_gift_code, "📖 راهنما": self.handle_guide,
+                            "📞 پشتیبانی": self.handle_support}
 
         # Check if the message corresponds to a known command
         if self.user_message_text in command_handlers:

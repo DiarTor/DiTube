@@ -4,13 +4,13 @@ import jdatetime
 import telebot
 from config.database import users_collection, factors_collection
 from languages import persian
-from telebot.apihelper import ApiTelegramException
 
 
 class BotAdministration:
     """
     Bot managing commands
     """
+
     def __init__(self):
         self.admin = {1154909190}
         self.today = self._get_today_date()
