@@ -1,6 +1,6 @@
-from bot.payments.gateway.zibal_gateway import send_request
 from bot.user.subscription.plans import Plans
 from languages import persian
+from zibal_gateway import send_request
 
 
 class CallGateway:

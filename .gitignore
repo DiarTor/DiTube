@@ -9,7 +9,6 @@ old_version.py
 test.py
 bot/.env
 videos
-Todo
 .cloud
 /.cloud/
 .cloud/
@@ -18,5 +17,9 @@ share
 share/
 etc
 etc/
+zibal_gateway.py
+Todo
 tests
 images
+config
+web

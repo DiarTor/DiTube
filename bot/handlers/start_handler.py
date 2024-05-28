@@ -11,6 +11,7 @@ class StartCommandHandler:
     """
     This Class hande /start Command and starting the bot by the user
     """
+
     def create_default_user_data(self, msg: telebot.types.Message):
         """
         Create default user data if the user is new.
@@ -20,16 +21,17 @@ class StartCommandHandler:
         if not users_collection.find_one({"user_id": msg.from_user.id}):
             user = msg.from_user
             user_data = {"user_id": user.id, "user_name": user.username, "user_firstname": user.first_name,
-                "user_lastname": user.last_name, "balance": 0, "referrals": [], "referral_total_profit": 0,
-                "referraled": None, "registered_at": jdatetime.datetime.now().strftime("%Y/%m/%d %H:%M:%S"),
-                "register_date": jdatetime.date.today().strftime("%Y/%m/%d"),
-                "register_time": jdatetime.datetime.now().strftime("%H:%M:%S"),
-                "subscription": {"type": "free", "max_file_size": 200, "max_data_per_day": 500, "used_data": 0,
-                    "remaining_data": 500, "last_reset_date": jdatetime.date.today().strftime("%Y/%m/%d"), },
-                "downloads": [],
-                "metadata": {"first_time_starting": True, "redeeming_code": False, "joined_in_support": False
+                         "user_lastname": user.last_name, "balance": 0, "referrals": [], "referral_total_profit": 0,
+                         "referraled": None, "registered_at": jdatetime.datetime.now().strftime("%Y/%m/%d %H:%M:%S"),
+                         "register_date": jdatetime.date.today().strftime("%Y/%m/%d"),
+                         "register_time": jdatetime.datetime.now().strftime("%H:%M:%S"),
+                         "subscription": {"type": "free", "max_file_size": 200, "max_data_per_day": 500, "used_data": 0,
+                                          "remaining_data": 500,
+                                          "last_reset_date": jdatetime.date.today().strftime("%Y/%m/%d"), },
+                         "downloads": [],
+                         "metadata": {"first_time_starting": True, "redeeming_code": False, "joined_in_support": False
 
-                }, }
+                                      }, }
             users_collection.insert_one(user_data)
         self.the_user = users_collection.find_one({"user_id": msg.from_user.id})
 

@@ -1,7 +1,7 @@
-import telebot
-from languages import persian
-from config.database import users_collection
 from bot.user.subscription.plans import Plans
+from config.database import users_collection
+
+
 class DirectBuy:
     def __init__(self):
         self.users = users_collection
@@ -13,4 +13,3 @@ class DirectBuy:
         if user:
             self.users.update_one({'user_id': user_id},
                                   {'$set': {'subscription': plan}})
-

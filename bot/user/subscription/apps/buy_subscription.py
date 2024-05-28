@@ -36,7 +36,9 @@ class BuySubscription(Plans):
                 sub_name = Plans()._get_plan_by_id(1)['name']
             elif users_collection.find_one({"user_id": user_id})['subscription']['id'] == 2:
                 sub_name = Plans()._get_plan_by_id(2)['name']
-            return bot.edit_message_text(chat_id=msg.chat.id, message_id=msg.message_id, text=persian.subscription_already_bought.format(sub_name), parse_mode='markdown')
+            return bot.edit_message_text(chat_id=msg.chat.id, message_id=msg.message_id,
+                                         text=persian.subscription_already_bought.format(sub_name),
+                                         parse_mode='markdown')
         keyboard = KeyboardMarkupGenerator(user_id).subscription_details_buttons(subscription)
         response = persian.subscription_details
         format_number_with_commas = lambda number: f"{number:,}"

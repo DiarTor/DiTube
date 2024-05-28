@@ -12,6 +12,7 @@ class YouTubeVideoHandler:
     """
     This class handle YouTube Video Link
     """
+
     def handle_exceptions(self, response, msg_id=None):
         """
         Handle exceptions by sending an error response to the user.
@@ -59,7 +60,7 @@ class YouTubeVideoHandler:
         audio_file_size = get_only_filesize(self.user_message_text)
         formatted_size = "{:.1f}".format(audio_file_size)
         kb.append([InlineKeyboardButton(f"دانلود صدا ({formatted_size} MB)",
-                                            callback_data=f"{self.yt.video_id} vc {self.chat_id}")])
+                                        callback_data=f"{self.yt.video_id} vc {self.chat_id}")])
 
         return InlineKeyboardMarkup(kb)
 

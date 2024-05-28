@@ -2,13 +2,13 @@ import logging
 import threading
 
 import telebot
+from bot.admin.bot_administration import BotAdministration
+from bot.admin.giftcode import generate_code
+from bot.admin.user_administration import UserAdministration
 from bot.common.utils import modify_daily_data
 from bot.handlers.callback_handler import CallbackHandler
 from bot.handlers.message_handler import MessageHandler
 from bot.handlers.start_handler import StartCommandHandler
-from bot.admin.bot_administration import BotAdministration
-from bot.admin.user_administration import UserAdministration
-from bot.admin.giftcode import generate_code
 from config.token import bot_token
 
 logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO)
@@ -17,10 +17,14 @@ logger = logging.getLogger(__name__)
 
 bot = telebot.TeleBot(bot_token)
 
-bot.register_message_handler(UserAdministration().send_message_to_premium_users, commands=['send_message_to_premium_users'], pass_bot=True)
-bot.register_message_handler(UserAdministration().send_message_to_free_users, commands=['send_message_to_free_users'], pass_bot=True)
-bot.register_message_handler(UserAdministration().send_message_to_all_users, commands=['send_message_to_all'], pass_bot=True)
-bot.register_message_handler(UserAdministration().send_message_to_user, commands=['send_message_to_user'], pass_bot=True)
+bot.register_message_handler(UserAdministration().send_message_to_premium_users,
+                             commands=['send_message_to_premium_users'], pass_bot=True)
+bot.register_message_handler(UserAdministration().send_message_to_free_users, commands=['send_message_to_free_users'],
+                             pass_bot=True)
+bot.register_message_handler(UserAdministration().send_message_to_all_users, commands=['send_message_to_all'],
+                             pass_bot=True)
+bot.register_message_handler(UserAdministration().send_message_to_user, commands=['send_message_to_user'],
+                             pass_bot=True)
 bot.register_message_handler(UserAdministration().include_user_balance, commands=['include_balance'], pass_bot=True)
 bot.register_message_handler(StartCommandHandler().process_start_command, commands=["start"], pass_bot=True)
 bot.register_message_handler(BotAdministration().admin_commands_help, commands=['ahelp'], pass_bot=True)
