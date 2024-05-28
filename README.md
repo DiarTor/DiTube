@@ -75,9 +75,7 @@ Feel free to open issues or submit pull requests if you find any bugs or have fe
 
 ---
 
-*Note: Downloading videos from YouTube might violate their terms of service. Please ensure that you have the right to
+*Warning: Downloading videos from YouTube might violate their terms of service. Please ensure that you have the right to
 download the content before using this bot.*
 
 *Note: There is no gateway connected to the bot so basiclly the premium version can not be baught automaticlly*
-
-```
