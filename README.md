@@ -37,6 +37,7 @@ via Telegram and the `pytube` library to download YouTube videos and audio.
     - Replace `YOUR_BOT_TOKEN` in the script with your actual bot token.
     - To replace the bot token you should create this path `config/token.py` and inside this file you should create a
       variable called `bot_token` and place your token there as a string
+    - Dont Forget To Change The MongoDB Database Address in `config/database.py`
 
 ## Usage
 
